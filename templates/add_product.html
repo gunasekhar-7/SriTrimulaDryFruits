@@ -1,0 +1,62 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<h2 class="mb-4">Add New Product</h2>
+
+<div class="card p-4">
+    <form method="post">
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label class="form-label">Name</label>
+                <input name="name" class="form-control" required placeholder="e.g. Loose Cashews 500g">
+            </div>
+            
+            <div class="col-md-6">
+                <label class="form-label">Barcode</label>
+                <div class="input-group">
+                    <input type="text" id="barcodeInput" name="barcode" class="form-control" required placeholder="Scan or Click Auto">
+                    <button type="button" class="btn btn-outline-secondary" onclick="generateBarcode()">⚡ Auto</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-3">
+                <label class="form-label">Quantity</label>
+                <input type="number" step="0.001" name="qty" class="form-control" required>
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label">Cost Price</label>
+                <input type="number" step="0.01" name="cost" class="form-control" required>
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label">MRP</label>
+                <input type="number" step="0.01" name="mrp" class="form-control" required>
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label">Selling Price</label>
+                <input type="number" step="0.01" name="sell" class="form-control" required>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">💾 Save Product</button>
+        <a href="/stock" class="btn btn-link">Cancel</a>
+
+    </form>
+</div>
+
+<script>
+    function generateBarcode() {
+        // Generates a random 12-digit number (Like a UPC)
+        // Starts with '200' to indicate it's an in-store item
+        const randomNum = Math.floor(100000000 + Math.random() * 900000000);
+        document.getElementById('barcodeInput').value = "200" + randomNum;
+    }
+</script>
+
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h2 class="mb-4">📈 Business Analytics</h2>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card p-4 shadow-sm h-100">
+            <h5 class="card-title text-center text-success fw-bold">Top 5 Best Selling Items</h5>
+            <hr>
+            <div style="height: 300px; display: flex; align-items: center; justify-content: center;">
+                <canvas id="salesChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card p-0 shadow-sm h-100 overflow-hidden">
+            <div class="p-3 text-white text-center" style="background-color: #0B3D25;">
+                <h5 class="mb-0">🏆 Leaderboard</h5>
+            </div>
+            <ul class="list-group list-group-flush">
+                {% for i in range(labels|length) %}
+                <li class="list-group-item d-flex justify-content-between align-items-center py-3">
+                    <span class="fw-bold text-dark">{{ i+1 }}. {{ labels[i] }}</span>
+                    <span class="badge rounded-pill" style="background-color: #D4AF37; color: black;">
+                        {{ values[i] }} sold
+                    </span>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Note: VS Code might show red lines below. Ignore them. They are correct.
+    const labels = {{ labels | tojson }};
+    const data = {{ values | tojson }};
+
+    const ctx = document.getElementById('salesChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar', 
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Quantity Sold',
+                data: data,
+                backgroundColor: '#0B3D25', // Brand Green
+                borderColor: '#D4AF37',     // Brand Gold
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: { y: { beginAtZero: true } }
+        }
+    });
+</script>
+{% endblock %}

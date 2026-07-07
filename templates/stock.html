@@ -1,0 +1,83 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 style="color: #0B3D25;">📦 Stock Inventory</h2>
+    
+    {% if session.get('role') == 'admin' %}
+        <a href="/add" class="btn btn-warning fw-bold">+ Add New Item</a>
+    {% endif %}
+</div>
+
+<div class="card p-3 mb-3 shadow-sm" style="background: #e9ecef;">
+    <div class="input-group">
+        <span class="input-group-text bg-white border-end-0">🔍</span>
+        <input type="text" id="searchInput" class="form-control border-start-0" placeholder="Search by Name or Barcode..." onkeyup="filterStock()">
+    </div>
+</div>
+
+<div class="card shadow-sm border-0">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0" id="stockTable">
+            <thead class="bg-success text-white">
+                <tr>
+                    <th class="py-3 ps-3">Product Name</th>
+                    <th class="py-3">Barcode</th>
+                    <th class="py-3 text-center">Stock</th>
+                    <th class="py-3">MRP</th>
+                    <th class="py-3">Sell Price</th>
+                    <th class="py-3 text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in products %}
+                <tr class="stock-row">
+                    <td class="ps-3 fw-bold product-name">{{ p.name }}</td>
+                    <td class="text-muted small font-monospace product-code">{{ p.barcode }}</td>
+                    
+                    <td class="text-center">
+                        {% if p.remaining < 5 %}
+                            <span class="badge bg-danger rounded-pill">{{ "%.3f"|format(p.remaining) }}</span>
+                        {% else %}
+                            <span class="badge bg-success rounded-pill">{{ "%.3f"|format(p.remaining) }}</span>
+                        {% endif %}
+                    </td>
+
+                    <td class="text-muted text-decoration-line-through">₹{{ "%.2f"|format(p.mrp if p.mrp else 0) }}</td>
+                    <td class="fw-bold text-success">₹{{ "%.2f"|format(p.selling_price) }}</td>
+                    
+                    <td class="text-center">
+                        <a href="/print_label/{{ p.id }}" target="_blank" class="btn btn-sm btn-dark me-1" title="Print Sticker">🖨️</a>
+                        <a href="/add_stock/{{ p.id }}" class="btn btn-sm btn-success me-1" title="Add Stock">➕ Stock</a>
+
+                        {% if session.get('role') == 'admin' %}
+                            <a href="/edit/{{ p.id }}" class="btn btn-sm btn-outline-primary me-1" title="Full Edit">✏️</a>
+                            <a href="/delete/{{ p.id }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this item?')" title="Delete">🗑️</a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function filterStock() {
+        var input = document.getElementById("searchInput");
+        var filter = input.value.toUpperCase();
+        var rows = document.getElementsByClassName("stock-row");
+
+        for (var i = 0; i < rows.length; i++) {
+            var name = rows[i].getElementsByClassName("product-name")[0].innerText;
+            var code = rows[i].getElementsByClassName("product-code")[0].innerText;
+            
+            if (name.toUpperCase().indexOf(filter) > -1 || code.indexOf(filter) > -1) {
+                rows[i].style.display = "";
+            } else {
+                rows[i].style.display = "none";
+            }
+        }
+    }
+</script>
+{% endblock %}

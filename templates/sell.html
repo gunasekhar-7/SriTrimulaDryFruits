@@ -1,0 +1,227 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="row">
+    
+    <div class="col-md-8">
+        
+        <div class="card p-3 mb-3 border-success shadow-sm" style="background-color: #f8f9fa;">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="text-success fw-bold m-0">🛒 Add Item (Editable)</h5>
+                <span class="badge bg-secondary">User: {{ session['user'] }}</span>
+            </div>
+            
+            <form method="post" action="/sell" id="billingForm">
+                <div class="row g-2">
+                    
+                    <div class="col-md-3">
+                        <label class="form-label small fw-bold text-muted">Barcode (Scan)</label>
+                        <input type="text" name="barcode" id="barcodeInput" class="form-control fw-bold border-success" 
+                               placeholder="Scan..." autofocus required autocomplete="off">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label small text-muted">Item Name</label>
+                        <input type="text" name="name" id="nameDisplay" class="form-control bg-white fw-bold">
+                    </div>
+
+                    <div class="col-md-2">
+                        <label class="form-label small text-muted">MRP</label>
+                        <input type="number" step="0.01" name="mrp" id="mrpDisplay" class="form-control bg-white text-muted">
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label small text-muted fw-bold text-success">Selling Price</label>
+                        <input type="number" step="0.01" name="price" id="priceDisplay" class="form-control bg-white fw-bold text-success">
+                    </div>
+                </div>
+
+                <div class="row g-2 mt-2">
+                    <div class="col-md-3">
+                        <label class="form-label small text-muted">Available Stock</label>
+                        <input type="text" id="stockDisplay" class="form-control bg-light" readonly tabindex="-1">
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label small fw-bold text-muted">Quantity</label>
+                        <input type="number" step="0.001" name="qty" id="qtyInput" 
+                               class="form-control fw-bold border-success" value="1">
+                    </div>
+
+                    <div class="col-md-6 d-flex align-items-end">
+                        <button type="submit" class="btn btn-success w-100 fw-bold">⬇️ Add to Bill (Enter)</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="card p-0 shadow-sm border-0">
+            <div class="table-responsive">
+                <table class="table table-striped mb-0 align-middle">
+                    <thead class="bg-dark text-white">
+                        <tr>
+                            <th class="ps-3">#</th>
+                            <th>Item Name</th>
+                            <th>MRP</th>
+                            <th>Price</th>
+                            <th class="text-center">Qty</th>
+                            <th class="text-end pe-3">Total</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in cart %}
+                        <tr>
+                            <td class="ps-3">{{ loop.index }}</td>
+                            <td class="fw-bold">{{ item.name }}</td>
+                            <td class="text-muted"><small><s>{{ "%.2f"|format(item.mrp) }}</s></small></td>
+                            <td>{{ "%.2f"|format(item.price) }}</td>
+                            <td class="text-center">
+                                <form action="/update_cart/{{ loop.index0 }}" method="POST" style="display:inline-block; width: 70px;">
+                                    <input type="number" name="qty" value="{{ item.qty }}" step="0.001"
+                                           class="form-control form-control-sm text-center p-1" 
+                                           onchange="this.form.submit()">
+                                </form>
+                            </td>
+                            <td class="text-end pe-3 fw-bold">{{ "%.2f"|format(item.total) }}</td>
+                            <td><a href="/delete_item/{{ loop.index0 }}" class="text-danger text-decoration-none fw-bold" title="Remove">✕</a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% if not cart %}
+                <div class="text-center p-5 text-muted bg-white">
+                    <h5>Cart is empty 🛒</h5>
+                    <p>Scan a barcode to begin billing.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card p-4 bg-dark text-white text-center shadow sticky-top" style="top: 20px; border-radius: 12px;">
+            <h5 class="text-white-50 text-uppercase mb-3">Grand Total</h5>
+            <h1 class="display-3 fw-bold text-warning mb-4">₹{{ "%.0f"|format(total) }}<small class="fs-6 text-white">.{{ "%.2f"|format(total % 1)|replace('0.', '') }}</small></h1>
+            
+            <div class="d-grid gap-3">
+                <a href="/finalize_bill" id="btnCheckout" class="btn btn-warning btn-lg fw-bold text-dark py-3">✅ PRINT BILL (F1)</a>
+                
+                <div class="d-flex gap-2">
+                    <a href="/hold_bill" id="btnHold" class="btn btn-secondary flex-grow-1 border-light">⏸️ Hold (F2)</a>
+                    <a href="/clear_cart" id="btnClear" class="btn btn-outline-danger flex-grow-1" onclick="return confirm('Clear entire list?')">🗑️ Clear (F4)</a>
+                </div>
+            </div>
+
+            <div class="mt-4 pt-3 border-top border-secondary text-start text-white-50" style="font-size: 0.85rem;">
+                <strong>⌨️ Keyboard Shortcuts:</strong><br>
+                <span class="badge bg-light text-dark">F1</span> Print Bill<br>
+                <span class="badge bg-light text-dark">F2</span> Hold Bill<br>
+                <span class="badge bg-light text-dark">F3</span> Focus Barcode<br>
+                <span class="badge bg-light text-dark">F4</span> Clear Cart
+            </div>
+        </div>
+        
+        {% if error %}
+        <div class="alert alert-danger mt-3 shadow-sm fw-bold">
+            ⚠️ {{ error }}
+        </div>
+        {% endif %}
+
+        {% if held_bills %}
+        <div class="card mt-3 border-0 shadow-sm">
+            <div class="card-header bg-secondary text-white fw-bold d-flex justify-content-between">
+                <span>⏸️ Held Bills</span>
+                <span class="badge bg-light text-dark">{{ held_bills|length }}</span>
+            </div>
+            <ul class="list-group list-group-flush">
+                {% for bill in held_bills %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="fw-bold d-block text-dark">₹{{ "%.2f"|format(bill.total) }}</span>
+                        <small class="text-muted">🕒 {{ bill.time }}</small>
+                    </div>
+                    <div>
+                        <a href="/resume_bill/{{ loop.index0 }}" class="btn btn-sm btn-primary">Resume</a>
+                        <a href="/discard_held/{{ loop.index0 }}" class="btn btn-sm btn-outline-danger">✕</a>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    // --- 1. KEYBOARD SHORTCUTS ---
+    document.addEventListener('keydown', function(event) {
+        
+        // F1: PRINT / CHECKOUT
+        if (event.key === "F1") {
+            event.preventDefault(); // Stop browser help menu
+            window.location.href = "/finalize_bill";
+        }
+
+        // F2: HOLD BILL
+        if (event.key === "F2") {
+            event.preventDefault();
+            window.location.href = "/hold_bill";
+        }
+
+        // F3: FOCUS BARCODE (Quick Scan)
+        if (event.key === "F3") {
+            event.preventDefault(); // Stop browser search
+            document.getElementById('barcodeInput').focus();
+            document.getElementById('barcodeInput').select();
+        }
+
+        // F4: CLEAR CART
+        if (event.key === "F4") {
+            event.preventDefault();
+            if(confirm("Are you sure you want to clear the entire cart?")) {
+                window.location.href = "/clear_cart";
+            }
+        }
+    });
+
+    // --- 2. BARCODE SCAN LOGIC (Existing) ---
+    document.getElementById('barcodeInput').addEventListener('keydown', function(event) {
+        if (event.key === "Enter") {
+            event.preventDefault(); 
+            fetchProductData();
+        }
+    });
+
+    function fetchProductData() {
+        const barcode = document.getElementById('barcodeInput').value;
+        if (!barcode) return;
+
+        fetch(`/get_product_details/${barcode}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('nameDisplay').value = data.name || '';
+                    document.getElementById('mrpDisplay').value = (data.mrp || 0).toFixed(2);
+                    document.getElementById('priceDisplay').value = (data.selling_price || 0).toFixed(2);
+                    document.getElementById('stockDisplay').value = (data.stock || 0).toFixed(3);
+                    
+                    document.getElementById('qtyInput').value = "1";
+                    
+                    const qtyField = document.getElementById('qtyInput');
+                    qtyField.focus();
+                    qtyField.select(); 
+                } else {
+                    alert("❌ Product Not Found!");
+                    document.getElementById('barcodeInput').value = "";
+                    document.getElementById('nameDisplay').value = "";
+                    document.getElementById('mrpDisplay').value = "";
+                    document.getElementById('priceDisplay').value = "";
+                    document.getElementById('stockDisplay').value = "";
+                }
+            })
+            .catch(err => console.error("Error:", err));
+    }
+</script>
+
+{% endblock %}

@@ -1,0 +1,285 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<style>
+/* =========================
+   BRAND COLORS
+========================= */
+:root {
+    --brand-green: #0B3D25;
+    --brand-gold: #D4AF37;
+    --light-bg: #f7f7f7;
+}
+
+/* =========================
+   HEADER
+========================= */
+.shop-header {
+    background: white;
+    border-bottom: 1px solid #eee;
+    padding: 15px 0;
+}
+
+.shop-title {
+    font-weight: 800;
+    color: var(--brand-green);
+}
+
+.shop-subtitle {
+    color: #777;
+    font-size: 0.9rem;
+}
+
+/* =========================
+   HERO
+========================= */
+.hero {
+    background: linear-gradient(135deg, #0B3D25, #145c3a);
+    color: white;
+    padding: 50px 20px;
+    border-radius: 12px;
+}
+
+.hero h1 {
+    font-weight: 800;
+}
+
+.hero p {
+    opacity: 0.9;
+}
+
+.category-chip {
+    background: white;
+    color: var(--brand-green);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    margin: 5px;
+    display: inline-block;
+    font-size: 0.9rem;
+}
+
+/* =========================
+   SECTION TITLES
+========================= */
+.section-title {
+    font-weight: 700;
+    color: var(--brand-green);
+}
+
+/* =========================
+   PRODUCT CARD
+========================= */
+.product-card {
+    border: 1px solid #eee;
+    border-radius: 10px;
+    transition: all 0.25s ease;
+    background: white;
+    cursor: pointer;
+}
+
+.product-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+.product-img {
+    height: 140px;
+    background: #f1f1f1;
+    font-size: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px 10px 0 0;
+}
+
+.product-name {
+    font-weight: 700;
+    color: #333;
+}
+
+.product-price {
+    color: #0B3D25;
+    font-weight: 800;
+}
+
+.product-item {
+    transition: all 0.2s ease;
+}
+
+/* =========================
+   FOOTER
+========================= */
+.site-footer {
+    background: #fafafa;
+    border-top: 1px solid #eee;
+    margin-top: 60px;
+    padding: 30px 10px;
+}
+</style>
+
+<!-- =========================
+     HEADER
+========================= -->
+<div class="shop-header mb-4">
+    <div class="container d-flex justify-content-between align-items-center">
+        <div>
+            <h4 class="shop-title mb-0">SRI TIRUMALA DRY FRUITS</h4>
+            <div class="shop-subtitle">Dry Fruits • Millets • Frozen Foods</div>
+        </div>
+        <div class="text-end small text-muted">
+            📍 Tekkali<br>
+            📞 +91 9133133931
+        </div>
+    </div>
+</div>
+
+<div class="container">
+
+<!-- =========================
+     HERO
+========================= -->
+<div class="hero text-center mb-5">
+    <h1>Fresh • Premium • Trusted</h1>
+    <p class="mt-2">Daily essentials & premium dry fruits under one roof</p>
+
+    <div class="mt-4">
+        <span class="category-chip">🌰 Dry Fruits</span>
+        <span class="category-chip">🌾 Millets</span>
+        <span class="category-chip">❄️ Frozen Foods</span>
+        <span class="category-chip">🍫 Snacks</span>
+    </div>
+</div>
+
+<!-- =========================
+     SEARCH & FILTERS
+========================= -->
+<div class="row mb-4 align-items-center">
+    <div class="col-12 col-md-6 mb-2 mb-md-0">
+        <input type="text"
+               id="searchInput"
+               class="form-control"
+               placeholder="🔍 Search products..."
+               onkeyup="filterProducts()">
+    </div>
+
+    <div class="col-12 col-md-3 mb-2 mb-md-0">
+        <select id="categoryFilter"
+                class="form-select"
+                onchange="filterProducts()">
+            <option value="all">All Categories</option>
+            <option value="Dry Fruits">Dry Fruits</option>
+            <option value="Millets">Millets</option>
+            <option value="Frozen Foods">Frozen Foods</option>
+            <option value="Snacks">Snacks</option>
+        </select>
+    </div>
+
+    <div class="col-12 col-md-3">
+        <button class="btn btn-outline-success w-100"
+                onclick="clearFilters()">
+            Clear Filters
+        </button>
+    </div>
+</div>
+
+<!-- =========================
+     PRODUCTS
+========================= -->
+<h4 class="section-title mb-4">Popular Items</h4>
+
+<div class="row" id="productGrid">
+
+{% if products %}
+    {% for p in products %}
+    <div class="col-6 col-md-3 mb-4 product-item"
+         data-name="{{ p.name | lower }}"
+         data-category="{{ p.category }}">
+
+        <a href="/print/{{ p.id }}"
+           class="text-decoration-none"
+           aria-label="View {{ p.name }}">
+
+            <div class="product-card h-100">
+                <div class="product-img">📦</div>
+                <div class="p-3 text-center">
+                    <div class="product-name">{{ p.name }}</div>
+                    <div class="product-price mt-1">
+                        ₹{{ "%.2f"|format(p.selling_price) }}
+                    </div>
+                </div>
+            </div>
+
+        </a>
+    </div>
+    {% endfor %}
+{% else %}
+    <div class="col-12 text-center text-muted py-5">
+        <h5>No products available</h5>
+        <p>Add items from staff panel</p>
+    </div>
+{% endif %}
+
+</div>
+
+<!-- No Results -->
+<div id="noResults"
+     class="text-center text-muted py-5"
+     style="display:none;">
+    <h5>No matching products</h5>
+</div>
+
+</div>
+
+<!-- =========================
+     FOOTER
+========================= -->
+<div class="site-footer text-center">
+    <strong>SRI TIRUMALA DRY FRUITS</strong><br>
+    Opposite RTC Complex, Tekkali – 532201<br>
+    📞 +91 9133133931
+</div>
+
+<!-- =========================
+     FILTER SCRIPT
+========================= -->
+<script>
+function filterProducts() {
+    const searchValue =
+        document.getElementById("searchInput").value.toLowerCase();
+    const categoryValue =
+        document.getElementById("categoryFilter").value;
+
+    const products =
+        document.querySelectorAll(".product-item");
+
+    let visibleCount = 0;
+
+    products.forEach(product => {
+        const name = product.dataset.name;
+        const category = product.dataset.category;
+
+        const matchesSearch = name.includes(searchValue);
+        const matchesCategory =
+            categoryValue === "all" || category === categoryValue;
+
+        if (matchesSearch && matchesCategory) {
+            product.style.display = "block";
+            visibleCount++;
+        } else {
+            product.style.display = "none";
+        }
+    });
+
+    document.getElementById("noResults").style.display =
+        visibleCount === 0 ? "block" : "none";
+}
+
+function clearFilters() {
+    document.getElementById("searchInput").value = "";
+    document.getElementById("categoryFilter").value = "all";
+    filterProducts();
+}
+</script>
+
+{% endblock %}
