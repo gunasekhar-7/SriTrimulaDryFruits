@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <h2 class="mb-4 text-center">➕ Add Stock</h2>
+
+        <div class="card p-4 shadow border-success border-top-0 border-end-0 border-bottom-0 border-4">
+            
+            <div class="text-center mb-4">
+                <h4 class="fw-bold text-success">{{ product.name }}</h4>
+                <div class="badge bg-secondary fs-6">{{ product.barcode }}</div>
+            </div>
+
+            <form method="post">
+                <div class="mb-3">
+                    <label class="form-label text-muted">Current Stock on Shelf</label>
+                    <input type="text" class="form-control bg-light" value="{{ '%.3f'|format(product.total_qty - (product.sold_qty or 0)) }}" readonly>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-bold">Quantity to Add (+)</label>
+                    <input type="number" step="0.001" name="added_qty" class="form-control form-control-lg border-success" required autofocus placeholder="e.g. 5.0">
+                    <div class="form-text">Enter the amount of new stock arriving today.</div>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-success btn-lg">Update Stock</button>
+                    <a href="/stock" class="btn btn-outline-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

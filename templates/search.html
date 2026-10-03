@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6">
+        <div class="card p-5 shadow-sm text-center border-0" style="background: #F9F7F2;">
+            <h2 class="mb-4" style="color: #0B3D25; font-family: 'Merriweather', serif;">🔎 Search Bill</h2>
+            
+            {% if error %}
+                <div class="alert alert-danger">{{ error }}</div>
+            {% endif %}
+
+            <form method="post">
+                <div class="mb-4">
+                    <label class="form-label fw-bold text-muted">Enter Bill Number</label>
+                    <input type="number" name="bill_id" class="form-control form-control-lg text-center fw-bold" placeholder="e.g. 101" required autofocus>
+                </div>
+                <button type="submit" class="btn btn-warning btn-lg w-100 fw-bold">Find & Print Bill 🖨️</button>
+            </form>
+            
+            <div class="mt-4">
+                <a href="/sell" class="text-decoration-none text-muted">← Back to Billing</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

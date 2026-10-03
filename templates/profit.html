@@ -1,0 +1,121 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 style="color: #0B3D25; font-family: 'Merriweather', serif;">💰 Profit Analytics</h2>
+        <div class="text-end">
+            <small class="text-muted d-block">Lifetime Profit Estimate</small>
+            {% set grand_total = namespace(value=0) %}
+            {% for date, details in data.items() %}
+                {% set grand_total.value = grand_total.value + details.daily_profit %}
+            {% endfor %}
+            <h3 class="text-success fw-bold">₹{{ "%.2f"|format(grand_total.value) }}</h3>
+        </div>
+    </div>
+
+    {% if data %}
+        <div class="accordion" id="profitAccordion">
+            {% for date, details in data.items() %}
+            <div class="accordion-item border-0 shadow-sm mb-3">
+                
+                <h2 class="accordion-header" id="heading{{ loop.index }}">
+                    <button class="accordion-button {% if not loop.first %}collapsed{% endif %} bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ loop.index }}">
+                        <div class="d-flex justify-content-between w-100 me-3 align-items-center">
+                            <span class="fw-bold text-dark">📅 {{ date }}</span>
+                            <div>
+                                <span class="badge bg-secondary me-2">Sales: ₹{{ "%.0f"|format(details.daily_sales) }}</span>
+                                <span class="badge bg-success" style="font-size: 1rem;">Profit: +₹{{ "%.2f"|format(details.daily_profit) }}</span>
+                            </div>
+                        </div>
+                    </button>
+                </h2>
+
+                <div id="collapse{{ loop.index }}" class="accordion-collapse collapse {% if loop.first %}show{% endif %}" data-bs-parent="#profitAccordion">
+                    <div class="accordion-body p-0">
+                        <table class="table table-hover mb-0 align-middle">
+                            <thead class="table-success">
+                                <tr>
+                                    <th class="ps-4">Bill No</th>
+                                    <th>Time</th>
+                                    <th>Bill Amount</th>
+                                    <th class="fw-bold text-success">Profit</th>
+                                    <th class="text-end pe-4">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for bill in details.bills %}
+                                <tr>
+                                    <td class="ps-4 text-muted">#{{ bill.bill_id }}</td>
+                                    <td>{{ bill.bill_time }}</td>
+                                    <td>₹{{ "%.2f"|format(bill.bill_total) }}</td>
+                                    
+                                    <td class="fw-bold text-success">
+                                        ₹{{ "%.2f"|format(bill.bill_profit) }}
+                                    </td>
+
+                                    <td class="text-end pe-4">
+                                        <button class="btn btn-sm btn-outline-warning" 
+                                                onclick="openEditModal('{{ bill.bill_id }}', '{{ bill.bill_profit }}')">
+                                            ✏️ Edit
+                                        </button>
+                                        <a href="/search_bill?bill_id={{ bill.bill_id }}" class="btn btn-sm btn-outline-primary">📄 View</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center text-muted py-5">
+            <h4>No Sales Data Yet 📉</h4>
+            <p>Make some sales to see your profits here.</p>
+        </div>
+    {% endif %}
+</div>
+
+<div class="modal fade" id="editProfitModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-warning border-3">
+            <div class="modal-header bg-warning text-dark">
+                <h5 class="modal-title fw-bold">✏️ Edit Profit</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="/update_profit" method="POST">
+                <div class="modal-body">
+                    <input type="hidden" name="bill_id" id="modalBillId">
+                    
+                    <p class="text-muted mb-2">Adjusting profit for Bill #<span id="displayBillId" class="fw-bold"></span></p>
+                    
+                    <label class="form-label fw-bold">New Profit Amount (₹)</label>
+                    <input type="number" step="0.01" name="new_profit" id="modalProfitInput" class="form-control form-control-lg border-warning fw-bold text-success" required>
+                    
+                    <div class="alert alert-info mt-3 py-2 small">
+                        ℹ️ <strong>Note:</strong> Changing this will adjust the profit record for this bill in the database.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-dark">💾 Save Change</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openEditModal(billId, currentProfit) {
+        document.getElementById('modalBillId').value = billId;
+        document.getElementById('displayBillId').innerText = billId;
+        document.getElementById('modalProfitInput').value = parseFloat(currentProfit).toFixed(2);
+        
+        var myModal = new bootstrap.Modal(document.getElementById('editProfitModal'));
+        myModal.show();
+    }
+</script>
+
+{% endblock %}
