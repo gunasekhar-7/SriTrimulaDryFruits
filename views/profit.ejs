@@ -1,0 +1,205 @@
+<%- include('header') %>
+
+<div class="container mt-3">
+    <% 
+    let grand_total_sales = 0;
+    let grand_total_profit = 0;
+    let total_bills_count = 0;
+    let overall_revenue_by_method = { Cash: 0, UPI: 0, Card: 0 };
+    const dates = typeof data !== 'undefined' && data ? Object.keys(data) : [];
+    dates.forEach(function(date) {
+        grand_total_sales += data[date].daily_sales;
+        grand_total_profit += data[date].daily_profit;
+        total_bills_count += data[date].bills.length;
+        if (data[date].revenue_by_method) {
+            Object.keys(data[date].revenue_by_method).forEach(method => {
+                if (!overall_revenue_by_method[method]) overall_revenue_by_method[method] = 0;
+                overall_revenue_by_method[method] += data[date].revenue_by_method[method];
+            });
+        }
+    });
+    const profit_margin = grand_total_sales > 0 ? (grand_total_profit / grand_total_sales * 100) : 0;
+    %>
+
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+        <div>
+            <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill mb-2 fw-bold" style="font-size: 0.8rem;">LEDGER & TAX REPORTS</span>
+            <h2 style="color: var(--brand-green);" class="brand-font m-0">💰 Profit Analytics</h2>
+        </div>
+        <span class="badge bg-dark py-2 px-3 fw-bold rounded-pill text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.05em;">FINANCIAL AUDITING</span>
+    </div>
+
+    <!-- Executive Stat Cards -->
+    <div class="row g-3 mb-5 no-print">
+        <div class="col-sm-6 col-md-3">
+            <div class="card p-3 border-0 bg-white h-100" style="border-left: 4px solid var(--brand-green) !important; border-top: none;">
+                <small class="text-muted text-uppercase fw-bold" style="font-size: 0.7rem; letter-spacing: 0.05em;">Total Sales (Gross)</small>
+                <h3 class="fw-extrabold text-dark m-0 mt-2" style="font-family: 'Plus Jakarta Sans', sans-serif;">₹<%= Number(grand_total_sales).toFixed(2) %></h3>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-3">
+            <div class="card p-3 border-0 bg-white h-100" style="border-left: 4px solid var(--brand-green-light) !important; border-top: none;">
+                <small class="text-muted text-uppercase fw-bold" style="font-size: 0.7rem; letter-spacing: 0.05em;">Net Profit (Est.)</small>
+                <h3 class="fw-extrabold text-success m-0 mt-2" style="font-family: 'Plus Jakarta Sans', sans-serif;">₹<%= Number(grand_total_profit).toFixed(2) %></h3>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-3">
+            <div class="card p-3 border-0 bg-white h-100" style="border-left: 4px solid var(--brand-gold) !important; border-top: none;">
+                <small class="text-muted text-uppercase fw-bold" style="font-size: 0.7rem; letter-spacing: 0.05em;">Bills Issued</small>
+                <h3 class="fw-extrabold text-dark m-0 mt-2" style="font-family: 'Plus Jakarta Sans', sans-serif;"><%= total_bills_count %> Invoices</h3>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-3">
+            <div class="card p-3 border-0 bg-white h-100" style="border-left: 4px solid #0dcaf0 !important; border-top: none;">
+                <small class="text-muted text-uppercase fw-bold" style="font-size: 0.7rem; letter-spacing: 0.05em;">Avg Profit Margin</small>
+                <h3 class="fw-extrabold text-info m-0 mt-2" style="font-family: 'Plus Jakarta Sans', sans-serif;"><%= Number(profit_margin).toFixed(1) %>%</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-4 no-print">
+        <div class="col-12">
+            <div class="card p-3 border-0 bg-white shadow-sm d-flex flex-row align-items-center flex-wrap gap-3" style="border-radius: 12px; border-left: 4px solid var(--brand-gold) !important;">
+                <span class="fw-bold text-muted text-uppercase" style="font-size: 0.8rem;">Overall Revenue Breakdown:</span>
+                <% Object.keys(overall_revenue_by_method).forEach(method => { %>
+                    <span class="badge bg-light text-dark border px-3 py-2 fs-6">
+                        <%= method %>: <span class="text-success fw-extrabold">₹<%= Number(overall_revenue_by_method[method]).toFixed(2) %></span>
+                    </span>
+                <% }) %>
+            </div>
+        </div>
+    </div>
+
+    <% if (dates.length > 0) { %>
+        <div class="accordion" id="profitAccordion" style="border-radius: 16px; overflow: hidden; box-shadow: var(--card-shadow);">
+            <% dates.forEach(function(date, index) { 
+                const details = data[date];
+            %>
+            <div class="accordion-item border-0 mb-2 shadow-sm" style="border-radius: 12px; overflow: hidden;">
+                
+                <h2 class="accordion-header" id="heading<%= index %>">
+                    <button class="accordion-button <%= index !== 0 ? 'collapsed' : '' %> bg-white py-3 px-4" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<%= index %>" style="box-shadow: none; border-bottom: 1px solid rgba(6, 58, 34, 0.05);">
+                        <div class="d-flex flex-wrap justify-content-between w-100 me-3 align-items-center gap-2">
+                            <span class="fw-bold text-dark fs-6 d-flex align-items-center gap-2">
+                                <span>📅</span> <%= date %>
+                            </span>
+                            <div class="d-flex gap-2">
+                                <span class="badge bg-secondary bg-opacity-10 text-dark fw-bold border border-secondary border-opacity-10 py-2 px-3 rounded-pill" style="font-size: 0.78rem;">Sales: ₹<%= Number(details.daily_sales).toFixed(2) %></span>
+                                <span class="badge bg-success bg-opacity-10 text-success fw-bold border border-success border-opacity-10 py-2 px-3 rounded-pill" style="font-size: 0.78rem;">Profit: +₹<%= Number(details.daily_profit).toFixed(2) %></span>
+                            </div>
+                        </div>
+                    </button>
+                </h2>
+
+                <div id="collapse<%= index %>" class="accordion-collapse collapse <%= index === 0 ? 'show' : '' %>" data-bs-parent="#profitAccordion">
+                    <div class="accordion-body p-0 bg-white">
+                        <div class="d-flex flex-wrap gap-3 p-3 bg-light border-bottom border-light">
+                            <span class="fw-bold small text-muted text-uppercase">Daily Revenue Breakdown:</span>
+                            <% if (details.revenue_by_method) { %>
+                                <% Object.keys(details.revenue_by_method).forEach(method => { %>
+                                    <% if (details.revenue_by_method[method] > 0) { %>
+                                        <span class="badge bg-white text-dark border border-secondary border-opacity-25 px-2 py-1"><%= method %>: ₹<%= Number(details.revenue_by_method[method]).toFixed(2) %></span>
+                                    <% } %>
+                                <% }) %>
+                            <% } %>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0 align-middle">
+                                <thead class="table-success" style="background-color: var(--brand-green-light);">
+                                    <tr>
+                                        <th class="ps-4 text-white py-3">Bill No</th>
+                                        <th class="text-white py-3">Time</th>
+                                        <th class="text-white py-3">Bill Amount</th>
+                                        <th class="fw-bold text-white py-3">Profit</th>
+                                        <th class="text-end pe-4 text-white py-3">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% details.bills.forEach(function(bill) { %>
+                                    <tr>
+                                        <td class="ps-4 text-muted font-monospace fw-bold" style="font-size: 0.85rem;">#<%= bill.bill_id %></td>
+                                        <td><%= bill.bill_time %></td>
+                                        <td class="fw-bold text-dark">
+                                            ₹<%= Number(bill.bill_total).toFixed(2) %><br>
+                                            <span class="badge bg-secondary bg-opacity-10 text-dark border border-secondary border-opacity-25 mt-1" style="font-size: 0.7rem;"><%= bill.payment_method || 'Cash' %></span>
+                                        </td>
+                                        
+                                        <td class="fw-bold text-success" style="font-size: 1.05rem;">
+                                            ₹<%= Number(bill.bill_profit).toFixed(2) %>
+                                        </td>
+
+                                        <td class="text-end pe-4">
+                                            <div class="d-flex justify-content-end gap-1">
+                                                <button class="btn btn-sm btn-outline-success fw-bold px-3" style="border-radius: 8px;"
+                                                        onclick="openEditModal('<%= bill.bill_id %>', '<%= bill.bill_profit %>')">
+                                                    ✏️ Edit
+                                                </button>
+                                                <a href="/search_bill?bill_id=<%= bill.bill_id %>" class="btn btn-sm btn-primary px-3" style="border-radius: 8px;">📄 View</a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <% }); %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <% }); %>
+        </div>
+    <% } else { %>
+        <div class="text-center text-muted py-5 card border-0 bg-white shadow-sm" style="border-radius: 20px;">
+            <div class="py-5">
+                <span class="fs-1">📉</span>
+                <h4 class="fw-bold text-dark mt-3">No Sales Registered Yet</h4>
+                <p class="mb-0">Run billing transactions on the POS terminal to populate this panel.</p>
+            </div>
+        </div>
+    <% } %>
+</div>
+
+<div class="modal fade" id="editProfitModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 bg-white shadow" style="border-radius: 20px;">
+            <div class="modal-header border-bottom border-light" style="padding: 24px;">
+                <h5 class="modal-title fw-bold text-success brand-font" style="font-size: 1.25rem;">✏️ Edit Invoice Profit</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="/update_profit" method="POST">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <div class="modal-body" style="padding: 24px;">
+                    <input type="hidden" name="bill_id" id="modalBillId">
+                    
+                    <p class="text-muted small mb-3">Adjusting transaction profit calculations for Invoice <strong id="displayBillId" class="text-success font-monospace"></strong></p>
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-dark mb-2">Adjusted Profit Amount (₹)</label>
+                        <input type="number" step="0.01" name="new_profit" id="modalProfitInput" class="form-control form-control-lg border-success fw-bold text-success font-monospace text-center py-3" required style="font-size: 1.5rem;">
+                    </div>
+                    
+                    <div class="alert alert-warning border-0 rounded-3 py-3 px-4 m-0 d-flex gap-2" style="background-color: #fffaf0;">
+                        <span>ℹ️</span>
+                        <div class="small text-muted"><strong>Audit compliance warning:</strong> Adjusting this value directly changes the recorded profit field for this specific transaction in the DB.</div>
+                    </div>
+                </div>
+                <div class="modal-footer border-top border-light" style="padding: 24px;">
+                    <button type="button" class="btn btn-outline-secondary px-4 py-2" data-bs-dismiss="modal" style="border-radius: 10px;">Cancel</button>
+                    <button type="submit" class="btn btn-primary px-5 py-2" style="border-radius: 10px; background-color: var(--brand-green); border-color: var(--brand-green);">Save Adjustment</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openEditModal(billId, currentProfit) {
+        document.getElementById('modalBillId').value = billId;
+        document.getElementById('displayBillId').innerText = "#" + billId;
+        document.getElementById('modalProfitInput').value = parseFloat(currentProfit).toFixed(2);
+        
+        var myModal = new bootstrap.Modal(document.getElementById('editProfitModal'));
+        myModal.show();
+    }
+</script>
+
+<%- include('footer') %>

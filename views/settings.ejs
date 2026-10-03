@@ -1,0 +1,73 @@
+<%- include('header') %>
+
+<div class="container mt-3">
+    
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+        <div>
+            <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill mb-2 fw-bold" style="font-size: 0.8rem;">SYSTEM CONTROLS</span>
+            <h2 style="color: var(--brand-green);" class="brand-font m-0">⚙️ User & Credential Management</h2>
+        </div>
+        <span class="badge bg-danger bg-opacity-10 text-danger py-2 px-3 fw-bold rounded-pill text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.05em;">ADMIN PRIVILEGES</span>
+    </div>
+
+    <div class="card p-5 border-0 bg-white shadow-sm" style="border-radius: 20px;">
+        <div class="alert alert-warning border-0 rounded-3 py-3 px-4 mb-4 d-flex gap-3 align-items-center" style="background-color: #fff9e6; color: #856404;">
+            <span class="fs-4">🔒</span>
+            <div class="small">
+                <strong>Secured Administration Note:</strong> Update authentication details for either yourself or active checkout staff members. Ensure strong credentials are used for system POS protection.
+            </div>
+        </div>
+
+        <div class="table-responsive bg-white rounded-4 border border-light overflow-hidden">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="text-white" style="background-color: var(--brand-green-light);">
+                    <tr>
+                        <th class="p-3 ps-4" style="font-size: 0.8rem; letter-spacing: 0.05em; width: 140px;">Role Type</th>
+                        <th class="p-3" style="font-size: 0.8rem; letter-spacing: 0.05em; width: 220px;">Current Username</th>
+                        <th class="p-3" style="font-size: 0.8rem; letter-spacing: 0.05em;">Update Login Credentials</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (users && users.length > 0) { %>
+                        <% users.forEach(function(u) { %>
+                        <tr>
+                            <td class="p-3 ps-4">
+                                <% if (u.role === 'admin') { %>
+                                    <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-10 px-3 py-2 fw-bold" style="font-size: 0.75rem;">ADMIN</span>
+                                <% } else { %>
+                                    <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-10 px-3 py-2 fw-bold" style="font-size: 0.75rem;">STAFF</span>
+                                <% } %>
+                            </td>
+                            <td class="p-3 fw-bold text-dark fs-6 font-monospace"><%= u.username %></td>
+                            <td class="p-3">
+                                <form action="/update_user" method="POST" class="row g-2 align-items-center">
+                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                    <input type="hidden" name="user_id" value="<%= u.id %>">
+                                    
+                                    <div class="col-sm-4">
+                                        <input type="text" name="username" class="form-control form-control-sm font-monospace fw-bold" value="<%= u.username %>" required placeholder="Username" style="border-radius: 8px;">
+                                    </div>
+                                    <div class="col-sm-5">
+                                        <input type="password" name="password" class="form-control form-control-sm font-monospace" placeholder="New Password" required style="border-radius: 8px;">
+                                    </div>
+                                    <div class="col-sm-3 text-end text-sm-start">
+                                        <button type="submit" class="btn btn-sm btn-success fw-bold px-3 py-2 w-100" style="border-radius: 8px; font-size: 0.8rem;">
+                                            Update Credentials
+                                        </button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                        <% }); %>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="mt-4">
+        <a href="/sell" class="btn btn-outline-secondary px-4 py-2" style="border-radius: 10px;">&larr; Return to Billing Desk</a>
+    </div>
+</div>
+
+<%- include('footer') %>

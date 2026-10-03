@@ -1,0 +1,116 @@
+<%- include('header') %>
+
+<div class="row justify-content-center mt-3">
+    <div class="col-lg-8 col-md-10">
+        
+        <div class="d-flex align-items-center gap-2 mb-3">
+            <a href="/stock" class="btn btn-sm btn-outline-secondary border-0 rounded-circle py-1" title="Back to stock list">
+                &larr;
+            </a>
+            <h2 style="color: var(--brand-green);" class="brand-font m-0">➕ Add New Organic Product</h2>
+        </div>
+
+        <div class="card p-5 shadow-sm border-0 bg-white" style="border-radius: 20px;">
+            <p class="text-muted small mb-4 border-bottom border-light pb-3">Register a new product in the Sri Tirumala dry fruits, millets, and organic inventory system. Fill in details and generate barcodes.</p>
+            
+            <form method="post" action="/add">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+                <!-- Row 1: Name, Barcode & Category -->
+                <div class="row mb-4 g-3">
+                    <div class="col-md-5">
+                        <label class="form-label fw-bold text-dark mb-2">Product Name</label>
+                        <input name="name" class="form-control" required placeholder="e.g. Premium Almonds Jumbo W180">
+                        <div class="form-text small">Use descriptive names and package weights.</div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold text-dark mb-2">Barcode Identifier</label>
+                        <div class="input-group">
+                            <input type="text" id="barcodeInput" name="barcode" class="form-control" required placeholder="Scan or Click Auto">
+                            <button type="button" class="btn btn-success" onclick="generateRandomBarcode()">Auto 🎲</button>
+                        </div>
+                        <div class="form-text small">Scan actual barcode or generate random.</div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold text-dark mb-2">Category</label>
+                        <select name="category" class="form-select">
+                            <option value="Dry Fruits">Dry Fruits</option>
+                            <option value="Millets">Millets</option>
+                            <option value="Seeds">Seeds</option>
+                            <option value="Spices">Spices</option>
+                            <option value="Nuts">Nuts</option>
+                            <option value="Sweets">Sweets</option>
+                        </select>
+                        <div class="form-text small">Select matching section.</div>
+                    </div>
+                </div>
+
+                <!-- Row 2: Quantities, Cost, Sell Price & MRP -->
+                <div class="row mb-4 g-3">
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold text-dark mb-2">Initial Stock Qty</label>
+                        <input type="number" step="0.001" name="qty" class="form-control" required placeholder="e.g. 10.000">
+                        <div class="form-text small">In kilograms or packet units.</div>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold text-dark mb-2">Cost Price (₹)</label>
+                        <input type="number" step="0.01" name="cost" class="form-control" required placeholder="e.g. 450.00">
+                        <div class="form-text small">Your purchase cost per unit.</div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold text-success mb-2">Selling Price (₹)</label>
+                        <input type="number" step="0.01" name="sell" class="form-control border-success fw-bold text-success" required placeholder="e.g. 520.00">
+                        <div class="form-text small">Customer final billing price.</div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold text-dark mb-2">MRP (Max Retail) (₹)</label>
+                        <input type="number" step="0.01" name="mrp" class="form-control" required placeholder="e.g. 600.00">
+                        <div class="form-text small">Printed price on packaging.</div>
+                    </div>
+                </div>
+
+                <!-- Row 3: Product Image (Optional) and Tax Rate -->
+                <div class="row mb-4 g-3">
+                    <div class="col-md-9">
+                        <label class="form-label fw-bold text-dark mb-2">Product Image URL or Path (Optional)</label>
+                        <input type="text" name="image_url" class="form-control" placeholder="e.g. /images/almonds.jpg or https://images.unsplash.com/photo-...">
+                        <div class="form-text small">Leave empty to use category emojis. You can upload an image into your <code>/public</code> directory and reference it as <code>/filename.jpg</code> here, or paste an external image URL from the web.</div>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold text-dark mb-2">Tax Rate (GST)</label>
+                        <select name="tax_rate" class="form-select">
+                            <option value="0">0%</option>
+                            <option value="5">5%</option>
+                            <option value="12">12%</option>
+                            <option value="18">18%</option>
+                        </select>
+                        <div class="form-text small">GST percentage.</div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="d-flex justify-content-end gap-2 border-top border-light pt-4 mt-2">
+                    <a href="/stock" class="btn btn-outline-secondary px-4 py-2" style="border-radius: 10px;">Cancel</a>
+                    <button type="submit" class="btn btn-primary px-5 py-2" style="border-radius: 10px; background-color: var(--brand-green); border-color: var(--brand-green);">
+                        Save Product to Stock Registry
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function generateRandomBarcode() {
+    // Generate a clean numeric 8-digit random barcode
+    const randomNum = Math.floor(10000000 + Math.random() * 90000000);
+    document.getElementById('barcodeInput').value = randomNum;
+}
+</script>
+
+<%- include('footer') %>

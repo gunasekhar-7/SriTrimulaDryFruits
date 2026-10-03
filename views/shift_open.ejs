@@ -1,0 +1,31 @@
+<%- include('header') %>
+
+<div class="row justify-content-center align-items-center" style="min-height: 70vh;">
+  <div class="col-md-6 col-lg-5">
+    <div class="card shadow-lg border-0 rounded-4">
+      <div class="card-body p-5 text-center">
+        <h2 class="brand-font text-success mb-2">Open Register</h2>
+        <p class="text-muted mb-4">Enter the starting cash amount in the drawer to begin your shift.</p>
+
+        <% if (typeof error !== 'undefined' && error) { %>
+          <div class="alert alert-danger rounded-3"><%= error %></div>
+        <% } %>
+
+        <form action="/shift/open" method="POST">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          
+          <div class="form-floating mb-4">
+            <input type="number" class="form-control form-control-lg fw-bold" id="opening_cash" name="opening_cash" placeholder="0.00" step="0.01" min="0" required>
+            <label for="opening_cash">Opening Cash (₹)</label>
+          </div>
+
+          <button type="submit" class="btn btn-success btn-lg w-100 rounded-3 fw-bold shadow-sm">
+            Start Shift
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('footer') %>

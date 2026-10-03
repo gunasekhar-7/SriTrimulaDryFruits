@@ -1,0 +1,474 @@
+<%- include('header') %>
+
+<style>
+/* =========================
+   STOREFRONT PREMIUM THEMING
+   ========================= */
+.storefront-hero {
+    background: radial-gradient(circle at top right, rgba(212, 175, 55, 0.15), transparent 60%), 
+                linear-gradient(135deg, var(--brand-green), #031c10);
+    color: white;
+    padding: 60px 40px;
+    border-radius: 24px;
+    box-shadow: 0 15px 35px rgba(6, 58, 34, 0.25);
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(212, 175, 55, 0.15);
+}
+
+.storefront-hero::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0; bottom: 0; left: 0;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 20px 20px;
+    opacity: 0.7;
+}
+
+.storefront-hero h1 {
+    font-size: 3.25rem;
+    line-height: 1.15;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+
+.storefront-hero p {
+    font-size: 1.15rem;
+    color: rgba(255, 255, 255, 0.8);
+    max-width: 600px;
+    margin: 15px auto 0;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 500;
+}
+
+.hero-divider {
+    width: 60px;
+    height: 3px;
+    background-color: var(--brand-gold);
+    margin: 20px auto;
+    border-radius: 2px;
+}
+
+/* Category Filter Chips */
+.category-pills-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+
+.premium-chip {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.9);
+    padding: 10px 22px;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+}
+
+.premium-chip:hover {
+    background: var(--brand-gold);
+    color: var(--brand-green-dark) !important;
+    border-color: var(--brand-gold);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(212, 175, 55, 0.25);
+}
+
+.premium-chip.active {
+    background: var(--brand-gold);
+    color: var(--brand-green-dark);
+    border-color: var(--brand-gold);
+    box-shadow: 0 8px 20px rgba(212, 175, 55, 0.25);
+}
+
+/* Modern Card Layout */
+.product-grid-card {
+    border: 1px solid #E9EFEA;
+    border-radius: 20px;
+    background: #ffffff;
+    transition: var(--transition);
+    overflow: hidden;
+    position: relative;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-grid-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 40px -10px rgba(6, 58, 34, 0.12);
+    border-color: rgba(212, 175, 55, 0.3);
+}
+
+.product-media-wrapper {
+    position: relative;
+    padding-top: 75%; /* 4:3 Aspect Ratio */
+    background: linear-gradient(135deg, #FAF9F5, #F1EFEA);
+    overflow: hidden;
+}
+
+.product-emoji-backdrop {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3.5rem;
+    transition: var(--transition);
+}
+
+.product-grid-card:hover .product-emoji-backdrop {
+    transform: scale(1.15) rotate(5deg);
+}
+
+.category-tag {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background: rgba(6, 58, 34, 0.85);
+    backdrop-filter: blur(8px);
+    color: var(--brand-gold);
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 50px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.product-details {
+    padding: 24px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.grid-product-name {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: var(--brand-green-dark);
+    margin-bottom: 8px;
+    line-height: 1.3;
+}
+
+.grid-product-price {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--brand-green-light);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    margin-top: auto;
+}
+
+.grid-product-mrp {
+    font-size: 0.82rem;
+    color: var(--text-light);
+    text-decoration: line-through;
+    margin-bottom: 4px;
+}
+
+/* Info Section Card */
+.info-bento-box {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 30px;
+    border: 1px solid #E9EFEA;
+    box-shadow: var(--card-shadow);
+    height: 100%;
+}
+
+.info-icon-circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    background-color: rgba(6, 58, 34, 0.06);
+    color: var(--brand-green);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+}
+</style>
+
+<!-- =========================
+     HERO SECTION
+     ========================= -->
+<div class="storefront-hero text-center mb-5 no-print">
+    <span class="badge bg-warning bg-opacity-25 text-warning px-3 py-2 rounded-pill mb-3 fw-bold" style="letter-spacing: 0.1em; font-size: 0.75rem;">PREMIUM COLLECTION</span>
+    <h1 class="brand-font m-0 text-white">Sri Tirumala</h1>
+    <h3 class="brand-font m-0 text-warning opacity-90 mt-1" style="font-size: 1.85rem; font-style: italic;">Dry Fruits, Seeds & Organics</h3>
+    <div class="hero-divider"></div>
+    <p>Sourcing the world's finest organic dry fruits, nutritious millets, wholesome seeds, premium spices, and traditional sweets directly for your wellness.</p>
+
+    <div class="mt-4 pt-2">
+        <div class="category-pills-container">
+            <span class="premium-chip active" onclick="filterByCategory('All', this)">🥥 All Products</span>
+            <span class="premium-chip" onclick="filterByCategory('Dry Fruits', this)">🌰 Dry Fruits</span>
+            <span class="premium-chip" onclick="filterByCategory('Millets', this)">🌾 Millets</span>
+            <span class="premium-chip" onclick="filterByCategory('Seeds', this)">🌱 Wholesome Seeds</span>
+            <span class="premium-chip" onclick="filterByCategory('Spices', this)">🌶️ Rich Spices</span>
+            <span class="premium-chip" onclick="filterByCategory('Nuts', this)">🥜 Crunchy Nuts</span>
+            <span class="premium-chip" onclick="filterByCategory('Sweets', this)">🍬 Sweets</span>
+        </div>
+    </div>
+</div>
+
+<!-- =========================
+     SEARCH & QUICK FILTERS
+     ========================= -->
+<div class="row mb-5 align-items-center g-3 no-print">
+    <div class="col-12 col-md-6 col-lg-7">
+        <div class="input-group">
+            <span class="input-group-text bg-white border-end-0 border-success" style="border-radius: 12px 0 0 12px; padding-left: 18px;">🔍</span>
+            <input type="text"
+                   id="searchInput"
+                   class="form-control border-start-0 border-success py-3"
+                   placeholder="Search our catalog (e.g. Premium Almonds, Cashews)..."
+                   style="border-radius: 0 12px 12px 0;"
+                   onkeyup="filterProducts()">
+        </div>
+    </div>
+
+    <div class="col-12 col-md-3 col-lg-3">
+        <select id="categoryFilter"
+                class="form-select py-3 border-success"
+                style="border-radius: 12px;"
+                onchange="syncCategoryFilter(this.value)">
+            <option value="all">All Categories</option>
+            <option value="Dry Fruits">Dry Fruits</option>
+            <option value="Millets">Millets</option>
+            <option value="Seeds">Seeds</option>
+            <option value="Spices">Spices</option>
+            <option value="Nuts">Nuts</option>
+            <option value="Sweets">Sweets</option>
+        </select>
+    </div>
+
+    <div class="col-12 col-md-3 col-lg-2">
+        <button class="btn btn-outline-success w-100 py-3 fw-bold"
+                style="border-radius: 12px;"
+                onclick="clearFilters()">
+            ✕ Reset
+        </button>
+    </div>
+</div>
+
+<!-- =========================
+     PRODUCTS GRID
+     ========================= -->
+<div class="d-flex justify-content-between align-items-baseline mb-4">
+    <h3 class="brand-font m-0" style="color: var(--brand-green); font-size: 1.75rem;">Premium Offerings</h3>
+    <small class="text-muted" id="catalogCounter"></small>
+</div>
+
+<div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4" id="productGrid">
+
+<% if (products && products.length > 0) { %>
+    <% products.forEach(function(p) { 
+        let emoji = "🥥";
+        const cat = p.category || 'Dry Fruits';
+        if (cat === 'Dry Fruits') emoji = "🌰";
+        else if (cat === 'Millets') emoji = "🌾";
+        else if (cat === 'Seeds') emoji = "🌱";
+        else if (cat === 'Spices') emoji = "🌶️";
+        else if (cat === 'Nuts') emoji = "🥜";
+        else if (cat === 'Sweets') emoji = "🍬";
+    %>
+    <div class="col product-item"
+         data-name="<%= p.name.toLowerCase() %>"
+         data-barcode="<%= p.barcode %>"
+         data-category="<%= cat %>">
+
+        <a href="/print_label/<%= p.id %>"
+           class="text-decoration-none h-100 d-block"
+           aria-label="View <%= p.name %>">
+
+            <div class="product-grid-card">
+                <div class="product-media-wrapper d-flex align-items-center justify-content-center">
+                    <span class="category-tag"><%= cat %></span>
+                    <% if (p.image_url) { %>
+                        <img src="<%= p.image_url %>" alt="<%= p.name %>" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top:0; left:0; z-index: 1;" onerror="this.style.display='none';">
+                    <% } %>
+                    <div class="product-emoji-backdrop"><%= emoji %></div>
+                </div>
+                
+                <div class="product-details">
+                    <div class="grid-product-name"><%= p.name %></div>
+                    <div class="text-muted small font-monospace mb-3">#<%= p.barcode %></div>
+                    
+                    <% if (p.mrp && p.mrp > p.selling_price) { %>
+                        <div class="grid-product-mrp">MRP ₹<%= Number(p.mrp).toFixed(2) %></div>
+                    <% } else { %>
+                        <div style="height: 19px;"></div>
+                    <% } %>
+                    <div class="grid-product-price">
+                        ₹<%= Number(p.selling_price).toFixed(2) %>
+                    </div>
+                </div>
+            </div>
+
+        </a>
+    </div>
+    <% }); %>
+<% } else { %>
+    <div class="col-12 text-center text-muted py-5 w-100">
+        <div class="py-5">
+            <span class="fs-1">🛍️</span>
+            <h5 class="fw-bold mt-3 text-dark">No products in inventory yet</h5>
+            <p>Please log in and add premium products to build your catalog.</p>
+        </div>
+    </div>
+<% } %>
+
+</div>
+
+<!-- No Results -->
+<div id="noResults"
+     class="text-center text-muted py-5"
+     style="display:none;">
+    <span class="fs-1">🔍</span>
+    <h5 class="fw-bold mt-3">No matching organic products found</h5>
+    <p>Try refining your search keyword or switching categories.</p>
+</div>
+
+<!-- =========================
+     INFO BENTO SECTION
+     ========================= -->
+<div class="row g-4 mt-5 pt-3 no-print">
+    <div class="col-md-4">
+        <div class="info-bento-box">
+            <div class="info-icon-circle">🌱</div>
+            <h5 class="fw-bold text-dark mb-2">100% Pure & Wholesome</h5>
+            <p class="text-muted small m-0">We collaborate directly with organic co-ops and farms to ensure chemical-free, nutrient-dense dry fruits of elite size and grading.</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="info-bento-box">
+            <div class="info-icon-circle">🔒</div>
+            <h5 class="fw-bold text-dark mb-2">Hygienically Packed</h5>
+            <p class="text-muted small m-0">Our state-of-the-art climate-controlled sorting safeguards purity, preserves natural essential oils, and prolongs wholesome flavor.</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="info-bento-box">
+            <div class="info-icon-circle">📍</div>
+            <h5 class="fw-bold text-dark mb-2">Sri Tirumala Tekkali</h5>
+            <p class="text-muted small m-0">Located at Tekkali, Andhra Pradesh. Dedicated to delivering top-tier health foods and dry fruits with unmatched customer service.</p>
+        </div>
+    </div>
+</div>
+
+<!-- =========================
+     FOOTER BANNER
+     ========================= -->
+<div class="card mt-5 mb-3 border-0 bg-dark text-white shadow-lg overflow-hidden no-print" style="border-radius: 20px;">
+    <div class="p-4 p-md-5 text-center position-relative" style="background: linear-gradient(rgba(6, 58, 34, 0.9), rgba(3, 33, 19, 0.95)); border-top: 4px solid var(--brand-gold);">
+        <h4 class="brand-font text-warning mb-2" style="font-size: 1.85rem;">SRI TIRUMALA DRY FRUITS</h4>
+        <p class="text-white-50 max-w-600 mx-auto small mb-4">Opposite RTC Complex, Tekkali, Srikakulam District, Andhra Pradesh – 532201</p>
+        
+        <div class="d-flex flex-wrap justify-content-center gap-4 text-white-50 small font-monospace">
+            <span>📞 +91 9133133931</span>
+            <span>📍 Tekkali Branch</span>
+            <span>🕒 Open Daily: 09:00 AM - 09:30 PM</span>
+        </div>
+    </div>
+</div>
+
+<!-- =========================
+     FILTER SCRIPT
+     ========================= -->
+<script>
+let currentCategory = 'All';
+
+function syncCategoryFilter(catVal) {
+    // Sync the select dropdown with the category tab state
+    const select = document.getElementById("categoryFilter");
+    select.value = catVal;
+    
+    // Update the visual state of buttons
+    const chips = document.querySelectorAll(".premium-chip");
+    chips.forEach(chip => {
+        const text = chip.innerText;
+        if (catVal === 'all' && text.includes('All')) {
+            chip.classList.add('active');
+        } else if (text.toUpperCase().includes(catVal.toUpperCase()) && catVal !== 'all') {
+            chip.classList.add('active');
+        } else {
+            chip.classList.remove('active');
+        }
+    });
+
+    currentCategory = catVal === 'all' ? 'All' : catVal;
+    filterProducts();
+}
+
+function filterByCategory(cat, btn) {
+    const chips = btn.parentNode.querySelectorAll('.premium-chip');
+    chips.forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    
+    currentCategory = cat;
+    
+    // Sync dropdown
+    const select = document.getElementById("categoryFilter");
+    select.value = cat === 'All' ? 'all' : cat;
+
+    filterProducts();
+}
+
+function filterProducts() {
+    const searchValue = document.getElementById("searchInput").value.toLowerCase();
+    const products = document.querySelectorAll(".product-item");
+
+    let visibleCount = 0;
+
+    products.forEach(product => {
+        const name = product.dataset.name;
+        const barcode = product.dataset.barcode;
+        const category = product.dataset.category;
+
+        const matchesSearch = name.includes(searchValue) || barcode.includes(searchValue);
+        const matchesCategory = currentCategory === 'All' || category === currentCategory;
+
+        if (matchesSearch && matchesCategory) {
+            product.style.display = "block";
+            visibleCount++;
+        } else {
+            product.style.display = "none";
+        }
+    });
+
+    document.getElementById("noResults").style.display = visibleCount === 0 ? "block" : "none";
+    document.getElementById("catalogCounter").innerText = `${visibleCount} products showing`;
+}
+
+function clearFilters() {
+    document.getElementById("searchInput").value = "";
+    document.getElementById("categoryFilter").value = "all";
+    
+    const chips = document.querySelectorAll('.premium-chip');
+    chips.forEach(c => c.classList.remove('active'));
+    if (chips.length > 0) chips[0].classList.add('active');
+    
+    currentCategory = 'All';
+    filterProducts();
+}
+
+// Initial counter execution
+window.addEventListener('DOMContentLoaded', () => {
+    filterProducts();
+});
+</script>
+
+<%- include('footer') %>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Login | Sri Tirumala Dry Fruits</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --brand-green: #063A22;
+            --brand-green-dark: #032113;
+            --brand-gold: #D4AF37;
+            --brand-gold-pale: #F8EFA2;
+            --transition: all 0.25s cubic-bezier(0.16,1,0.3,1);
+        }
+        body {
+            background: radial-gradient(circle at 70% 20%, rgba(212,175,55,0.12), transparent 50%),
+                        linear-gradient(135deg, var(--brand-green-dark), #01140a);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            padding: 20px;
+        }
+        .login-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            max-width: 860px;
+            width: 100%;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+        }
+        /* Left panel */
+        .login-brand-panel {
+            background: linear-gradient(135deg, rgba(6,58,34,0.8), rgba(3,33,19,0.9)),
+                        radial-gradient(circle at 30% 70%, rgba(212,175,55,0.2), transparent);
+            padding: 48px 36px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border-right: 1px solid rgba(212,175,55,0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        .login-brand-panel::before {
+            content: '🥥';
+            position: absolute;
+            font-size: 12rem;
+            opacity: 0.04;
+            top: -20px;
+            right: -30px;
+        }
+        .brand-icon { font-size: 3rem; margin-bottom: 16px; animation: float 4s ease-in-out infinite; }
+        @keyframes float { 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(-8px); } }
+        .brand-name { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 800; color: var(--brand-gold); margin: 0 0 4px; }
+        .brand-tagline { color: rgba(255,255,255,0.5); font-size: 0.75rem; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 28px; }
+        .brand-feature { display: flex; align-items: center; gap: 12px; color: rgba(255,255,255,0.7); font-size: 0.88rem; margin-bottom: 12px; }
+        .brand-feature .feat-icon { width: 32px; height: 32px; border-radius: 8px; background: rgba(212,175,55,0.15); display:flex;align-items:center;justify-content:center; font-size:1rem; flex-shrink:0; }
+
+        /* Right panel (form) */
+        .login-form-panel {
+            background: #fff;
+            padding: 48px 40px;
+        }
+        .login-form-panel h2 { font-family: 'Playfair Display', serif; color: var(--brand-green); font-size: 1.6rem; margin-bottom: 4px; }
+        .login-form-panel p.sub { color: #888; font-size: 0.88rem; margin-bottom: 28px; }
+        .form-label { font-size: 0.8rem; font-weight: 700; color: var(--brand-green); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+        .form-control { border-radius: 10px; padding: 12px 14px; border: 1.5px solid #E1E6E3; font-weight: 500; transition: var(--transition); background: #FAFAF8; }
+        .form-control:focus { border-color: var(--brand-green); box-shadow: 0 0 0 3px rgba(6,58,34,0.1); background: #fff; }
+        .btn-login { background: linear-gradient(135deg, var(--brand-green), var(--brand-green-dark)); border: none; color: #fff; font-weight: 700; font-size: 1rem; padding: 13px; border-radius: 12px; transition: var(--transition); box-shadow: 0 4px 14px rgba(6,58,34,0.2); }
+        .btn-login:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(6,58,34,0.3); }
+        .back-link { color: #888; font-size: 0.85rem; text-decoration: none; transition: var(--transition); }
+        .back-link:hover { color: var(--brand-green); }
+        .alert-error { background: #fff5f5; border: 1px solid #fecaca; color: #dc2626; border-radius: 10px; padding: 10px 14px; font-size: 0.88rem; font-weight: 600; margin-bottom: 16px; }
+
+        @media (max-width: 640px) {
+            .login-wrapper { grid-template-columns: 1fr; }
+            .login-brand-panel { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-wrapper">
+        <!-- Left brand panel -->
+        <div class="login-brand-panel">
+            <div class="brand-icon">🥥</div>
+            <div class="brand-name">Sri Tirumala</div>
+            <div class="brand-tagline">Staff & Admin Portal</div>
+            <div class="brand-feature">
+                <div class="feat-icon">🧾</div>
+                <span>Fast barcode-based POS billing</span>
+            </div>
+            <div class="brand-feature">
+                <div class="feat-icon">📦</div>
+                <span>Real-time inventory tracking</span>
+            </div>
+            <div class="brand-feature">
+                <div class="feat-icon">💰</div>
+                <span>Daily profit & sales reports</span>
+            </div>
+            <div class="brand-feature">
+                <div class="feat-icon">📊</div>
+                <span>Product analytics dashboard</span>
+            </div>
+        </div>
+
+        <!-- Right form panel -->
+        <div class="login-form-panel">
+            <h2>Welcome back 👋</h2>
+            <p class="sub">Sign in to access the management portal.</p>
+
+            <% if (typeof error !== 'undefined' && error) { %>
+            <div class="alert-error">⚠️ <%= error %></div>
+            <% } %>
+
+            <form method="post" action="/login" autocomplete="off">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <input type="text" name="fake_user" style="position:absolute;opacity:0;z-index:-1;" tabindex="-1">
+                <input type="password" name="fake_pass" style="position:absolute;opacity:0;z-index:-1;" tabindex="-1">
+
+                <div class="mb-3">
+                    <label class="form-label" for="usernameInput">Username</label>
+                    <input type="text" id="usernameInput" name="username" class="form-control" required
+                           autocomplete="username" placeholder="Enter your username">
+                </div>
+                <div class="mb-4">
+                    <label class="form-label" for="passwordInput">Password</label>
+                    <input type="password" id="passwordInput" name="password" class="form-control" required
+                           autocomplete="current-password" placeholder="••••••••">
+                </div>
+                <button type="submit" class="btn btn-login w-100 mb-4">Sign In Securely →</button>
+            </form>
+
+            <div class="text-center">
+                <a href="/" class="back-link">← Back to Storefront</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

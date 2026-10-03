@@ -1,0 +1,125 @@
+<%- include('header') %>
+
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+    <div>
+        <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill mb-2 fw-bold" style="font-size: 0.8rem;">SALES INTELLIGENCE</span>
+        <h2 style="color: var(--brand-green);" class="brand-font m-0">📈 Business Analytics</h2>
+    </div>
+    <span class="badge bg-dark py-2 px-3 fw-bold rounded-pill text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.05em;">DAILY VISUALIZATIONS</span>
+</div>
+
+<div class="row g-4">
+    <!-- CHART BLOCK -->
+    <div class="col-lg-8">
+        <div class="card p-4 border-0 bg-white shadow-sm h-100" style="border-radius: 20px;">
+            <div class="d-flex justify-content-between align-items-center mb-4 border-bottom border-light pb-3">
+                <h5 class="card-title fw-bold text-success brand-font m-0" style="font-size: 1.15rem;">Top 5 Best Selling Items</h5>
+                <span class="text-muted small">Sales by Units</span>
+            </div>
+            
+            <div style="height: 340px; position: relative;">
+                <canvas id="salesChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- LEADERBOARD PANEL -->
+    <div class="col-lg-4">
+        <div class="card p-0 border-0 bg-white shadow-sm h-100 overflow-hidden" style="border-radius: 20px;">
+            <div class="p-4 text-white" style="background: linear-gradient(135deg, var(--brand-green), #031c10); border-bottom: 3px solid var(--brand-gold);">
+                <span class="badge bg-warning bg-opacity-25 text-warning px-2 py-1 rounded-pill mb-2 fw-bold" style="font-size: 0.65rem;">PERFORMANCE</span>
+                <h5 class="mb-0 brand-font text-warning" style="font-size: 1.2rem;">🏆 Product Leaderboard</h5>
+            </div>
+            
+            <ul class="list-group list-group-flush">
+                <% if (labels && labels.length > 0) { %>
+                    <% for (let i = 0; i < labels.length; i++) { %>
+                    <li class="list-group-item d-flex justify-content-between align-items-center py-3 px-4 border-light">
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="fw-extrabold text-muted" style="font-family: 'JetBrains Mono', monospace; font-size: 1.1rem;"><%= i+1 %></span>
+                            <span class="fw-bold text-dark fs-6"><%= labels[i] %></span>
+                        </div>
+                        <span class="badge rounded-pill" style="background-color: var(--brand-gold-pale); color: var(--brand-green-dark); padding: 8px 16px; font-weight: 700; font-size: 0.82rem;">
+                            <%= Number(values[i]).toFixed(1) %> sold
+                        </span>
+                    </li>
+                    <% } %>
+                <% } else { %>
+                    <li class="list-group-item text-center text-muted py-5">
+                        <span class="fs-1 d-block mb-2">📊</span>
+                        No sales leaderboard data available yet.
+                    </li>
+                <% } %>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const labels = <%- JSON.stringify(labels) %>;
+    const dataValues = <%- JSON.stringify(values) %>;
+
+    const ctx = document.getElementById('salesChart').getContext('2d');
+    
+    // Create soft beautiful gradients for the bar chart
+    const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+    gradient.addColorStop(0, '#0D5A37'); // light brand green
+    gradient.addColorStop(1, '#063A22'); // dark brand green
+
+    new Chart(ctx, {
+        type: 'bar', 
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Quantity Sold (Units/Kg)',
+                data: dataValues,
+                backgroundColor: gradient,
+                borderColor: '#D4AF37',     // Brand Gold borders
+                borderWidth: 1.5,
+                borderRadius: 8,
+                barPercentage: 0.55
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: { 
+                y: { 
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(6, 58, 34, 0.04)',
+                        drawBorder: false
+                    },
+                    ticks: {
+                        font: {
+                            family: 'Plus Jakarta Sans',
+                            weight: 600
+                        },
+                        color: '#6C7A72'
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        font: {
+                            family: 'Plus Jakarta Sans',
+                            weight: 700,
+                            size: 11
+                        },
+                        color: '#1F2E26'
+                    }
+                }
+            }
+        }
+    });
+</script>
+
+<%- include('footer') %>

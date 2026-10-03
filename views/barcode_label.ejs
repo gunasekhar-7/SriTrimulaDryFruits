@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Print Label</title>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 10px;
+        }
+        .label-container {
+            width: 300px; /* Fits 80mm paper */
+            text-align: center;
+            border: 1px dashed #ccc; /* Border helper for cutting */
+            padding: 10px;
+            page-break-inside: avoid;
+        }
+        .store-name { font-size: 12px; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; }
+        .product-name { font-size: 14px; font-weight: bold; margin: 5px 0; display: block; }
+        .price { font-size: 18px; font-weight: bold; color: #000; margin-top: 2px; }
+        
+        @media print {
+            @page { margin: 0; size: auto; }
+            body { padding: 0; }
+            .label-container { border: none; width: 100%; padding: 5px 0; }
+            .no-print { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="label-container">
+        <div class="store-name">SRI TIRUMALA DRY FRUITS</div>
+        
+        <svg id="barcode"></svg>
+
+        <div class="product-name"><%= product.name %></div>
+        <div class="price">Rs. <%= Number(product.selling_price || 0).toFixed(2) %></div>
+    </div>
+
+    <div class="no-print" style="position: fixed; bottom: 20px; right: 20px;">
+        <button onclick="window.print()" style="padding: 15px 30px; background: black; color: white; font-size: 20px; cursor: pointer; border: none;">🖨️ PRINT</button>
+    </div>
+
+    <script>
+        // Generate the barcode lines on the SVG
+        JsBarcode("#barcode", "<%= product.barcode %>", {
+            format: "CODE128",  // Versatile format, handles numbers & letters
+            width: 2,           // Width of bars
+            height: 50,         // Height of bars
+            displayValue: true, // Show numbers below bars
+            fontSize: 16,
+            marginTop: 5,
+            marginBottom: 5
+        });
+        
+        // Auto print immediately
+        // window.onload = function() { window.print(); } 
+    </script>
+</body>
+</html>

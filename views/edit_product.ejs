@@ -1,0 +1,102 @@
+<%- include('header') %>
+
+<div class="row justify-content-center mt-3">
+    <div class="col-lg-8 col-md-10">
+        
+        <div class="d-flex align-items-center gap-2 mb-3">
+            <a href="/stock" class="btn btn-sm btn-outline-secondary border-0 rounded-circle py-1" title="Back to stock list">
+                &larr;
+            </a>
+            <h2 style="color: var(--brand-green);" class="brand-font m-0">✏️ Edit Product Details</h2>
+        </div>
+
+        <div class="card p-5 shadow-sm border-0 bg-white" style="border-radius: 20px;">
+            <div class="text-start mb-4 border-bottom border-light pb-3 d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="fw-bold text-dark m-0"><%= product.name %></h5>
+                    <span class="text-muted small font-monospace">Product Database ID: #<%= product.id %></span>
+                </div>
+                <span class="badge bg-secondary text-uppercase py-2 px-3 rounded-pill" style="font-size: 0.72rem; letter-spacing: 0.05em;"><%= product.category || 'Dry Fruits' %></span>
+            </div>
+
+            <form method="post" action="/edit/<%= product.id %>">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <!-- Row 1: Name, Barcode & Category -->
+                <div class="row mb-4 g-3">
+                    <div class="col-md-5">
+                        <label class="form-label fw-bold text-dark mb-2">Product Name</label>
+                        <input name="name" class="form-control" value="<%= product.name %>" required placeholder="Product name">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold text-dark mb-2">Barcode Identifier</label>
+                        <input name="barcode" class="form-control" value="<%= product.barcode %>" required placeholder="Barcode">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold text-dark mb-2">Category</label>
+                        <select name="category" class="form-select">
+                            <option value="Dry Fruits" <%= (product.category === 'Dry Fruits' || !product.category) ? 'selected' : '' %>>Dry Fruits</option>
+                            <option value="Millets" <%= product.category === 'Millets' ? 'selected' : '' %>>Millets</option>
+                            <option value="Seeds" <%= product.category === 'Seeds' ? 'selected' : '' %>>Seeds</option>
+                            <option value="Spices" <%= product.category === 'Spices' ? 'selected' : '' %>>Spices</option>
+                            <option value="Nuts" <%= product.category === 'Nuts' ? 'selected' : '' %>>Nuts</option>
+                            <option value="Sweets" <%= product.category === 'Sweets' ? 'selected' : '' %>>Sweets</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Row 2: Quantities, Cost, Sell Price & MRP -->
+                <div class="row mb-4 g-3">
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold text-dark mb-2">Available Stock</label>
+                        <input type="number" step="0.001" name="qty" class="form-control" value="<%= Number(product.total_qty - (product.sold_qty || 0)).toFixed(3) %>" required placeholder="e.g. 5.0">
+                        <div class="form-text small">Remaining stock count.</div>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold text-dark mb-2">Cost Price (₹)</label>
+                        <input type="number" step="0.01" name="cost" class="form-control" value="<%= Number(product.cost_price || 0).toFixed(2) %>" required placeholder="Cost price">
+                        <div class="form-text small">Your purchase cost.</div>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold text-success mb-2">Selling Price (₹)</label>
+                        <input type="number" step="0.01" name="sell" class="form-control border-success fw-bold text-success" value="<%= Number(product.selling_price || 0).toFixed(2) %>" required placeholder="Selling price">
+                        <div class="form-text small">Wholesale/POS selling price.</div>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold text-dark mb-2">MRP (Maximum Retail) (₹)</label>
+                        <input type="number" step="0.01" name="mrp" class="form-control" value="<%= Number(product.mrp || 0).toFixed(2) %>" required placeholder="MRP">
+                        <div class="form-text small">Printed product package price.</div>
+                    </div>
+                </div>
+
+                <!-- Row 3: Product Image (Optional) and Tax Rate -->
+                <div class="row mb-4 g-3">
+                    <div class="col-md-9">
+                        <label class="form-label fw-bold text-dark mb-2">Product Image URL or Path (Optional)</label>
+                        <input type="text" name="image_url" class="form-control" value="<%= product.image_url || '' %>" placeholder="e.g. /images/almonds.jpg or https://images.unsplash.com/photo-...">
+                        <div class="form-text small">Leave empty to use category emojis. You can upload an image into your <code>/public</code> directory and reference it as <code>/filename.jpg</code> here, or paste an external image URL from the web.</div>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold text-dark mb-2">Tax Rate (GST)</label>
+                        <select name="tax_rate" class="form-select">
+                            <option value="0" <%= (product.tax_rate == 0 || !product.tax_rate) ? 'selected' : '' %>>0%</option>
+                            <option value="5" <%= product.tax_rate == 5 ? 'selected' : '' %>>5%</option>
+                            <option value="12" <%= product.tax_rate == 12 ? 'selected' : '' %>>12%</option>
+                            <option value="18" <%= product.tax_rate == 18 ? 'selected' : '' %>>18%</option>
+                        </select>
+                        <div class="form-text small">GST percentage.</div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="d-flex justify-content-end gap-2 border-top border-light pt-4 mt-2">
+                    <a href="/stock" class="btn btn-outline-secondary px-4 py-2" style="border-radius: 10px;">Cancel</a>
+                    <button type="submit" class="btn btn-primary px-5 py-2" style="border-radius: 10px; background-color: var(--brand-green); border-color: var(--brand-green);">
+                        Update Product Records
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<%- include('footer') %>

@@ -1,0 +1,59 @@
+        </div><!-- end .page-content or .container -->
+    </div><!-- end .main-content or public wrapper -->
+</div><!-- end .app-layout or public container -->
+
+<% if (session && session.user) { %>
+</div><!-- close public container if not auth -->
+<% } %>
+
+<footer class="no-print text-center py-4 mt-2 border-top" style="color: var(--text-light); font-size: 0.8rem; background: #fff;">
+    <p class="m-0">© 2026 Sri Tirumala Dry Fruits &amp; Organics &bull; Tekkali, Srikakulam, AP</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Sidebar toggle script -->
+<% if (session && session.user) { %>
+<script>
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    const toggle = document.getElementById('sidebarToggle');
+
+    if (toggle) {
+        toggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+        });
+    }
+    if (overlay) {
+        overlay.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('active');
+        });
+    }
+
+    // Highlight active sidebar link
+    const currentPath = window.location.pathname;
+    document.querySelectorAll('.sidebar-link').forEach(link => {
+        const href = link.getAttribute('href');
+        if (href && (currentPath === href || (href !== '/' && currentPath.startsWith(href)))) {
+            link.classList.add('active');
+        }
+    });
+
+    // Auto-logout on tab close (sendBeacon)
+    let isLeaving = true;
+    document.querySelectorAll('a, button, input[type="submit"]').forEach(el => {
+        el.addEventListener('click', () => { isLeaving = false; });
+    });
+    document.querySelectorAll('form').forEach(el => {
+        el.addEventListener('submit', () => { isLeaving = false; });
+    });
+    window.addEventListener('beforeunload', function () {
+        if (isLeaving) navigator.sendBeacon('/logout');
+    });
+</script>
+<% } %>
+
+</body>
+</html>

@@ -1,0 +1,355 @@
+<%- include('header') %>
+
+<style>
+    /* =========================
+       INVOICE STYLE (Thermal Print Mockup)
+       ========================= */
+    .invoice-card-wrapper {
+        background-color: #E9EFEA;
+        border-radius: 24px;
+        padding: 40px 20px;
+        box-shadow: inset 0 3px 10px rgba(6, 58, 34, 0.05);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .invoice-container {
+        width: 320px;
+        background: #ffffff;
+        font-family: 'JetBrains Mono', 'Plus Jakarta Sans', monospace;
+        font-size: 12px;
+        color: #000000;
+        line-height: 1.4;
+        padding: 24px 20px;
+        box-shadow: 0 15px 40px -10px rgba(6, 58, 34, 0.15);
+        border-radius: 4px;
+        border-top: 5px solid var(--brand-gold);
+        position: relative;
+    }
+
+    /* Elegant thermal zig-zag border effect on screen */
+    .invoice-container::after {
+        content: "";
+        position: absolute;
+        bottom: -8px; left: 0; right: 0;
+        height: 8px;
+        background-image: linear-gradient(-45deg, transparent 4px, #ffffff 4px), 
+                          linear-gradient(45deg, transparent 4px, #ffffff 4px);
+        background-size: 8px 12px;
+    }
+
+    .header-text { text-align: center; margin-bottom: 12px; }
+    .store-name { font-size: 18px; font-weight: 800; text-transform: uppercase; margin-bottom: 2px; font-family: 'Playfair Display', serif; color: var(--brand-green-dark); }
+    .sub-details { font-size: 11px; color: #444; margin-bottom: 2px; }
+    
+    .invoice-title { 
+        text-align: center; font-weight: bold; margin: 8px 0; 
+        border-bottom: 1px dashed #000000; padding-bottom: 8px; text-transform: uppercase;
+        font-size: 13px;
+        letter-spacing: 0.08em;
+    }
+
+    .bill-meta {
+        display: flex; justify-content: space-between; 
+        font-weight: bold; font-size: 12px; margin: 8px 0;
+    }
+
+    .row-item-name { font-weight: bold; font-size: 12px; margin-top: 6px;}
+    .row-item-details { font-size: 11px; display: flex; justify-content: space-between; margin-bottom: 6px; }
+
+    .summary-box { border-top: 1px dashed #000000; margin-top: 8px; padding-top: 8px; }
+    .flex-row { display: flex; justify-content: space-between; }
+    
+    .total-row { 
+        font-size: 20px; font-weight: 800; 
+        border-top: 1.5px dashed #000000; border-bottom: 1.5px dashed #000000;
+        padding: 8px 0; margin: 8px 0;
+    }
+
+    .invoice-footer { text-align: center; font-size: 11px; margin-top: 15px; border-top: 1px dashed #000000; padding-top: 12px; }
+    
+    @media print {
+        @page { margin: 0; size: auto; }
+        body { margin: 0; padding: 0; background: #ffffff !important; }
+        .no-print { display: none !important; }
+        .invoice-card-wrapper { background: none !important; padding: 0 !important; box-shadow: none !important; }
+        .invoice-container { width: 100% !important; padding: 0 !important; box-shadow: none !important; border-top: none !important; }
+        .invoice-container::after { display: none !important; }
+        * { color: #000000 !important; background: transparent !important; }
+    }
+</style>
+
+<script>
+function numToWords(n) {
+    const a = ['','One ','Two ','Three ','Four ', 'Five ','Six ','Seven ','Eight ','Nine ','Ten ','Eleven ','Twelve ','Thirteen ','Fourteen ','Fifteen ','Sixteen ','Seventeen ','Eighteen ','Nineteen '];
+    const b = ['', '', 'Twenty','Thirty','Forty','Fifty', 'Sixty','Seventy','Eighty','Ninety'];
+    if ((n = n.toString()).length > 9) return 'overflow';
+    const match = ('000000000' + n).slice(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
+    if (!match) return; 
+    let str = '';
+    str += (match[1] !== '00') ? (a[Number(match[1])] || b[match[1][0]] + ' ' + a[match[1][1]]) + 'Crore ' : '';
+    str += (match[2] !== '00') ? (a[Number(match[2])] || b[match[2][0]] + ' ' + a[match[2][1]]) + 'Lakh ' : '';
+    str += (match[3] !== '00') ? (a[Number(match[3])] || b[match[3][0]] + ' ' + a[match[3][1]]) + 'Thousand ' : '';
+    str += (match[4] !== '0') ? (a[Number(match[4])] || b[match[4][0]] + ' ' + a[match[4][1]]) + 'Hundred ' : '';
+    str += (match[5] !== '00') ? ((str !== '') ? 'and ' : '') + (a[Number(match[5])] || b[match[5][0]] + ' ' + a[match[5][1]]) + 'Only' : '';
+    return str;
+}
+</script>
+
+<div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8 text-center no-print mb-3">
+        <h3 class="brand-font text-success">🖨️ Invoice Issued</h3>
+        <p class="text-muted small">You can review the invoice on screen below. Click Print to physically issue the thermal slip.</p>
+    </div>
+</div>
+
+<div class="invoice-card-wrapper">
+    <div class="invoice-container">
+        
+        <div class="header-text">
+            <div class="store-name">SRI TIRUMALA</div>
+            <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; color: #444; letter-spacing: 0.05em;">Dry Fruits & Organics</div>
+            <div class="sub-details">OPP RTC COMPLEX, TEKKALI- 532201</div>
+            <div class="sub-details">PHONE: +91 9133133931</div>
+        </div>
+
+        <div class="invoice-title">CASH MEMORANDUM</div>
+
+        <div class="bill-meta">
+            <span>Bill No: <span style="font-size: 14px; font-weight: 800;"><%= sale_id %></span></span>
+            <span>Date: <%= date %></span>
+        </div>
+        <% if (typeof payment_method !== 'undefined' && payment_method) { %>
+        <div class="bill-meta" style="margin-top: 0;">
+            <span>Payment: <%= payment_method %></span>
+        </div>
+        <% } %>
+
+        <% if ((typeof customer_name !== 'undefined' && customer_name) || (typeof customer_phone !== 'undefined' && customer_phone)) { %>
+        <div style="border-bottom: 1px dashed #000000; padding-bottom: 6px; margin-bottom: 6px; font-size: 11px;">
+            <% if (customer_name) { %><div><strong>Customer:</strong> <%= customer_name %></div><% } %>
+            <% if (customer_phone) { %><div><strong>Phone:</strong> <%= customer_phone %></div><% } %>
+        </div>
+        <% } %>
+
+        <div style="border-bottom: 1px dashed #000000; margin-bottom: 6px; padding-bottom: 4px;">
+            <div style="display:flex; font-size:11px; font-weight:bold;">
+                <span style="width:15%">SNo</span>
+                <span style="width:85%">Item Description</span>
+            </div>
+            <div style="display:flex; font-size:11px; justify-content: space-between; margin-top:2px; font-weight: bold;">
+                <span style="width:20%">MRP</span>
+                <span style="width:20%">Disc</span>
+                <span style="width:20%">Rate</span>
+                <span style="width:15%; text-align:center;">Qty</span>
+                <span style="width:25%; text-align:right;">Amount</span>
+            </div>
+        </div>
+
+        <% 
+        let gross = 0;
+        let total_disc = 0;
+        let total_qty = 0;
+        let taxSummary = {};
+
+        if (items && items.length > 0) {
+            items.forEach(function(item, index) { 
+                const item_mrp = item.mrp ? item.mrp : item.price;
+                const item_disc = item_mrp - item.price;
+                const line_gross = item_mrp * item.qty;
+                const item_total = item.price * item.qty;
+
+                const tRate = item.tax_rate || 0;
+                const baseP = item_total / (1 + (tRate / 100));
+                const taxAmt = item_total - baseP;
+                if (!taxSummary[tRate]) taxSummary[tRate] = { base: 0, tax: 0 };
+                taxSummary[tRate].base += baseP;
+                taxSummary[tRate].tax += taxAmt;
+
+                gross += line_gross;
+                total_disc += item_disc * item.qty;
+                total_qty += Number(item.qty);
+        %>
+            <div style="border-bottom: 1px dotted #dddddd; padding-bottom: 4px; margin-bottom: 4px;">
+                <div class="row-item-name">
+                    <span style="margin-right: 5px;"><%= index + 1 %></span> <%= item.name %>
+                </div>
+                <div class="row-item-details">
+                    <span style="width:20%"><%= Number(item_mrp).toFixed(2) %></span>
+                    <span style="width:20%"><%= Number(item_disc).toFixed(2) %></span>
+                    <span style="width:20%"><%= Number(item.price).toFixed(2) %></span>
+                    <span style="width:15%; text-align:center;"><%= Number(item.qty).toFixed(3) %></span>
+                    <span style="width:25%; text-align:right; font-weight:bold;"><%= Number(item.total).toFixed(2) %></span>
+                </div>
+            </div>
+        <% 
+            });
+        } 
+        %>
+
+        <div class="summary-box">
+            <div class="flex-row">
+                <span>Gross Total :</span>
+                <span><%= Number(gross).toFixed(2) %></span>
+            </div>
+            <div class="flex-row">
+                <span>Item Discount :</span>
+                <span>-<%= Number(total_disc).toFixed(2) %></span>
+            </div>
+            <% if (typeof discount_amount !== 'undefined' && discount_amount > 0) { %>
+            <div class="flex-row" style="font-weight: bold;">
+                <span>Bill Discount :</span>
+                <span>-<%= Number(discount_amount).toFixed(2) %></span>
+            </div>
+            <% } %>
+            <div class="flex-row" style="font-weight: bold; border-top: 1px dotted #000000; padding-top: 4px; margin-top: 4px;">
+                <span>Total Savings :</span>
+                <span><%= Number(total_disc + (typeof discount_amount !== 'undefined' ? discount_amount : 0)).toFixed(2) %></span>
+            </div>
+        </div>
+
+        <div class="total-row flex-row align-items-center">
+            <span>Net Payable :</span>
+            <span>₹ <%= Number(total).toFixed(2) %></span>
+        </div>
+
+        <!-- TAX SUMMARY TABLE -->
+        <% if (Object.keys(taxSummary).length > 0) { %>
+        <div style="border: 1px dashed #000; margin-top: 10px; padding: 6px; font-size: 10px;">
+            <div style="text-align: center; font-weight: bold; margin-bottom: 4px; text-transform: uppercase;">Tax Summary (Included in Net)</div>
+            <div style="display: flex; font-weight: bold; border-bottom: 1px dotted #000; padding-bottom: 2px; margin-bottom: 4px;">
+                <span style="width: 25%">Rate</span>
+                <span style="width: 25%; text-align: center;">Base</span>
+                <span style="width: 25%; text-align: center;">CGST</span>
+                <span style="width: 25%; text-align: right;">SGST</span>
+            </div>
+            <% Object.keys(taxSummary).forEach(function(rate) { 
+                if (Number(rate) > 0) {
+                    const base = taxSummary[rate].base;
+                    const halfTax = taxSummary[rate].tax / 2;
+            %>
+            <div style="display: flex; margin-bottom: 2px;">
+                <span style="width: 25%"><%= rate %>%</span>
+                <span style="width: 25%; text-align: center;"><%= Number(base).toFixed(2) %></span>
+                <span style="width: 25%; text-align: center;"><%= Number(halfTax).toFixed(2) %></span>
+                <span style="width: 25%; text-align: right;"><%= Number(halfTax).toFixed(2) %></span>
+            </div>
+            <%  } 
+            }); %>
+        </div>
+        <% } %>
+
+        <div style="font-size: 11px; margin-top:6px; font-weight:bold; text-align: left; line-height: 1.3;">
+            RUPEES IN WORDS: <span id="word-display" style="text-transform: uppercase; font-weight: normal; font-size: 10px;"></span>
+        </div>
+
+        <div class="flex-row" style="margin-top:12px; font-size:11px;">
+            <span>Items Count: <%= items ? items.length : 0 %></span>
+            <span>Total Qty: <%= Number(total_qty).toFixed(3) %></span>
+        </div>
+        <div class="flex-row" style="font-size:11px; margin-top: 2px;">
+            <span>Billed By: <%= session && session.user ? session.user : 'Staff' %></span>
+            <span><%= time %></span>
+        </div>
+
+        <div class="invoice-footer">
+            <div style="font-weight: bold; margin-bottom: 2px;">* FREE HOME DELIVERY *</div>
+            <div style="margin-bottom: 6px;">* NO EXCHANGE & NO RETURN *</div>
+            <div style="font-weight:bold; letter-spacing: 0.05em; font-size: 11px;">*** THANK YOU & VISIT AGAIN ***</div>
+        </div>
+    </div>
+</div>
+
+<div class="text-center mt-5 no-print" style="max-width: 420px; margin: 0 auto;">
+    <div class="d-grid gap-3">
+        <button onclick="printAndNext()" class="btn btn-success btn-lg py-3 fw-bold shadow" style="border-radius: 12px; font-size: 1.1rem; letter-spacing: 0.05em;">
+            🖨️ PRINT SLIP (F1 / Enter)
+        </button>
+        <a href="/bill/pdf/<%= sale_id %>" target="_blank" class="btn btn-outline-dark py-2 fw-bold" style="border-radius: 10px;">
+            📄 Download PDF Receipt
+        </a>
+        <a href="/sell" class="btn btn-outline-secondary py-2" style="border-radius: 10px;">
+            Next Customer &larr; (Esc)
+        </a>
+    </div>
+</div>
+
+<!-- RETURN MANAGEMENT SECTION -->
+<% if (typeof allow_return !== 'undefined' && allow_return && items && items.length > 0) { %>
+<div class="row justify-content-center mt-5 no-print">
+    <div class="col-lg-6 col-md-8">
+        <div class="card p-4 border-danger shadow-sm bg-white" style="border-radius: 20px; border: 1.5px solid rgba(220, 53, 69, 0.2) !important;">
+            <div class="text-center mb-3">
+                <span class="fs-3">↩️</span>
+                <h5 class="text-danger fw-bold brand-font m-0 mt-1" style="font-size: 1.25rem;">Return Policy Processing</h5>
+                <small class="text-muted">In case of returns, process line items below to return stock to shelf inventory.</small>
+            </div>
+            
+            <div class="table-responsive bg-white rounded shadow-sm border border-light">
+                <table class="table table-hover align-middle mb-0" style="font-size: 13px;">
+                    <thead class="bg-danger text-white">
+                        <tr>
+                            <th class="p-3">Product Item</th>
+                            <th class="p-3 text-center" style="width: 100px;">Sold Qty</th>
+                            <th class="p-3 text-end" style="width: 160px;">Process Return</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% items.forEach(function(item) { %>
+                        <tr>
+                            <td class="p-3">
+                                <span class="fw-bold text-dark d-block"><%= item.name %></span>
+                            </td>
+                            <td class="p-3 text-center fw-bold"><%= Number(item.qty).toFixed(3) %></td>
+                            <td class="p-3 text-end">
+                                <form action="/return_item" method="POST" class="d-flex gap-1 justify-content-end" onsubmit="return confirm('Confirm Return item? This adjusts inventory and profits.');">
+                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                    <input type="hidden" name="bill_id" value="<%= sale_id %>">
+                                    <input type="hidden" name="sale_id" value="<%= item.sale_id %>">
+                                    <input type="hidden" name="product_id" value="<%= item.product_id %>">
+                                    
+                                    <input type="number" name="return_qty" class="form-control form-control-sm text-center fw-bold text-danger border-danger" 
+                                           step="0.001" min="0.001" max="<%= item.qty %>" 
+                                           placeholder="Qty" required style="width: 80px; border-radius: 6px;">
+                                    <button type="submit" class="btn btn-danger btn-sm fw-bold px-3" style="border-radius: 6px;">↩️</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<% } %>
+
+<script>
+    // 1. Convert Numbers to Words
+    const totalAmount = Number("<%= total %>");
+    document.getElementById('word-display').innerText = numToWords(Math.floor(totalAmount)) + " RUPEES ONLY";
+
+    // 2. Print Function
+    function printAndNext() {
+        window.print();
+        setTimeout(function(){
+            window.location.href = '/sell';
+        }, 1200);
+    }
+
+    // 3. KEYBOARD SHORTCUTS FOR BILL PAGE
+    document.addEventListener('keydown', function(event) {
+        if (event.key === "F1" || event.key === "Enter") {
+            event.preventDefault();
+            printAndNext();
+        }
+        if (event.key === "Escape") {
+            event.preventDefault();
+            window.location.href = '/sell';
+        }
+    });
+</script>
+
+<%- include('footer') %>

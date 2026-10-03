@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sri Tirumala Dry Fruits</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,800;1,500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+    <style>
+        /* ============================
+           CSS VARIABLES & RESET
+           ============================ */
+        :root {
+            --brand-green: #063A22;
+            --brand-green-light: #0D5A37;
+            --brand-green-dark: #032113;
+            --brand-gold: #D4AF37;
+            --brand-gold-pale: #F8EFA2;
+            --bg-cream: #FAF9F5;
+            --bg-sidebar: #032113;
+            --text-dark: #1F2E26;
+            --text-light: #6C7A72;
+            --sidebar-width: 240px;
+            --sidebar-collapsed: 70px;
+            --card-shadow: 0 2px 12px rgba(6,58,34,0.07);
+            --transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+            --radius: 14px;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-cream);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: var(--text-dark);
+            -webkit-font-smoothing: antialiased;
+            letter-spacing: -0.01em;
+            margin: 0;
+        }
+
+        h1, h2, h3, h4, h5, h6, .brand-font {
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* ============================
+           SIDEBAR LAYOUT
+           ============================ */
+        <% if (session && session.user) { %>
+        .app-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ── Sidebar ── */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--bg-sidebar);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            position: fixed;
+            top: 0; left: 0; bottom: 0;
+            z-index: 1040;
+            transition: var(--transition);
+            overflow: hidden;
+            border-right: 1px solid rgba(212,175,55,0.15);
+        }
+
+        .sidebar-brand {
+            padding: 20px 18px 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            min-height: 72px;
+        }
+
+        .sidebar-brand-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: rgba(212,175,55,0.15);
+            border: 1px solid rgba(212,175,55,0.3);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .sidebar-brand-text {
+            overflow: hidden;
+        }
+
+        .sidebar-brand-text strong {
+            color: var(--brand-gold);
+            font-family: 'Playfair Display', serif;
+            font-size: 1rem;
+            display: block;
+            white-space: nowrap;
+        }
+
+        .sidebar-brand-text small {
+            color: rgba(255,255,255,0.45);
+            font-size: 0.68rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        /* Nav items */
+        .sidebar-nav {
+            flex: 1;
+            padding: 12px 10px;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .sidebar-nav::-webkit-scrollbar { width: 3px; }
+        .sidebar-nav::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+
+        .nav-section-label {
+            color: rgba(255,255,255,0.3);
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            padding: 12px 10px 6px;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            padding: 10px 10px;
+            border-radius: 10px;
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            font-size: 0.88rem;
+            font-weight: 600;
+            transition: var(--transition);
+            margin-bottom: 2px;
+            white-space: nowrap;
+            position: relative;
+        }
+
+        .sidebar-link:hover {
+            background: rgba(255,255,255,0.07);
+            color: #fff;
+        }
+
+        .sidebar-link.active {
+            background: rgba(212,175,55,0.12);
+            color: var(--brand-gold);
+            border: 1px solid rgba(212,175,55,0.2);
+        }
+
+        .sidebar-link .nav-icon {
+            width: 28px;
+            height: 28px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .sidebar-link .nav-badge {
+            margin-left: auto;
+            background: #dc3545;
+            color: #fff;
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 20px;
+            animation: pulse-red 2s infinite;
+        }
+
+        /* Sidebar footer */
+        .sidebar-footer {
+            padding: 12px 10px;
+            border-top: 1px solid rgba(255,255,255,0.07);
+        }
+
+        .sidebar-user-chip {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.05);
+            margin-bottom: 8px;
+        }
+
+        .user-avatar {
+            width: 32px; height: 32px;
+            border-radius: 8px;
+            background: rgba(212,175,55,0.2);
+            border: 1px solid rgba(212,175,55,0.3);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .user-info strong {
+            display: block;
+            color: #fff;
+            font-size: 0.82rem;
+            white-space: nowrap;
+        }
+
+        .user-info small {
+            color: var(--brand-gold);
+            font-size: 0.68rem;
+            text-transform: capitalize;
+            white-space: nowrap;
+        }
+
+        .btn-logout-sidebar {
+            width: 100%;
+            background: rgba(220,53,69,0.1);
+            border: 1px solid rgba(220,53,69,0.3);
+            color: #ff8080;
+            border-radius: 10px;
+            padding: 9px;
+            font-size: 0.84rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+            text-decoration: none;
+            display: block;
+        }
+
+        .btn-logout-sidebar:hover {
+            background: rgba(220,53,69,0.2);
+            color: #ffaaaa;
+        }
+
+        /* ── Main Content Area ── */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            transition: var(--transition);
+        }
+
+        /* ── Top Bar (mobile + breadcrumb) ── */
+        .top-bar {
+            background: #fff;
+            border-bottom: 1px solid rgba(6,58,34,0.08);
+            padding: 0 24px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 8px rgba(6,58,34,0.04);
+        }
+
+        .sidebar-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.3rem;
+            cursor: pointer;
+            color: var(--text-dark);
+            padding: 4px 8px;
+            border-radius: 8px;
+        }
+
+        .sidebar-toggle:hover { background: var(--bg-cream); }
+
+        .page-content {
+            padding: 28px 28px 48px;
+            flex: 1;
+        }
+
+        /* Mobile sidebar overlay */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1039;
+        }
+
+        /* ── Mobile responsive ── */
+        @media (max-width: 991px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            .sidebar-overlay.active {
+                display: block;
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .sidebar-toggle {
+                display: block;
+            }
+            .page-content {
+                padding: 20px 16px 40px;
+            }
+        }
+        <% } else { %>
+        /* ── Non-authenticated layout: top navbar ── */
+        .public-navbar {
+            background: var(--brand-green);
+            border-bottom: 3px solid var(--brand-gold);
+            padding: 12px 0;
+            box-shadow: 0 4px 20px rgba(6,58,34,0.15);
+        }
+        .public-main { padding-bottom: 40px; }
+        <% } %>
+
+        /* ============================
+           SHARED UI COMPONENTS
+           ============================ */
+
+        /* Cards */
+        .card {
+            border: 1px solid rgba(6,58,34,0.08);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            background: #fff;
+        }
+
+        .card-header-green {
+            background: var(--brand-green);
+            color: #fff;
+            border-radius: var(--radius) var(--radius) 0 0 !important;
+            padding: 14px 20px;
+        }
+
+        /* Stat Cards */
+        .stat-card {
+            background: #fff;
+            border-radius: var(--radius);
+            padding: 20px;
+            border: 1px solid rgba(6,58,34,0.07);
+            box-shadow: var(--card-shadow);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .stat-icon {
+            width: 48px; height: 48px;
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.4rem;
+            flex-shrink: 0;
+        }
+
+        /* Buttons */
+        .btn-brand {
+            background: var(--brand-green);
+            border-color: var(--brand-green);
+            color: #fff;
+            font-weight: 700;
+            border-radius: 10px;
+            transition: var(--transition);
+        }
+        .btn-brand:hover { background: var(--brand-green-light); border-color: var(--brand-green-light); color: #fff; }
+
+        .btn-gold {
+            background: var(--brand-gold);
+            border-color: var(--brand-gold);
+            color: var(--brand-green-dark);
+            font-weight: 700;
+            border-radius: 10px;
+            transition: var(--transition);
+        }
+        .btn-gold:hover { background: #c9a430; border-color: #c9a430; color: var(--brand-green-dark); }
+
+        /* Override Bootstrap primary/success to brand colors */
+        .btn-primary { background-color: var(--brand-green); border-color: var(--brand-green); font-weight: 700; border-radius: 10px; }
+        .btn-primary:hover { background-color: var(--brand-green-light); border-color: var(--brand-green-light); }
+        .btn-success { background-color: var(--brand-gold); border-color: var(--brand-gold); color: var(--brand-green-dark) !important; font-weight: 700; border-radius: 10px; }
+        .btn-success:hover { background-color: #c9a430; border-color: #c9a430; }
+        .btn-outline-success { color: var(--brand-green); border-color: var(--brand-green); border-radius: 10px; font-weight: 600; }
+        .btn-outline-success:hover { background: var(--brand-green); border-color: var(--brand-green); }
+
+        /* Forms */
+        .form-control, .form-select {
+            border-radius: 10px;
+            padding: 10px 14px;
+            border: 1.5px solid #E1E6E3;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: var(--brand-green-light);
+            box-shadow: 0 0 0 3px rgba(13,90,55,0.1);
+        }
+
+        /* Tables */
+        .table th {
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .table-brand thead th {
+            background: var(--brand-green);
+            color: #fff;
+            border: none;
+        }
+
+        /* Badges */
+        .badge { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; }
+
+        /* Alerts */
+        .alert { border-radius: 12px; }
+
+        /* Page heading */
+        .page-heading {
+            margin-bottom: 24px;
+        }
+        .page-heading h2 {
+            color: var(--brand-green);
+            font-size: 1.75rem;
+            margin: 0;
+        }
+        .page-heading .page-sub {
+            font-size: 0.82rem;
+            color: var(--text-light);
+            font-weight: 500;
+            margin-top: 2px;
+        }
+
+        /* Animations */
+        @keyframes pulse-red {
+            0% { box-shadow: 0 0 0 0 rgba(220,53,69,0.5); }
+            70% { box-shadow: 0 0 0 5px rgba(220,53,69,0); }
+            100% { box-shadow: 0 0 0 0 rgba(220,53,69,0); }
+        }
+
+        /* Print */
+        @media print {
+            .no-print { display: none !important; }
+            .sidebar, .top-bar, .sidebar-overlay { display: none !important; }
+            .main-content { margin-left: 0 !important; }
+            body { background: #fff; }
+            .card { box-shadow: none; border: 1px solid #ddd; }
+        }
+    </style>
+</head>
+<body>
+
+<% if (session && session.user) { %>
+<!-- ==============================
+     AUTHENTICATED LAYOUT w/ SIDEBAR
+     ============================== -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div class="app-layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <a class="sidebar-brand" href="/">
+            <div class="sidebar-brand-icon">🥥</div>
+            <div class="sidebar-brand-text">
+                <strong>Sri Tirumala</strong>
+                <small>Dry Fruits & Organics</small>
+            </div>
+        </a>
+
+        <nav class="sidebar-nav">
+            <!-- Main -->
+            <div class="nav-section-label">Main</div>
+            <a href="/" class="sidebar-link">
+                <span class="nav-icon">🏠</span>
+                <span>Storefront</span>
+            </a>
+            <a href="/sell" class="sidebar-link">
+                <span class="nav-icon">🧾</span>
+                <span>Billing / POS</span>
+            </a>
+            <a href="/search_bill" class="sidebar-link">
+                <span class="nav-icon">🔍</span>
+                <span>Search Bills</span>
+            </a>
+
+            <!-- Inventory -->
+            <div class="nav-section-label">Inventory</div>
+            <a href="/stock" class="sidebar-link">
+                <span class="nav-icon">📦</span>
+                <span>Stock</span>
+                <% if (typeof lowStockCount !== 'undefined' && lowStockCount > 0) { %>
+                    <span class="nav-badge"><%= lowStockCount %></span>
+                <% } %>
+            </a>
+
+            <% if (session.role === 'admin') { %>
+            <a href="/add" class="sidebar-link">
+                <span class="nav-icon">➕</span>
+                <span>Add Product</span>
+            </a>
+
+            <!-- Admin -->
+            <div class="nav-section-label">Admin</div>
+            <a href="/profit" class="sidebar-link">
+                <span class="nav-icon">💰</span>
+                <span>Profit Report</span>
+            </a>
+            <a href="/analytics" class="sidebar-link">
+                <span class="nav-icon">📊</span>
+                <span>Analytics</span>
+            </a>
+            <a href="/settings" class="sidebar-link">
+                <span class="nav-icon">⚙️</span>
+                <span>Settings</span>
+            </a>
+            <% } %>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="sidebar-user-chip">
+                <div class="user-avatar">👤</div>
+                <div class="user-info">
+                    <strong><%= session.user %></strong>
+                    <small><%= session.role %></small>
+                </div>
+            </div>
+            <% if (typeof currentShift !== 'undefined' && currentShift) { %>
+            <a href="/shift/close" class="btn-gold text-center d-block w-100 py-2 mb-2 text-decoration-none" style="font-size: 0.85rem;">🔒 Close Register</a>
+            <% } %>
+            <a href="/logout" class="btn-logout-sidebar">🚪 Logout</a>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <!-- Top Bar -->
+        <div class="top-bar no-print">
+            <button class="sidebar-toggle" id="sidebarToggle">☰</button>
+            <div class="d-flex align-items-center gap-3 ms-auto">
+                <% if (typeof lowStockCount !== 'undefined' && lowStockCount > 0) { %>
+                <a href="/stock" class="badge bg-danger text-white text-decoration-none" style="font-size: 0.78rem; padding: 6px 10px;">
+                    ⚠️ <%= lowStockCount %> Low Stock
+                </a>
+                <% } %>
+                <span class="text-muted small fw-semibold d-none d-md-inline">
+                    <%= new Date().toLocaleDateString('en-IN', {weekday:'short', day:'2-digit', month:'short', year:'numeric'}) %>
+                </span>
+            </div>
+        </div>
+
+        <!-- Flash Messages -->
+        <% if (messages && messages.length > 0) { %>
+        <div class="mx-4 mt-3 no-print">
+            <div class="alert alert-warning border-0 shadow-sm py-3 d-flex align-items-center gap-2" role="alert" style="border-left: 4px solid var(--brand-gold) !important;">
+                <span>🔔</span> <span><%= messages[0] %></span>
+            </div>
+        </div>
+        <% } %>
+
+        <div class="page-content">
+
+<% } else { %>
+<!-- ==============================
+     PUBLIC LAYOUT w/ TOP NAVBAR
+     ============================== -->
+<nav class="public-navbar navbar navbar-expand-lg navbar-dark no-print">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center gap-2" href="/">
+            <span class="fs-4">🥥</span>
+            <div>
+                <strong style="font-family:'Playfair Display',serif; color: var(--brand-gold); font-size:1.2rem;">Sri Tirumala</strong>
+                <span style="display:block; font-size:0.6rem; letter-spacing:0.2em; text-transform:uppercase; color:rgba(255,255,255,0.5);">Dry Fruits & Organics</span>
+            </div>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#publicNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="publicNav">
+            <ul class="navbar-nav ms-auto align-items-center gap-2">
+                <li class="nav-item">
+                    <a class="nav-link fw-semibold" href="/" style="color:rgba(255,255,255,0.85);">🏠 Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="btn btn-sm fw-bold px-4 py-2 ms-2" href="/login"
+                       style="background: var(--brand-gold); color: var(--brand-green-dark); border-radius:20px;">
+                        🔐 Staff Login
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container public-main pt-4">
+
+    <% if (messages && messages.length > 0) { %>
+    <div class="alert alert-warning border-0 shadow-sm py-3 d-flex align-items-center gap-2 mb-4 no-print" role="alert">
+        <span>🔔</span> <span><%= messages[0] %></span>
+    </div>
+    <% } %>
+
+<% } %>

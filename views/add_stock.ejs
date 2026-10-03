@@ -1,0 +1,77 @@
+<%- include('header') %>
+
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        
+        <div class="d-flex align-items-center gap-2 mb-3">
+            <a href="/stock" class="btn btn-sm btn-outline-secondary border-0 rounded-circle py-1" title="Back to stock list">
+                &larr;
+            </a>
+            <h2 class="brand-font m-0 text-success" style="color: var(--brand-green);">➕ Add Stock Inventory</h2>
+        </div>
+
+        <div class="card p-5 shadow border-0 bg-white" style="border-radius: 24px;">
+            
+            <div class="text-center mb-4 pb-3 border-bottom border-light">
+                <div class="mx-auto mb-3" style="width: 80px; height: 80px; background: #f8f9fa; border-radius: 12px; border: 1px solid #e9ecef; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative;">
+                    <% 
+                    let catEmoji = '🥥';
+                    const categoryUpper = (product.category || '').toUpperCase();
+                    if (categoryUpper.includes('MILLET')) catEmoji = '🌾';
+                    else if (categoryUpper.includes('SEED')) catEmoji = '🌻';
+                    else if (categoryUpper.includes('SPICE')) catEmoji = '🌶️';
+                    else if (categoryUpper.includes('NUT')) catEmoji = '🥜';
+                    else if (categoryUpper.includes('SWEET')) catEmoji = '🍬';
+                    %>
+                    <img id="product-preview-img" src="<%= product.image_url || '' %>" alt="<%= product.name %>" style="width: 100%; height: 100%; object-fit: cover; <%= product.image_url ? '' : 'display: none;' %>" onerror="this.style.display='none'; document.getElementById('product-preview-emoji').style.display='block';">
+                    <span id="product-preview-emoji" class="fs-1" style="<%= product.image_url ? 'display: none;' : '' %>"><%= catEmoji %></span>
+                </div>
+                <h4 class="fw-bold text-success mb-1"><%= product.name %></h4>
+                <div class="badge bg-secondary font-monospace bg-opacity-10 text-secondary border border-secondary border-opacity-10 py-2 px-3 rounded-pill" style="font-size: 0.8rem; font-weight: 600;"><%= product.barcode %></div>
+            </div>
+
+            <form method="post" action="/add_stock/<%= product.id %>">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <div class="mb-3">
+                    <label class="form-label text-muted small fw-bold text-uppercase">Current Stock on Shelf</label>
+                    <input type="text" class="form-control bg-light font-monospace text-center fw-bold text-secondary" value="<%= Number(product.total_qty - (product.sold_qty || 0)).toFixed(3) %> units" readonly tabindex="-1" style="font-size: 1.1rem;">
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-bold text-dark mb-2">Quantity to Add (+)</label>
+                    <input type="number" step="0.001" name="added_qty" class="form-control form-control-lg border-success font-monospace text-center fw-bold text-success" required autofocus placeholder="e.g. 5.000" style="font-size: 1.5rem;">
+                    <div class="form-text text-muted small text-center mt-2">Enter the amount of new physical stock arriving at the retail shelf today.</div>
+                </div>
+
+                <!-- NEW FIELD: Add / Edit Image URL while restocking -->
+                <div class="mb-4">
+                    <label class="form-label fw-bold text-dark mb-2">Product Image URL or Path (Optional)</label>
+                    <input type="text" name="image_url" class="form-control" value="<%= product.image_url || '' %>" placeholder="e.g. /images/almonds.jpg or https://images.unsplash.com/... " oninput="updatePreview(this.value)">
+                    <div class="form-text small">Provide/paste an image URL or static path. Leave empty to fallback to category emoji. You can also save a static file inside the <code>/public</code> directory.</div>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-success btn-lg py-3 fw-bold" style="border-radius: 12px; font-size: 1rem; letter-spacing: 0.05em;">UPDATE SHELF STOCK</button>
+                    <a href="/stock" class="btn btn-outline-secondary py-2 fw-semibold" style="border-radius: 10px; font-size: 0.9rem;">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function updatePreview(val) {
+    const previewImg = document.getElementById('product-preview-img');
+    const previewEmoji = document.getElementById('product-preview-emoji');
+    if (val.trim()) {
+        previewImg.src = val;
+        previewImg.style.display = 'block';
+        previewEmoji.style.display = 'none';
+    } else {
+        previewImg.style.display = 'none';
+        previewEmoji.style.display = 'block';
+    }
+}
+</script>
+
+<%- include('footer') %>

@@ -1,0 +1,626 @@
+<%- include('header') %>
+
+<style>
+    /* =========================
+       POS BILLING DESK STYLING
+       ========================= */
+    .pos-billing-card {
+        border-radius: 20px;
+        background: #ffffff;
+        border: 1px solid #E1E6E3;
+        box-shadow: var(--card-shadow);
+        overflow: hidden;
+    }
+
+    .pos-header-accent {
+        border-bottom: 2px solid rgba(6, 58, 34, 0.05);
+        background-color: #FAF9F5;
+        padding: 16px 24px;
+    }
+
+    /* Autocomplete Dropdown styling */
+    .autocomplete-wrapper {
+        position: relative;
+    }
+    .autocomplete-results {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        border: 1px solid #ced4da;
+        border-top: none;
+        border-radius: 0 0 12px 12px;
+        box-shadow: 0 12px 28px rgba(6, 58, 34, 0.15);
+        max-height: 280px;
+        overflow-y: auto;
+        z-index: 1050;
+        display: none;
+    }
+    .autocomplete-item {
+        padding: 12px 18px;
+        cursor: pointer;
+        border-bottom: 1px solid #FAF9F5;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: var(--transition);
+    }
+    .autocomplete-item:last-child {
+        border-bottom: none;
+        border-radius: 0 0 12px 12px;
+    }
+    .autocomplete-item:hover, .autocomplete-item.active {
+        background-color: var(--brand-green) !important;
+        color: white !important;
+    }
+    .autocomplete-item:hover .text-muted, .autocomplete-item.active .text-muted {
+        color: rgba(255,255,255,0.7) !important;
+    }
+    .autocomplete-item:hover strong, .autocomplete-item.active strong {
+        color: #ffffff !important;
+    }
+    .autocomplete-item:hover .text-success, .autocomplete-item.active .text-success {
+        color: var(--brand-gold) !important;
+    }
+
+    /* Table row tweaks */
+    .cart-table th {
+        background-color: var(--brand-green) !important;
+        color: white !important;
+        font-weight: 700;
+        font-size: 0.82rem;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        border: none;
+    }
+
+    .cart-table tbody tr {
+        transition: var(--transition);
+    }
+
+    .cart-table tbody tr:hover {
+        background-color: rgba(6, 58, 34, 0.02) !important;
+    }
+
+    /* Checkout control panel sidebar */
+    .checkout-sidebar-card {
+        background: linear-gradient(135deg, var(--brand-green-dark), #01140a);
+        color: white;
+        border-radius: 20px;
+        padding: 30px 24px;
+        box-shadow: 0 15px 35px rgba(3, 33, 19, 0.25);
+        border: 1px solid rgba(212, 175, 55, 0.2);
+        position: sticky;
+        top: 24px;
+    }
+
+    .checkout-sidebar-card::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 4px;
+        background: var(--brand-gold);
+        border-radius: 20px 20px 0 0;
+    }
+
+    .checkout-subtotal-header {
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-weight: 700;
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    .checkout-input-group {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        padding: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .checkout-field {
+        background: rgba(255, 255, 255, 0.07) !important;
+        border: 1.5px solid rgba(255, 255, 255, 0.12) !important;
+        color: #ffffff !important;
+        font-weight: 600;
+    }
+
+    .checkout-field:focus {
+        border-color: var(--brand-gold) !important;
+        box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.15) !important;
+        background: rgba(255, 255, 255, 0.1) !important;
+    }
+
+    .checkout-field::placeholder {
+        color: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Hotkey badge */
+    .shortcut-badge {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.72rem;
+        background: rgba(255, 255, 255, 0.12);
+        color: rgba(255, 255, 255, 0.85);
+        padding: 2px 6px;
+        border-radius: 4px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        font-weight: 600;
+    }
+</style>
+
+<div class="row g-4">
+    
+    <!-- LEFT PANEL: SCANNING & CART LIST -->
+    <div class="col-lg-8">
+        
+        <div class="pos-billing-card mb-4">
+            <div class="pos-header-accent d-flex flex-wrap justify-content-between align-items-center gap-2">
+                <div class="d-flex align-items-center gap-2">
+                    <span class="fs-4">🛒</span>
+                    <h5 class="brand-font m-0 text-success" style="font-size: 1.25rem;">Billing & Sales Terminal</h5>
+                </div>
+                <span class="badge bg-success bg-opacity-10 text-success py-2 px-3 rounded-pill fw-bold" style="font-size: 0.82rem;">
+                    🟢 Active Cashier: <%= session.user %>
+                </span>
+            </div>
+            
+            <div class="p-4">
+            <form method="post" action="/sell" id="billingForm">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <div class="row g-3">
+                        
+                        <div class="col-md-3">
+                            <label class="form-label small fw-bold text-muted">Barcode (Scan)</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white border-end-0 border-success text-muted">🏷️</span>
+                                <input type="text" name="barcode" id="barcodeInput" class="form-control fw-bold border-success border-start-0" 
+                                       placeholder="Scan Barcode..." autofocus autocomplete="off" style="font-family: 'JetBrains Mono', monospace;">
+                            </div>
+                        </div>
+
+                        <div class="col-md-5 autocomplete-wrapper">
+                            <label class="form-label small fw-bold text-muted">Item Name (Search)</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white border-end-0 border-success text-muted">🔍</span>
+                                <input type="text" name="name" id="nameDisplay" class="form-control fw-bold border-success border-start-0" 
+                                       placeholder="Type to auto-search items..." autocomplete="off">
+                            </div>
+                            <div id="autocompleteResults" class="autocomplete-results"></div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <label class="form-label small text-muted">MRP (₹)</label>
+                            <input type="number" step="0.01" name="mrp" id="mrpDisplay" class="form-control bg-light text-muted fw-bold" readonly tabindex="-1">
+                        </div>
+
+                        <div class="col-md-2">
+                            <label class="form-label small text-muted fw-bold text-success">Rate (₹)</label>
+                            <input type="number" step="0.01" name="price" id="priceDisplay" class="form-control bg-white fw-bold text-success">
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mt-1">
+                        <div class="col-md-3">
+                            <label class="form-label small text-muted">Available Stock</label>
+                            <input type="text" id="stockDisplay" class="form-control bg-light text-secondary fw-bold" readonly tabindex="-1">
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label small fw-bold text-muted">Quantity</label>
+                            <input type="number" step="0.001" name="qty" id="qtyInput" 
+                                   class="form-control fw-bold border-success" value="1">
+                        </div>
+
+                        <div class="col-md-6 d-flex align-items-end">
+                            <button type="submit" class="btn btn-success w-100 fw-bold py-3 text-uppercase" style="letter-spacing: 0.05em; border-radius: 12px;">
+                                ⬇️ Add Item to Bill (Enter)
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- CART TABLE -->
+        <div class="card p-0 shadow-sm border-0 overflow-hidden" style="border-radius: 20px;">
+            <div class="table-responsive">
+                <table class="table cart-table align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th class="ps-4 py-3 text-center" style="width: 60px;">#</th>
+                            <th class="py-3">Item Description</th>
+                            <th class="py-3">MRP</th>
+                            <th class="py-3">Rate</th>
+                            <th class="py-3 text-center" style="width: 120px;">Qty</th>
+                            <th class="py-3 text-end pe-4" style="width: 150px;">Total</th>
+                            <th class="py-3 text-center" style="width: 60px;"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (cart && cart.length > 0) { %>
+                            <% cart.forEach(function(item, index) { %>
+                            <tr>
+                                <td class="text-center text-muted fw-bold"><%= index + 1 %></td>
+                                <td>
+                                    <span class="fw-bold text-dark d-block" style="font-size: 1.05rem;"><%= item.name %></span>
+                                    <span class="text-muted small font-monospace">Product Code: <%= item.barcode %></span>
+                                </td>
+                                <td class="text-muted"><small><s>₹<%= Number(item.mrp || 0).toFixed(2) %></s></small></td>
+                                <td class="fw-bold text-dark">₹<%= Number(item.price || 0).toFixed(2) %></td>
+                                <td class="text-center">
+                                    <form action="/update_cart/<%= index %>" method="POST" style="display:inline-block; width: 100%;">
+                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                        <input type="number" name="qty" value="<%= item.qty %>" step="0.001"
+                                               class="form-control text-center p-2 border-success fw-bold mx-auto" 
+                                               style="max-width: 90px; border-radius: 8px;"
+                                               onchange="this.form.submit()">
+                                    </form>
+                                </td>
+                                <td class="text-end pe-4 fw-bold text-success fs-5">₹<%= Number(item.total || 0).toFixed(2) %></td>
+                                <td class="text-center">
+                                    <form action="/delete_item/<%= index %>" method="POST" style="display:inline;">
+                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger border-0 rounded-circle py-1 px-2" title="Remove" onclick="return confirm('Remove <%= item.name %>?')">✕</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            <% }); %>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+            <% if (!cart || cart.length === 0) { %>
+                <div class="text-center p-5 text-muted bg-white">
+                    <span class="fs-1 d-block mb-3">🧺</span>
+                    <h5 class="fw-bold text-dark">Cart is Empty</h5>
+                    <p class="mb-0 small text-muted">Scan a barcode or type an item name above to build this receipt.</p>
+                </div>
+            <% } %>
+        </div>
+    </div>
+
+    <!-- RIGHT PANEL: CHECKOUT SIDEBAR -->
+    <div class="col-lg-4">
+        <form method="POST" action="/finalize_bill" id="checkoutForm">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <div class="checkout-sidebar-card">
+                <div class="text-center mb-4 border-bottom border-secondary border-opacity-25 pb-3">
+                    <span class="checkout-subtotal-header">Gross Bill Amount</span>
+                    <h2 class="display-5 fw-extrabold text-warning m-0 mt-1" style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800;">
+                        ₹<%= Number(total).toFixed(2) %>
+                    </h2>
+                </div>
+
+                <div class="checkout-input-group mb-4">
+                    <h6 class="text-warning fw-bold mb-3 d-flex align-items-center gap-2" style="font-size: 0.9rem;">
+                        <span>📋</span> Customer & Invoice details
+                    </h6>
+                    
+                    <div class="mb-3">
+                        <label class="form-label small text-white-50 m-0 mb-1" style="font-size: 0.75rem;">Customer Name</label>
+                        <input type="text" name="customer_name" class="form-control form-control-sm checkout-field" placeholder="e.g. Ramesh Kumar">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label small text-white-50 m-0 mb-1" style="font-size: 0.75rem;">Phone Number</label>
+                        <input type="text" name="customer_phone" class="form-control form-control-sm checkout-field" placeholder="e.g. 9876543210" style="font-family: 'JetBrains Mono', monospace;">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small text-white-50 m-0 mb-1" style="font-size: 0.75rem;">Manual Discount (₹)</label>
+                        <input type="number" step="1" name="discount_amount" id="checkoutDiscount" class="form-control form-control-sm checkout-field text-warning fw-bold fs-6" placeholder="0" value="0" oninput="calculateNetTotal()">
+                    </div>
+
+                    <div class="mb-0">
+                        <label class="form-label small text-white-50 m-0 mb-1" style="font-size: 0.75rem;">Payment Method</label>
+                        <select name="payment_method" class="form-select form-select-sm checkout-field fw-bold">
+                            <option value="Cash">Cash</option>
+                            <option value="UPI">UPI</option>
+                            <option value="Card">Card</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-1 text-white-50 small">
+                        <span>Distinct Items Count:</span>
+                        <span class="fw-bold text-white"><%= cart ? cart.length : 0 %> rows</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center fw-bold fs-4 border-top border-secondary border-opacity-50 pt-3 mt-2">
+                        <span class="text-white">Net Payable:</span>
+                        <span class="text-warning fs-3" id="netPayDisplay">₹<%= Number(total).toFixed(2) %></span>
+                    </div>
+                </div>
+                
+                <div class="d-grid gap-3">
+                    <button type="submit" id="btnCheckout" class="btn btn-warning btn-lg fw-bold text-dark py-3 shadow-lg" <%= (!cart || cart.length === 0) ? 'disabled' : '' %> style="border-radius: 12px; letter-spacing: 0.05rem; font-size: 1.1rem;">
+                        ✅ PRINT INVOICE <span class="shortcut-badge text-dark bg-white bg-opacity-25 ms-1">F1</span>
+                    </button>
+                    
+                    <div class="d-flex gap-2">
+                        <form action="/hold_bill" method="POST" class="flex-grow-1">
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                            <button type="button" id="btnHold" class="btn btn-secondary w-100 border-secondary border-opacity-50 py-2 fw-semibold" style="border-radius: 10px; font-size: 0.88rem;" onclick="this.closest('form').submit()">
+                                ⏸️ Suspend <span class="shortcut-badge ms-1">F2</span>
+                            </button>
+                        </form>
+                        <form action="/clear_cart" method="POST" class="flex-grow-1">
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                            <button type="button" id="btnClear" class="btn btn-outline-danger w-100 py-2 fw-semibold" onclick="if(confirm('Clear entire list?')) this.closest('form').submit()" style="border-radius: 10px; font-size: 0.88rem;">
+                                🗑️ Clear <span class="shortcut-badge text-white ms-1" style="background: rgba(220,53,69,0.2);">F4</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Short keys legend inside sidebar -->
+                <div class="mt-4 pt-3 border-top border-secondary border-opacity-25 text-start text-white-50" style="font-size: 0.82rem;">
+                    <div class="fw-bold text-warning mb-2" style="font-size: 0.75rem; letter-spacing: 0.05em; text-transform: uppercase;">⚡ SYSTEM HOTKEYS</div>
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span>Finalize & Print Invoice</span>
+                        <span class="shortcut-badge">F1</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span>Suspend / Hold Receipt</span>
+                        <span class="shortcut-badge">F2</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span>Focus Item Search Input</span>
+                        <span class="shortcut-badge">F3</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span>Clear Current Receipt</span>
+                        <span class="shortcut-badge">F4</span>
+                    </div>
+                </div>
+            </div>
+        </form>
+        
+        <% if (typeof error !== 'undefined' && error) { %>
+        <div class="alert alert-danger mt-3 shadow-sm fw-bold border-0" style="border-radius: 12px;">
+            ⚠️ <%= error %>
+        </div>
+        <% } %>
+
+        <!-- HELD INVOICES CONTAINER -->
+        <% if (typeof held_bills !== 'undefined' && held_bills && held_bills.length > 0) { %>
+        <div class="card mt-4 border-0 shadow-sm overflow-hidden" style="border-radius: 16px;">
+            <div class="card-header bg-secondary text-white fw-bold d-flex justify-content-between align-items-center py-3">
+                <span class="m-0">⏸️ Suspended Receipts</span>
+                <span class="badge bg-white text-dark rounded-pill px-3"><%= held_bills.length %></span>
+            </div>
+            <ul class="list-group list-group-flush">
+                <% held_bills.forEach(function(bill, index) { %>
+                <li class="list-group-item d-flex justify-content-between align-items-center py-3 px-3">
+                    <div>
+                        <span class="fw-bold d-block text-dark fs-6">₹<%= Number(bill.total || 0).toFixed(2) %></span>
+                        <small class="text-muted font-monospace d-block" style="font-size: 0.75rem;">🕒 Time: <%= bill.time %></small>
+                    </div>
+                    <div class="d-flex gap-1">
+                        <form action="/resume_bill/<%= index %>" method="POST" style="display:inline;">
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                            <button type="submit" class="btn btn-sm btn-primary py-1 px-3" style="border-radius: 8px; font-size: 0.8rem;">Resume</button>
+                        </form>
+                        <form action="/discard_held/<%= index %>" method="POST" style="display:inline;">
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                            <button type="submit" class="btn btn-sm btn-outline-danger border-0 rounded-circle" onclick="return confirm('Discard this bill?')" title="Discard">✕</button>
+                        </form>
+                    </div>
+                </li>
+                <% }); %>
+            </ul>
+        </div>
+        <% } %>
+    </div>
+</div>
+
+<script>
+    const subtotalValue = <%= Number(total) %>;
+
+    function calculateNetTotal() {
+        const discountInput = document.getElementById('checkoutDiscount');
+        const netPayDisplay = document.getElementById('netPayDisplay');
+        let discount = parseFloat(discountInput.value) || 0;
+        if (discount < 0) {
+            discount = 0;
+            discountInput.value = 0;
+        }
+        const netTotal = Math.max(0, subtotalValue - discount);
+        netPayDisplay.innerText = '₹' + netTotal.toFixed(2);
+    }
+
+    // --- autocomplete search engine ---
+    let productsList = [];
+    const nameInput = document.getElementById('nameDisplay');
+    const resultsContainer = document.getElementById('autocompleteResults');
+    let activeIndex = -1;
+
+    // Load products list on startup
+    fetch('/api/products')
+        .then(res => res.json())
+        .then(data => {
+            productsList = data;
+        })
+        .catch(err => console.error('Failed to load products list:', err));
+
+    nameInput.addEventListener('input', function() {
+        const query = this.value.toUpperCase();
+        resultsContainer.innerHTML = '';
+        activeIndex = -1;
+
+        if (!query) {
+            resultsContainer.style.display = 'none';
+            return;
+        }
+
+        const matches = productsList.filter(p => 
+            p.name.toUpperCase().includes(query) || p.barcode.includes(query)
+        );
+
+        if (matches.length === 0) {
+            resultsContainer.style.display = 'none';
+            return;
+        }
+
+        matches.forEach((p, idx) => {
+            const item = document.createElement('div');
+            item.className = 'autocomplete-item';
+            item.dataset.index = idx;
+            item.innerHTML = `
+                <div>
+                    <strong class="d-block text-dark">${p.name}</strong>
+                    <span class="text-muted small font-monospace">${p.barcode} | Stock: ${p.available.toFixed(3)}</span>
+                </div>
+                <div class="text-end">
+                    <strong class="text-success d-block">₹${p.selling_price.toFixed(2)}</strong>
+                    <span class="text-muted text-decoration-line-through small">₹${p.mrp.toFixed(2)}</span>
+                </div>
+            `;
+            item.addEventListener('click', () => {
+                selectProduct(p);
+            });
+            resultsContainer.appendChild(item);
+        });
+
+        resultsContainer.style.display = 'block';
+    });
+
+    nameInput.addEventListener('keydown', function(e) {
+        const items = resultsContainer.getElementsByClassName('autocomplete-item');
+        if (resultsContainer.style.display === 'none' || items.length === 0) return;
+
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            activeIndex++;
+            if (activeIndex >= items.length) activeIndex = 0;
+            updateSelection(items);
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            activeIndex--;
+            if (activeIndex < 0) activeIndex = items.length - 1;
+            updateSelection(items);
+        } else if (e.key === 'Enter') {
+            if (activeIndex > -1) {
+                e.preventDefault();
+                items[activeIndex].click();
+            }
+        } else if (e.key === 'Escape') {
+            resultsContainer.style.display = 'none';
+        }
+    });
+
+    // Close autocomplete when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.autocomplete-wrapper')) {
+            resultsContainer.style.display = 'none';
+        }
+    });
+
+    function updateSelection(items) {
+        for (let i = 0; i < items.length; i++) {
+            items[i].classList.remove('active');
+        }
+        if (activeIndex > -1) {
+            items[activeIndex].classList.add('active');
+            items[activeIndex].scrollIntoView({ block: 'nearest' });
+        }
+    }
+
+    function selectProduct(p) {
+        document.getElementById('barcodeInput').value = p.barcode;
+        nameInput.value = p.name;
+        document.getElementById('mrpDisplay').value = p.mrp.toFixed(2);
+        document.getElementById('priceDisplay').value = p.selling_price.toFixed(2);
+        document.getElementById('stockDisplay').value = p.available.toFixed(3);
+        resultsContainer.style.display = 'none';
+        
+        // Focus quantity input
+        const qtyField = document.getElementById('qtyInput');
+        qtyField.value = "1";
+        qtyField.focus();
+        qtyField.select();
+    }
+
+    // --- 1. KEYBOARD SHORTCUTS ---
+    document.addEventListener('keydown', function(event) {
+        
+        // F1: SUBMIT CHECKOUT FORM
+        if (event.key === "F1") {
+            event.preventDefault();
+            const btn = document.getElementById('btnCheckout');
+            if (btn && !btn.disabled) {
+                document.getElementById('checkoutForm').submit();
+            }
+        }
+
+        // F2: HOLD BILL
+        if (event.key === "F2") {
+            event.preventDefault();
+            window.location.href = "/hold_bill";
+        }
+
+        // F3: FOCUS AUTOCOMPLETE SEARCH INPUT
+        if (event.key === "F3") {
+            event.preventDefault();
+            nameInput.focus();
+            nameInput.select();
+        }
+
+        // F4: CLEAR CART
+        if (event.key === "F4") {
+            event.preventDefault();
+            if(confirm("Are you sure you want to clear the entire cart?")) {
+                window.location.href = "/clear_cart";
+            }
+        }
+    });
+
+    // --- 2. BARCODE SCAN LOGIC (Existing) ---
+    document.getElementById('barcodeInput').addEventListener('keydown', function(event) {
+        if (event.key === "Enter") {
+            event.preventDefault(); 
+            fetchProductData();
+        }
+    });
+
+    function fetchProductData() {
+        const barcode = document.getElementById('barcodeInput').value;
+        if (!barcode) return;
+
+        // Try searching in local cache first for sub-millisecond response
+        const cached = productsList.find(p => p.barcode === barcode);
+        if (cached) {
+            selectProduct(cached);
+            return;
+        }
+
+        // Fallback to server fetch
+        fetch(`/get_product_details/${barcode}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('nameDisplay').value = data.name || '';
+                    document.getElementById('mrpDisplay').value = (data.mrp || 0).toFixed(2);
+                    document.getElementById('priceDisplay').value = (data.selling_price || 0).toFixed(2);
+                    document.getElementById('stockDisplay').value = (data.available || 0).toFixed(3);
+                    
+                    document.getElementById('qtyInput').value = "1";
+                    
+                    const qtyField = document.getElementById('qtyInput');
+                    qtyField.focus();
+                    qtyField.select(); 
+                } else {
+                    alert("❌ Product Not Found!");
+                    document.getElementById('barcodeInput').value = "";
+                    document.getElementById('nameDisplay').value = "";
+                    document.getElementById('mrpDisplay').value = "";
+                    document.getElementById('priceDisplay').value = "";
+                    document.getElementById('stockDisplay').value = "";
+                }
+            })
+            .catch(err => console.error("Error:", err));
+    }
+</script>
+
+<%- include('footer') %>
