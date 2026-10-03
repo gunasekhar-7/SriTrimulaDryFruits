@@ -71,7 +71,7 @@ router.post('/return_item', requireAuth, csrfProtection, (req, res) => {
 });
 
 // GET /profit
-router.get('/profit', requireAdmin, (req, res) => {
+router.get('/profit', requireAdmin, csrfProtection, (req, res) => {
   const bills = repo.getBills();
   const grouped_data: Record<string, { daily_profit: number; daily_sales: number; bills: any[]; revenue_by_method: Record<string, number> }> = {};
 
@@ -94,7 +94,7 @@ router.get('/profit', requireAdmin, (req, res) => {
   Object.keys(grouped_data).forEach(date => {
     grouped_data[date].bills.sort((a, b) => b.bill_id - a.bill_id);
   });
-  res.render('profit', { data: grouped_data });
+  res.render('profit', { data: grouped_data, csrfToken: res.locals.csrfToken });
 });
 
 // POST /update_profit
