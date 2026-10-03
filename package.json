@@ -1,7 +1,7 @@
 {
   "name": "sri-tirumala-dryfruits",
   "version": "1.0.0",
-  "description": "Billing and Inventory Management System for Sri Tirumala Dry Fruits",
+  "description": "Billing and Inventory Management System for Sri Tirumala Dryfruits",
   "main": "server.ts",
   "type": "module",
   "scripts": {

@@ -1,6 +1,6 @@
 # System Architecture & Development Guide
 
-This document outlines the architectural decisions, database schema, and security models used in the Sri Tirumala Dry Fruits POS system.
+This document outlines the architectural decisions, database schema, and security models used in the Sri Tirumala Dryfruits POS system.
 
 ## 1. Architectural Overview
 

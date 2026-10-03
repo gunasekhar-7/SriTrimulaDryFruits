@@ -36,7 +36,7 @@ router.get('/bill/pdf/:id', requireAuth, (req, res) => {
   doc.pipe(res);
 
   // ─── Header ─────────────────────────────────────────────────────────────
-  doc.fontSize(14).font('Helvetica-Bold').text('SRI TIRUMALA DRY FRUITS', { align: 'center', width: 206 });
+  doc.fontSize(14).font('Helvetica-Bold').text('Sri Tirumala Dryfruits', { align: 'center', width: 206 });
   doc.fontSize(8).font('Helvetica').text('Opp. RTC Complex, Tekkali, AP-532201', { align: 'center', width: 206 });
   doc.text('Ph: +91 9133133931', { align: 'center', width: 206 });
   doc.moveDown(0.5);

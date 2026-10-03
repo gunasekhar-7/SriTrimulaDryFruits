@@ -1,4 +1,4 @@
-# Sri Tirumala Dry Fruits - POS & Inventory System 🥜
+# Sri Tirumala Dryfruits - POS & Inventory System 🥜
 
 ![Node.js](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white)
 ![Express.js](https://img.shields.io/badge/Express.js-404D59?style=for-the-badge)
@@ -6,14 +6,14 @@
 ![SQLite](https://img.shields.io/badge/SQLite-07405E?style=for-the-badge&logo=sqlite&logoColor=white)
 ![Bootstrap](https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white)
 
-A production-grade, hybrid web application built for Sri Tirumala Dry Fruits & Organics. It serves as both a **public-facing product catalog** for customers and a highly secure, lightning-fast **Point-of-Sale (POS) and Inventory Management system** for store staff and administrators.
+A production-grade, hybrid web application built for Sri Tirumala Dryfruits. It serves as both a **public-facing product catalog** for customers and a highly secure, lightning-fast **Point-of-Sale (POS) and Inventory Management system** for store staff and administrators.
 
 ---
 
 ## ✨ Key Features
 
 ### 🛒 Public Storefront
-*   **Modern Catalog:** Beautiful, mobile-responsive product grid displaying premium dry fruits, millets, and organics.
+*   **Modern Catalog:** Beautiful, mobile-responsive product grid displaying premium dry fruits, millets.
 *   **Live Search & Filtering:** Instant client-side filtering by category and product name.
 *   **Dynamic Inventory Integration:** Automatically reflects current stock and pricing from the backend.
 
@@ -106,6 +106,6 @@ A production-grade, hybrid web application built for Sri Tirumala Dry Fruits & O
 
 ## 🛡️ License & Proprietary Notice
 
-This software is proprietary and developed specifically for Sri Tirumala Dry Fruits & Organics. Unauthorized distribution, modification, or commercial use outside of the intended organization is prohibited.
+This software is proprietary and developed specifically for Sri Tirumala Dryfruits. Unauthorized distribution, modification, or commercial use outside of the intended organization is prohibited.
 
-*Built with ❤️ for Sri Tirumala Dry Fruits.*
+*Built with ❤️ for Sri Tirumala Dryfruits.*
