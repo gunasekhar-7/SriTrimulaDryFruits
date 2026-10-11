@@ -2,23 +2,12 @@
 
 <div class="container mt-3">
     <% 
-    let grand_total_sales = 0;
-    let grand_total_profit = 0;
-    let total_bills_count = 0;
-    let overall_revenue_by_method = { Cash: 0, UPI: 0, Card: 0 };
     const dates = typeof data !== 'undefined' && data ? Object.keys(data) : [];
-    dates.forEach(function(date) {
-        grand_total_sales += data[date].daily_sales;
-        grand_total_profit += data[date].daily_profit;
-        total_bills_count += data[date].bills.length;
-        if (data[date].revenue_by_method) {
-            Object.keys(data[date].revenue_by_method).forEach(method => {
-                if (!overall_revenue_by_method[method]) overall_revenue_by_method[method] = 0;
-                overall_revenue_by_method[method] += data[date].revenue_by_method[method];
-            });
-        }
-    });
-    const profit_margin = grand_total_sales > 0 ? (grand_total_profit / grand_total_sales * 100) : 0;
+    const grand_total_sales = typeof locals.grand_total_sales !== 'undefined' ? locals.grand_total_sales : 0;
+    const grand_total_profit = typeof locals.grand_total_profit !== 'undefined' ? locals.grand_total_profit : 0;
+    const total_bills_count = typeof locals.total_bills_count !== 'undefined' ? locals.total_bills_count : 0;
+    const profit_margin = typeof locals.profit_margin !== 'undefined' ? locals.profit_margin : 0;
+    const overall_revenue_by_method = typeof locals.overall_revenue_by_method !== 'undefined' ? locals.overall_revenue_by_method : { Cash: 0, UPI: 0, Card: 0 };
     %>
 
     <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">

@@ -3,64 +3,51 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import cron from 'node-cron';
 import logger from './logger.js';
-import db from './database.js';
+import { backupService } from './services/backup.service.js';
+import { queueService } from './queue/index.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const dbPath = path.join(__dirname, '../data/store.db');
 const backupDir = path.join(__dirname, '../data/backups');
 
-// Ensure backups directory exists
-if (!fs.existsSync(backupDir)) {
-    fs.mkdirSync(backupDir, { recursive: true });
-}
-
 export function initBackupCron() {
-    // Schedule backup for 11:30 PM every night
-    cron.schedule('30 23 * * *', async () => {
-        logger.info('Starting automated database backup...');
-        
-        const timestamp = new Date().toISOString().replace(/T/, '_').replace(/:/g, '-').split('.')[0];
-        const backupPath = path.join(backupDir, `backup_${timestamp}.db`);
-
+    // ─── 1. Hourly Business Hours Backup & WAL Checkpoint (RPO ≤ 1 Hour) ─────
+    // Runs at minute 0 every hour between 09:00 AM and 10:00 PM IST
+    cron.schedule('0 9-22 * * *', async () => {
+        logger.info('[BackupCron] Executing hourly business-hours backup (RPO guarantee)...');
         try {
-            // Using better-sqlite3 built-in backup API which is safe and locks correctly
-            await db.backup(backupPath);
-            logger.info(`✅ Database backed up successfully to ${backupPath}`);
-            
-            // Clean up old backups (keep last 30 days)
-            cleanOldBackups();
+            const record = await backupService.createBackup({ skipUpload: true });
+            logger.info(`[BackupCron] ✅ Hourly backup created: ${record.filename}`);
         } catch (err: any) {
-            logger.error(`❌ Automated database backup failed: ${err.message}`);
+            logger.error(`[BackupCron] ❌ Hourly backup failed: ${err.message}`, { event: 'backup.failed' });
         }
     });
 
-    logger.info('Automated database backups initialized (Runs at 11:30 PM daily).');
+    // ─── 2. End-of-Day Consolidated Archive & Cloud Sync (11:30 PM) ───────────
+    cron.schedule('30 23 * * *', async () => {
+        logger.info('[BackupCron] Starting daily consolidated database backup and offsite sync...');
+        try {
+            const record = await backupService.createBackup();
+            logger.info(`[BackupCron] ✅ Daily backup completed and verified: ${record.filename}`);
+
+            // Enqueue durable background job for continuous verification audit
+            queueService.enqueue({
+                name: 'backup_verification',
+                payload: { backupPath: record.filepath },
+                idempotencyKey: `verify_${record.filename}`
+            });
+        } catch (err: any) {
+            logger.error(`[BackupCron] ❌ Daily backup failed: ${err.message}`, { event: 'backup.failed' });
+        }
+    });
+
+    logger.info('Automated database backups initialized (Hourly RPO 9am-10pm + Daily 11:30pm offsite sync).');
 }
 
-function cleanOldBackups() {
-    try {
-        const files = fs.readdirSync(backupDir);
-        const thirtyDaysAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
-
-        let deletedCount = 0;
-        for (const file of files) {
-            if (!file.startsWith('backup_') || !file.endsWith('.db')) continue;
-
-            const filePath = path.join(backupDir, file);
-            const stats = fs.statSync(filePath);
-
-            if (stats.mtimeMs < thirtyDaysAgo) {
-                fs.unlinkSync(filePath);
-                deletedCount++;
-            }
-        }
-        
-        if (deletedCount > 0) {
-            logger.info(`Cleaned up ${deletedCount} old backup(s) older than 30 days.`);
-        }
-    } catch (err: any) {
-        logger.error(`Failed to clean old backups: ${err.message}`);
-    }
+/**
+ * Execute on-demand manual backup with full integrity and restore verification
+ */
+export async function executeManualBackup() {
+    return await backupService.createBackup();
 }

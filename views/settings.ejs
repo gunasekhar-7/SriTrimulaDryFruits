@@ -44,15 +44,21 @@
                                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                     <input type="hidden" name="user_id" value="<%= u.id %>">
                                     
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-3">
                                         <input type="text" name="username" class="form-control form-control-sm font-monospace fw-bold" value="<%= u.username %>" required placeholder="Username" style="border-radius: 8px;">
                                     </div>
-                                    <div class="col-sm-5">
-                                        <input type="password" name="password" class="form-control form-control-sm font-monospace" placeholder="New Password" required style="border-radius: 8px;">
+                                    <div class="col-sm-3">
+                                        <input type="password" name="password" class="form-control form-control-sm font-monospace" placeholder="New Password" style="border-radius: 8px;">
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <select name="role" class="form-select form-select-sm" style="border-radius: 8px;">
+                                            <option value="staff" <%= u.role === 'staff' ? 'selected' : '' %>>Staff</option>
+                                            <option value="admin" <%= u.role === 'admin' ? 'selected' : '' %>>Admin</option>
+                                        </select>
                                     </div>
                                     <div class="col-sm-3 text-end text-sm-start">
                                         <button type="submit" class="btn btn-sm btn-success fw-bold px-3 py-2 w-100" style="border-radius: 8px; font-size: 0.8rem;">
-                                            Update Credentials
+                                            Save Changes
                                         </button>
                                     </div>
                                 </form>

@@ -1,0 +1,1304 @@
+/* ==============================================================================
+   SRI TIRUMALA DRY FRUITS — ARTISANAL BOTANICAL LUXURY DESIGN SYSTEM
+   Stitch Project ID: 17161336994256065779
+   Responsive, High-Performance, Ultra-Premium Epicurean Storefront
+   ============================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap');
+
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined' !important;
+  font-weight: normal;
+  font-style: normal;
+  font-size: 20px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+  vertical-align: middle;
+}
+
+:root {
+  /* Artisanal Botanical Palette Tokens */
+  --primary: #002312;
+  --primary-container: #063a22;
+  --on-primary: #ffffff;
+  --on-primary-container: #74a585;
+  --forest-dark: #032013;
+  --forest-light: #0E5735;
+  --forest-deep: #021a0f;
+
+  --secondary: #735c00;
+  --secondary-container: #fed65b;
+  --on-secondary-container: #745c00;
+  --gold-burnished: #B89528;
+  --gold-accent: #D4AF37;
+  --gold-sheen: #F3E5AB;
+
+  --tertiary: #685e31;
+  --tertiary-container: #b7ab76;
+
+  --surface: #faf9f5;
+  --surface-bright: #faf9f5;
+  --surface-container-lowest: #ffffff;
+  --cream-container: #F4F1EA;
+  --surface-container-low: #f4f4f0;
+  --surface-container: #efeeea;
+  --surface-container-high: #e9e8e4;
+  --surface-container-highest: #e3e2df;
+  --soft-sand: #EBE7DF;
+
+  --charcoal: #1A1A1A;
+  --on-surface: #1b1c1a;
+  --on-surface-variant: #414942;
+  --outline: #717972;
+  --outline-variant: #c1c9c0;
+  --error: #ba1a1a;
+
+  /* Legacy Bridge Tokens */
+  --sf-primary: #063A22;
+  --sf-primary-light: #0E5735;
+  --sf-primary-dark: #032013;
+  --sf-gold: #D4AF37;
+  --sf-gold-light: #F3E5AB;
+  --sf-gold-dark: #B89528;
+  --sf-cream: #FAF9F5;
+  --sf-sand: #F4F1EA;
+  --sf-surface: #FFFFFF;
+  --sf-text-main: #1b1c1a;
+  --sf-text-muted: #414942;
+  --sf-border: #EBE7DF;
+  --sf-shadow-sm: 0 2px 8px rgba(6, 58, 34, 0.04);
+  --sf-shadow-md: 0 8px 24px rgba(6, 58, 34, 0.08);
+  --sf-shadow-lg: 0 16px 40px rgba(6, 58, 34, 0.14);
+  --sf-radius-sm: 4px;
+  --sf-radius-md: 8px;
+  --sf-radius-lg: 14px;
+  --sf-transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ─── Typography Utility Classes ───────────────────────────────────────────── */
+body {
+  background-color: var(--surface);
+  color: var(--on-surface);
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.brand-font,
+.font-editorial,
+h1, h2, h3, h4 {
+  font-family: 'Playfair Display', Georgia, serif;
+}
+
+.font-display-hero {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(34px, 4.5vw, 56px);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.font-headline-lg {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(26px, 3.2vw, 40px);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+}
+
+.font-headline-md {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(22px, 2.5vw, 28px);
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.font-headline-sm {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.font-title-editorial {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.45;
+}
+
+.font-label-caps {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.font-label-lg {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.font-label-md {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.font-price-lg {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 28px;
+}
+
+.font-price-md {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 22px;
+}
+
+.font-body-lg {
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+.font-body-md {
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.font-body-sm {
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+/* ─── Layout Wrappers ───────────────────────────────────────────────────────── */
+.public-main-home {
+  width: 100%;
+  max-width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+.max-w-7xl {
+  max-width: 1360px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ─── Top Announcement Bar (Stitch) ────────────────────────────────────────── */
+.top-announcement-bar {
+  background: var(--primary-container);
+  color: var(--surface);
+  padding: 8px 16px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.announcement-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--secondary-container);
+}
+
+/* ─── Storefront Navbar (Stitch Artisanal Theme) ───────────────────────────── */
+.storefront-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+  background: rgba(250, 249, 245, 0.96);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--soft-sand);
+  transition: var(--sf-transition);
+}
+
+.storefront-navbar.scrolled {
+  box-shadow: 0 8px 24px rgba(6, 58, 34, 0.06);
+  background: rgba(250, 249, 245, 0.98);
+}
+
+.brand-crest-logo {
+  height: 38px;
+  width: auto;
+  object-fit: contain;
+}
+
+.brand-title {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  color: var(--primary);
+  font-size: 1.35rem;
+  letter-spacing: -0.01em;
+}
+
+.brand-sub {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--secondary);
+  font-weight: 700;
+}
+
+/* Pill Search Input */
+.nav-search-wrapper {
+  position: relative;
+  max-width: 340px;
+  min-width: 200px;
+  width: 100%;
+}
+
+.nav-search-input {
+  background: var(--surface-container-lowest);
+  border: 1px solid var(--soft-sand);
+  border-radius: 50px;
+  color: var(--on-surface) !important;
+  font-size: 0.8125rem;
+  height: 38px;
+  padding: 0 85px 0 36px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+  transition: var(--sf-transition);
+}
+
+.nav-search-input:focus {
+  background: #ffffff;
+  border-color: var(--gold-accent);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.18);
+  outline: none;
+}
+
+.nav-search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--outline);
+  font-size: 0.85rem;
+  pointer-events: none;
+}
+
+.nav-search-chips {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  gap: 3px;
+}
+
+.nav-search-chip {
+  font-size: 8.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 6px;
+  border-radius: 50px;
+  background: var(--surface-container);
+  color: var(--on-surface-variant);
+  cursor: pointer;
+  border: none;
+  transition: var(--sf-transition);
+}
+
+.nav-search-chip:hover {
+  background: var(--secondary-container);
+  color: var(--on-secondary-container);
+}
+
+/* ─── Nav Action Buttons (Senior UI/UX Polish) ─────────────────────────────── */
+.nav-action-btn {
+  height: 38px;
+  background: var(--surface-container-lowest);
+  border: 1px solid var(--soft-sand);
+  color: var(--on-surface-variant);
+  border-radius: 50px;
+  padding: 0 13px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  white-space: nowrap !important;
+  text-decoration: none;
+  transition: var(--sf-transition);
+  cursor: pointer;
+}
+
+.nav-action-btn:hover {
+  background: var(--cream-container);
+  color: var(--primary);
+  border-color: var(--gold-accent);
+}
+
+/* Primary Conversion Button: Royal Casket */
+.nav-btn-casket {
+  height: 38px;
+  background: var(--primary-container);
+  border: 1px solid var(--primary-container);
+  color: #ffffff !important;
+  border-radius: 50px;
+  padding: 0 15px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  white-space: nowrap !important;
+  text-decoration: none;
+  transition: var(--sf-transition);
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(6, 58, 34, 0.16);
+}
+
+.nav-btn-casket:hover {
+  background: var(--forest-light);
+  border-color: var(--forest-light);
+  color: #ffffff !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(6, 58, 34, 0.22);
+}
+
+.nav-btn-casket .nav-badge {
+  background: var(--gold-accent);
+  color: var(--forest-dark);
+}
+
+/* Patron Account Pill */
+.nav-btn-account {
+  height: 38px;
+  background: var(--surface-container-lowest);
+  border: 1px solid var(--soft-sand);
+  color: var(--primary) !important;
+  border-radius: 50px;
+  padding: 0 14px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  white-space: nowrap !important;
+  text-decoration: none;
+  transition: var(--sf-transition);
+}
+
+.nav-btn-account:hover {
+  background: var(--cream-container);
+  border-color: var(--gold-accent);
+  color: var(--primary) !important;
+}
+
+/* Discreet Staff Portal Pill */
+.nav-btn-staff {
+  height: 34px;
+  background: transparent;
+  border: 1px solid rgba(6, 58, 34, 0.18);
+  color: var(--primary) !important;
+  border-radius: 50px;
+  padding: 0 11px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  white-space: nowrap !important;
+  text-decoration: none;
+  transition: var(--sf-transition);
+  opacity: 0.82;
+}
+
+.nav-btn-staff:hover {
+  background: var(--surface-container);
+  opacity: 1;
+  border-color: var(--primary);
+  color: var(--primary) !important;
+}
+
+.nav-badge {
+  background: var(--gold-accent);
+  color: var(--primary-container);
+  font-size: 10px;
+  font-weight: 800;
+  border-radius: 50px;
+  padding: 1px 6px;
+  line-height: 1.2;
+}
+
+/* ─── Mobile Sticky Bottom Navigation ──────────────────────────────────────── */
+@media (min-width: 992px) {
+  .mobile-bottom-nav {
+    display: none !important;
+  }
+}
+
+@media (max-width: 991.98px) {
+  .mobile-bottom-nav {
+    display: flex !important;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 58px;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-top: 1px solid rgba(212, 175, 55, 0.25);
+    z-index: 1040;
+    align-items: center;
+    justify-content: space-around;
+    padding: 0 6px;
+    box-shadow: 0 -4px 18px rgba(6, 58, 34, 0.07);
+  }
+
+  .mobile-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: #4A5568;
+    font-size: 10px;
+    font-weight: 600;
+    gap: 2px;
+    flex: 1;
+    background: transparent;
+    border: none;
+    padding: 4px 0;
+    transition: var(--sf-transition);
+  }
+
+  .mobile-nav-item:hover,
+  .mobile-nav-item.active {
+    color: var(--primary);
+  }
+
+  .mobile-nav-icon {
+    font-size: 18px;
+    line-height: 1;
+  }
+
+  .mobile-nav-badge {
+    position: absolute;
+    top: 2px;
+    right: 25%;
+    background: var(--gold-accent);
+    color: var(--primary);
+    font-size: 9px;
+    font-weight: 800;
+    border-radius: 50px;
+    padding: 0 4px;
+    line-height: 1.2;
+  }
+}
+
+/* Secondary Navigation Category Ribbon */
+.storefront-subnav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  padding: 10px 16px;
+  border-top: 1px solid rgba(235, 231, 223, 0.6);
+  background: var(--surface);
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.subnav-link {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--on-surface-variant);
+  text-decoration: none;
+  transition: var(--sf-transition);
+  padding: 3px 0;
+  position: relative;
+}
+
+.subnav-link:hover,
+.subnav-link.active {
+  color: var(--primary);
+}
+
+.subnav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--primary-container);
+  border-radius: 2px;
+}
+
+/* ─── Hero Section (Stitch Artisanal Luxury) ───────────────────────────────── */
+.hero-editorial-section {
+  position: relative;
+  padding: 48px 24px 64px;
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.hero-prestige-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  background: var(--surface-container);
+  border-radius: 50px;
+  border: 1px solid var(--soft-sand);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+}
+
+.pulsing-gold-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--gold-burnished);
+  box-shadow: 0 0 0 0 rgba(184, 149, 40, 0.7);
+  animation: pulseGold 2s infinite;
+}
+
+@keyframes pulseGold {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(184, 149, 40, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(184, 149, 40, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(184, 149, 40, 0); }
+}
+
+.hero-cta-btn-primary {
+  height: 48px;
+  padding: 0 28px;
+  background: var(--primary-container);
+  color: var(--surface);
+  font-weight: 700;
+  font-size: 14px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
+  box-shadow: 0 4px 14px rgba(6, 58, 34, 0.22);
+  transition: var(--sf-transition);
+}
+
+.hero-cta-btn-primary:hover {
+  background: var(--forest-light);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(6, 58, 34, 0.28);
+}
+
+.hero-cta-btn-secondary {
+  height: 48px;
+  padding: 0 24px;
+  background: var(--surface-container);
+  color: var(--primary);
+  font-weight: 700;
+  font-size: 14px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
+  border: 1px solid var(--soft-sand);
+  transition: var(--sf-transition);
+}
+
+.hero-cta-btn-secondary:hover {
+  background: var(--cream-container);
+  color: var(--forest-dark);
+}
+
+/* Hero Showcase Canvas & Floating Badges */
+.hero-showcase-canvas {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  max-width: 460px;
+  margin: 0 auto;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 20px 48px -12px rgba(6, 58, 34, 0.18);
+  background: var(--cream-container);
+  border: 1px solid var(--soft-sand);
+}
+
+.hero-showcase-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hero-showcase-canvas:hover .hero-showcase-img {
+  transform: scale(1.05);
+}
+
+.hero-showcase-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(3, 32, 19, 0) 40%, rgba(3, 32, 19, 0.85) 100%);
+  pointer-events: none;
+}
+
+.hero-showcase-caption {
+  position: absolute;
+  bottom: 22px;
+  left: 22px;
+  right: 22px;
+  color: #ffffff;
+}
+
+.floating-badge-top {
+  position: absolute;
+  top: 16px;
+  left: -12px;
+  background: #ffffff;
+  padding: 10px 14px;
+  border-radius: 10px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 220px;
+  border: 1px solid var(--soft-sand);
+  z-index: 10;
+}
+
+.floating-badge-bottom {
+  position: absolute;
+  bottom: 20px;
+  right: -12px;
+  background: var(--primary-container);
+  color: #ffffff;
+  padding: 10px 16px;
+  border-radius: 10px;
+  box-shadow: 0 12px 28px rgba(6, 58, 34, 0.25);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 10;
+}
+
+/* ─── Category Filter Ribbon ────────────────────────────────────────────────── */
+.provenance-ribbon-bar {
+  background: var(--surface-container-low);
+  padding: 24px 0;
+  border-top: 1px solid var(--soft-sand);
+  border-bottom: 1px solid var(--soft-sand);
+}
+
+.cat-pill-scroll {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+
+.cat-pill-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.cat-pill {
+  flex-shrink: 0;
+  padding: 9px 20px;
+  border-radius: 50px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid var(--soft-sand);
+  background: var(--surface-container-lowest);
+  color: var(--on-surface-variant);
+  cursor: pointer;
+  transition: var(--sf-transition);
+}
+
+.cat-pill:hover {
+  background: var(--cream-container);
+  color: var(--primary);
+  border-color: var(--gold-accent);
+}
+
+.cat-pill.active {
+  background: var(--primary-container);
+  color: #ffffff;
+  border-color: var(--primary-container);
+  box-shadow: 0 4px 12px rgba(6, 58, 34, 0.15);
+}
+
+/* ─── Product Cards (Artisanal Luxury) ─────────────────────────────────────── */
+.product-card-luxury {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 16px;
+  border: 1px solid var(--soft-sand);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: var(--sf-transition);
+  height: 100%;
+}
+
+.product-card-luxury:hover {
+  transform: translateY(-4px);
+  border-color: var(--gold-accent);
+  box-shadow: 0 14px 30px rgba(6, 58, 34, 0.09);
+}
+
+.card-badge-row {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 5;
+}
+
+.badge-discount-tag {
+  background: var(--secondary-container);
+  color: var(--on-secondary-container);
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.badge-rating-tag {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(4px);
+  color: var(--primary);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  border: 1px solid var(--soft-sand);
+}
+
+.product-media-canvas {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: var(--cream-container);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 24px;
+  margin-bottom: 14px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.product-media-canvas img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.product-card-luxury:hover .product-media-canvas img {
+  transform: scale(1.06);
+}
+
+.provenance-tag-overlay {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  background: rgba(250, 249, 245, 0.94);
+  color: var(--primary);
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+.provenance-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--outline);
+}
+
+.product-title-editorial {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--primary);
+  line-height: 1.3;
+  margin: 4px 0 8px;
+  text-decoration: none;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.product-title-editorial:hover {
+  color: var(--forest-light);
+}
+
+/* Variant Selector Chips */
+.variant-chip-group {
+  display: flex;
+  gap: 6px;
+  margin: 10px 0;
+}
+
+.variant-chip {
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 4px;
+  background: var(--surface-container);
+  color: var(--on-surface-variant);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: var(--sf-transition);
+}
+
+.variant-chip:hover {
+  background: var(--cream-container);
+}
+
+.variant-chip.active {
+  background: var(--primary-container);
+  color: #ffffff;
+}
+
+/* Price & Stock Display */
+.price-stock-box {
+  margin-top: auto;
+  padding-top: 10px;
+}
+
+.price-main {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.price-mrp {
+  font-size: 13px;
+  color: var(--outline);
+  text-decoration: line-through;
+  margin-left: 6px;
+}
+
+.stock-indicator-text {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--forest-light);
+  margin-top: 3px;
+}
+
+/* Card Button Actions */
+.btn-quick-add {
+  width: 100%;
+  height: 42px;
+  background: var(--primary-container);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 13px;
+  border-radius: 6px;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: var(--sf-transition);
+  margin-top: 12px;
+}
+
+.btn-quick-add:hover {
+  background: var(--forest-light);
+  transform: translateY(-1px);
+}
+
+.btn-quick-add:disabled {
+  background: var(--surface-container-high);
+  color: var(--outline);
+  cursor: not-allowed;
+}
+
+.btn-whatsapp-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 6px;
+  background: rgba(37, 211, 102, 0.12);
+  color: #128C7E;
+  border: 1px solid rgba(37, 211, 102, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  cursor: pointer;
+  transition: var(--sf-transition);
+}
+
+.btn-whatsapp-icon:hover {
+  background: #25D366;
+  color: #ffffff;
+}
+
+/* ─── Festive & Corporate Hampers Spotlight Banner ─────────────────────────── */
+.festive-spotlight-box {
+  background: var(--primary-container);
+  color: var(--surface);
+  border-radius: 16px;
+  padding: 48px 36px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 20px 48px rgba(3, 32, 19, 0.24);
+}
+
+.ambient-glow-circle-1 {
+  position: absolute;
+  top: -120px;
+  right: -120px;
+  width: 380px;
+  height: 380px;
+  border-radius: 50%;
+  background: rgba(254, 214, 91, 0.12);
+  filter: blur(60px);
+  pointer-events: none;
+}
+
+.ambient-glow-circle-2 {
+  position: absolute;
+  bottom: -120px;
+  left: -120px;
+  width: 380px;
+  height: 380px;
+  border-radius: 50%;
+  background: rgba(14, 87, 53, 0.35);
+  filter: blur(60px);
+  pointer-events: none;
+}
+
+.coupon-promo-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 50px;
+  background: var(--forest-dark);
+  color: var(--secondary-container);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: 1px solid rgba(254, 214, 91, 0.25);
+}
+
+.hamper-inclusions-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 14px 0 20px;
+}
+
+.hamper-inclusion-chip {
+  padding: 6px 12px;
+  border-radius: 4px;
+  background: rgba(3, 32, 19, 0.6);
+  font-size: 12px;
+  color: var(--surface-container-high);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.btn-concierge {
+  height: 48px;
+  padding: 0 26px;
+  background: var(--secondary-container);
+  color: var(--on-secondary-container);
+  font-weight: 700;
+  font-size: 14px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  transition: var(--sf-transition);
+  border: none;
+  cursor: pointer;
+}
+
+.btn-concierge:hover {
+  background: var(--gold-burnished);
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+
+/* ─── Patron Endorsements (Sensory Reviews) ────────────────────────────────── */
+.testimonial-card-editorial {
+  background: #ffffff;
+  padding: 28px;
+  border-radius: 12px;
+  border: 1px solid var(--soft-sand);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.testimonial-quote {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--primary);
+  margin-top: 10px;
+}
+
+.patron-avatar-initials {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--surface-container-high);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-family: 'Playfair Display', serif;
+}
+
+/* ─── Quality Promise 4 Pillars ────────────────────────────────────────────── */
+.pillars-container-box {
+  background: var(--surface-container-low);
+  border-radius: 16px;
+  padding: 40px;
+  border: 1px solid var(--soft-sand);
+}
+
+.pillar-icon-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  margin-bottom: 14px;
+}
+
+/* ─── Toast Feedback Drawer (Stitch Quick Add) ─────────────────────────────── */
+.fixed-cart-toast {
+  position: fixed;
+  top: 96px;
+  right: 20px;
+  z-index: 1090;
+  max-width: 420px;
+  width: calc(100% - 40px);
+  background: #ffffff;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 16px 40px rgba(3, 32, 19, 0.18);
+  border: 1px solid var(--gold-accent);
+  transition: all 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.fixed-cart-toast.translate-y-hidden {
+  display: none !important;
+  transform: translateY(-160%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.fixed-cart-toast.translate-y-visible {
+  display: block !important;
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.toast-icon-circle {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--primary-container);
+  color: var(--secondary-container);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toast-eyebrow {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--secondary);
+  margin: 0;
+}
+
+.toast-product-name {
+  font-size: 15px;
+  color: var(--primary);
+  margin: 2px 0 0;
+}
+
+.toast-benefit-text {
+  font-size: 12px;
+  color: var(--forest-light);
+  margin: 2px 0 0;
+}
+
+.toast-progress-bar-bg {
+  width: 100%;
+  height: 6px;
+  border-radius: 50px;
+  background: var(--surface-container);
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.toast-progress-bar-fill {
+  height: 100%;
+  background: var(--gold-accent);
+  border-radius: 50px;
+  transition: width 0.6s ease;
+}
+
+.toast-close-btn {
+  background: none;
+  border: none;
+  color: var(--outline);
+  cursor: pointer;
+  padding: 0;
+}
+
+.toast-close-btn:hover {
+  color: var(--primary);
+}
+
+/* ─── Luxury Footer ────────────────────────────────────────────────────────── */
+.luxury-site-footer {
+  background: var(--cream-container);
+  color: var(--on-surface);
+  border-top: 1px solid var(--soft-sand);
+  margin-top: 64px;
+  padding: 64px 0 32px;
+}
+
+.newsletter-subscribe-card {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 32px;
+  border: 1px solid var(--soft-sand);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+  margin-bottom: 48px;
+}
+
+.footer-nav-heading {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--primary);
+  margin-bottom: 16px;
+}
+
+.footer-link-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-link-list li {
+  margin-bottom: 8px;
+}
+
+.footer-link-list a {
+  font-size: 13px;
+  color: var(--on-surface-variant);
+  text-decoration: none;
+  transition: var(--sf-transition);
+}
+
+.footer-link-list a:hover {
+  color: var(--primary);
+}
+
+/* ─── Search Toolbar & Quick View Modal Overrides ──────────────────────────── */
+.search-toolbar-card {
+  border-radius: 14px;
+  background: #ffffff;
+  border: 1px solid var(--soft-sand) !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+  padding: 16px;
+}
+
+.modal-content.luxury-modal {
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--soft-sand);
+}
+
+.modal-header.luxury-modal-header {
+  background: var(--cream-container);
+  border-bottom: 1px solid var(--soft-sand);
+}
+
+/* ─── Media Queries for Responsive Touch Viewports ─────────────────────────── */
+@media (max-width: 991px) {
+  .hero-editorial-section {
+    padding: 32px 16px 48px;
+  }
+  .hero-showcase-canvas {
+    max-width: 100%;
+    margin-top: 24px;
+  }
+  .floating-badge-top {
+    left: 8px;
+    top: 8px;
+  }
+  .floating-badge-bottom {
+    right: 8px;
+    bottom: 8px;
+  }
+  .festive-spotlight-box {
+    padding: 32px 20px;
+  }
+}

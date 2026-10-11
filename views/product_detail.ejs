@@ -1,0 +1,458 @@
+<%- include('header') %>
+
+<!-- =========================
+     PRODUCT DETAIL CONTAINER
+     ========================= -->
+<div class="container py-4">
+
+    <!-- Breadcrumb Navigation -->
+    <% 
+        const rawCategory = (product.category || '').trim();
+        const detailCrumbs = [
+            { name: 'Home', url: '/' }
+        ];
+        if (rawCategory) {
+            detailCrumbs.push({
+                name: rawCategory,
+                url: '/category/' + encodeURIComponent(rawCategory)
+            });
+        }
+        detailCrumbs.push({
+            name: product.name,
+            current: true
+        });
+    %>
+    <%- include('partials/breadcrumbs', { breadcrumbs: locals.breadcrumbs || detailCrumbs }) %>
+
+    <% 
+        const stock = (product.total_qty || 0) - (product.sold_qty || 0);
+        const hasDiscount = product.mrp && Number(product.mrp) > Number(product.selling_price);
+        const discountPercent = hasDiscount ? Math.round(((product.mrp - product.selling_price) / product.mrp) * 100) : 0;
+        const savingsAmount = hasDiscount ? (Number(product.mrp) - Number(product.selling_price)).toFixed(2) : 0;
+        const cat = product.category || 'Dry Fruits';
+        let emoji = "🥥";
+        if (cat === 'Dry Fruits') emoji = "🌰";
+        else if (cat === 'Millets') emoji = "🌾";
+        else if (cat === 'Seeds') emoji = "🌱";
+        else if (cat === 'Spices') emoji = "🌶️";
+        else if (cat === 'Nuts') emoji = "🥜";
+        else if (cat === 'Sweets') emoji = "🍬";
+        const safeName = product.name.replace(/'/g, "\\'");
+    %>
+
+    <div class="card border-0 shadow-sm p-4 mb-5" style="border-radius: 24px; background: #ffffff; border: 1px solid var(--sf-border, #E5ECE7) !important;">
+        <div class="row g-4 g-lg-5 align-items-start">
+            
+            <!-- Left Column: Product Visuals -->
+            <div class="col-12 col-md-5 col-lg-5">
+                <div class="position-relative overflow-hidden" style="border-radius: 20px; background: linear-gradient(135deg, #FAF8F2, #EDEAE1); border: 1px solid var(--sf-border, #E5ECE7); min-height: 380px; display: flex; align-items: center; justify-content: center;">
+                    
+                    <!-- Category Badge -->
+                    <span class="position-absolute top-0 start-0 m-3 px-3 py-1 rounded-pill fw-bold" style="background: rgba(6, 58, 34, 0.9); color: var(--sf-gold, #D4AF37); font-size: 0.78rem; letter-spacing: 0.05em; z-index: 2;">
+                        <%= cat %>
+                    </span>
+
+                    <!-- Discount Badge -->
+                    <% if (hasDiscount) { %>
+                        <span class="position-absolute top-0 end-0 m-3 badge bg-success px-3 py-2 fw-bold" style="font-size: 0.82rem; border-radius: 12px; z-index: 2;">
+                            <%= discountPercent %>% OFF
+                        </span>
+                    <% } %>
+
+                    <!-- Product Image -->
+                    <% if (product.image_url) { %>
+                        <img src="<%= product.image_url %>" 
+                             alt="<%= product.name %>" 
+                             class="img-fluid w-100 h-100 object-fit-cover" 
+                             style="max-height: 420px; border-radius: 20px; z-index: 1;"
+                             loading="eager"
+                             decoding="async"
+                             onerror="this.style.display='none'; document.getElementById('productEmojiLarge').style.display='block';">
+                    <% } %>
+
+                    <!-- Emoji Fallback Backdrop -->
+                    <div id="productEmojiLarge" 
+                         style="font-size: 8rem; user-select: none; <%= product.image_url ? 'display: none;' : '' %>" 
+                         aria-hidden="true">
+                        <%= emoji %>
+                    </div>
+                </div>
+
+                <!-- Quality Highlights -->
+                <div class="row g-2 mt-3 text-center">
+                    <div class="col-4">
+                        <div class="p-2 rounded bg-light border text-muted" style="font-size: 0.75rem;">
+                            <div class="fw-bold text-dark">🌱 100% Pure</div>
+                            Natural Harvest
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="p-2 rounded bg-light border text-muted" style="font-size: 0.75rem;">
+                            <div class="fw-bold text-dark">🔒 Sealed</div>
+                            Vacuum Packed
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="p-2 rounded bg-light border text-muted" style="font-size: 0.75rem;">
+                            <div class="fw-bold text-dark">⚡ Fresh</div>
+                            Direct from Tekkali
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Product Information & Purchase Actions -->
+            <div class="col-12 col-md-7 col-lg-7">
+                <div class="d-flex flex-column h-100">
+                    
+                    <div class="mb-2">
+                        <span class="text-uppercase fw-bold" style="color: var(--sf-gold-dark, #AA820A); font-size: 0.78rem; letter-spacing: 0.12em;">
+                            Sri Tirumala Dry Fruits & Millets
+                        </span>
+                    </div>
+
+                    <!-- Unique H1 Product Title -->
+                    <h1 class="brand-font mb-2" style="color: var(--sf-primary, #063A22); font-size: 2.1rem; font-weight: 700; line-height: 1.25;">
+                        <%= product.name %>
+                    </h1>
+
+                    <!-- SKU & Stock Status -->
+                    <div class="d-flex flex-wrap align-items-center gap-3 mb-2">
+                        <span class="text-muted small">
+                            SKU / Barcode: <strong class="text-dark"><%= product.barcode %></strong>
+                        </span>
+                        
+                        <% if (stock <= 0) { %>
+                            <span class="badge bg-secondary px-3 py-1">Out of Stock</span>
+                        <% } else if (stock < 10) { %>
+                            <span class="badge bg-warning text-dark px-3 py-1">⚠️ Only <%= stock %> left in stock</span>
+                        <% } else { %>
+                            <span class="badge bg-success px-3 py-1">✓ In Stock (<%= stock %> available)</span>
+                        <% } %>
+                    </div>
+
+                    <!-- Verified Attribute Badges -->
+                    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+                        <% if (locals.content && content.gradeVariety) { %>
+                            <span class="badge bg-light text-dark border px-2 py-1 rounded-pill">
+                                🏷️ <%= content.gradeVariety %>
+                            </span>
+                        <% } %>
+                        <span class="badge bg-light text-dark border px-2 py-1 rounded-pill">
+                            📦 <%= locals.content ? content.packSizeText : 'Standard Pack' %>
+                        </span>
+                        <span class="badge bg-light text-dark border px-2 py-1 rounded-pill">
+                            📍 Tekkali Storefront
+                        </span>
+                    </div>
+
+                    <hr class="my-2 text-muted opacity-25">
+
+                    <!-- Pricing Display -->
+                    <div class="d-flex align-items-baseline gap-3 my-3">
+                        <div class="display-6 fw-bold" style="color: var(--sf-primary, #063A22); font-family: 'Plus Jakarta Sans', sans-serif;">
+                            ₹<%= Number(product.selling_price).toFixed(2) %>
+                        </div>
+                        
+                        <% if (hasDiscount) { %>
+                            <div class="text-muted text-decoration-line-through fs-5">
+                                MRP ₹<%= Number(product.mrp).toFixed(2) %>
+                            </div>
+                            <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-1 fw-bold" style="font-size: 0.8rem;">
+                                Save ₹<%= savingsAmount %>
+                            </span>
+                        <% } %>
+                    </div>
+                    <div class="small text-muted mb-4">
+                        (Inclusive of all applicable GST & taxes. Free local store pickup available at Tekkali)
+                    </div>
+
+                    <!-- Description -->
+                    <div class="p-3 rounded mb-3" style="background: var(--sf-cream, #FAF9F5); border: 1px solid var(--sf-border, #E5ECE7);">
+                        <h6 class="fw-bold mb-2" style="color: var(--sf-primary, #063A22);">
+                            <%= locals.content && content.isCustomDescription ? 'Product Details' : 'Product Overview & Sourcing' %>
+                        </h6>
+                        <p class="m-0 text-secondary" style="font-size: 0.95rem; line-height: 1.6;">
+                            <%= locals.content ? content.description : product.name %>
+                        </p>
+                    </div>
+
+                    <% if (locals.content) { %>
+                    <!-- Practical Storage & Culinary Advice (High Customer Value) -->
+                    <div class="row g-2 mb-4">
+                        <div class="col-12 col-sm-6">
+                            <div class="p-3 rounded h-100" style="background: #ffffff; border: 1px solid var(--sf-border, #E5ECE7);">
+                                <div class="fw-bold small text-dark mb-1">🌿 Recommended Storage</div>
+                                <div class="text-muted small" style="line-height: 1.5;"><%= content.storageInstructions %></div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-6">
+                            <div class="p-3 rounded h-100" style="background: #ffffff; border: 1px solid var(--sf-border, #E5ECE7);">
+                                <div class="fw-bold small text-dark mb-1">🥣 Culinary Uses & Serving</div>
+                                <div class="text-muted small" style="line-height: 1.5;"><%= content.culinaryUsage %></div>
+                            </div>
+                        </div>
+                    </div>
+                    <% } %>
+
+                    <!-- Purchase Interaction Stepper & Buttons -->
+                    <div class="row g-3 align-items-center mb-4">
+                        <!-- Quantity Selector -->
+                        <div class="col-auto">
+                            <label for="detailProductQty" class="form-label small fw-bold text-muted mb-1 d-block">Quantity</label>
+                            <div class="input-group" style="width: 130px;">
+                                <button class="btn btn-outline-secondary" type="button" onclick="adjustDetailQty(-1)" <%= stock <= 0 ? 'disabled' : '' %>>−</button>
+                                <input type="number" id="detailProductQty" class="form-control text-center fw-bold" value="1" min="1" max="<%= Math.max(1, stock) %>" readonly>
+                                <button class="btn btn-outline-secondary" type="button" onclick="adjustDetailQty(1)" <%= stock <= 0 ? 'disabled' : '' %>>+</button>
+                            </div>
+                        </div>
+
+                        <!-- Add to Cart Button -->
+                        <div class="col">
+                            <label class="form-label small fw-bold text-muted mb-1 d-block">&nbsp;</label>
+                            <button class="btn btn-brand w-100 py-2 fw-bold shadow-sm" 
+                                    id="detailAddToCartBtn"
+                                    <%= stock <= 0 ? 'disabled' : '' %>
+                                    onclick="handleDetailAddToCart(<%= product.id %>, '<%= safeName %>')">
+                                <%= stock <= 0 ? 'Out of Stock' : '🛒 Add to Cart' %>
+                            </button>
+                        </div>
+
+                        <!-- Direct WhatsApp Order Button -->
+                        <div class="col-12 col-sm-auto">
+                            <label class="form-label small fw-bold text-muted mb-1 d-block d-none d-sm-block">&nbsp;</label>
+                            <button type="button" 
+                                    class="btn btn-outline-success w-100 py-2 fw-bold"
+                                    onclick="orderDetailViaWhatsApp(<%= product.id %>, '<%= safeName %>', <%= product.selling_price %>, '<%= cat %>')">
+                                💬 WhatsApp Order
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Trust Guarantees -->
+                    <div class="mt-auto pt-3 border-top">
+                        <div class="row g-2 text-muted small">
+                            <div class="col-12 col-md-6 d-flex align-items-center gap-2">
+                                <span>🚚</span> Express dispatch across Tekkali, Srikakulam & Andhra Pradesh
+                            </div>
+                            <div class="col-12 col-md-6 d-flex align-items-center gap-2">
+                                <span>📞</span> Customer Helpline & WhatsApp: +91 91331 33931
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Specifications Table -->
+    <div class="card border-0 shadow-sm p-4 mb-5" style="border-radius: 20px; background: #ffffff; border: 1px solid var(--sf-border, #E5ECE7) !important;">
+        <h4 class="brand-font mb-3" style="color: var(--sf-primary, #063A22);">Specifications & Product Details</h4>
+        <div class="table-responsive">
+            <table class="table table-bordered mb-0">
+                <tbody>
+                    <% if (locals.content && content.verifiedAttributes) { %>
+                        <% content.verifiedAttributes.forEach(attr => { %>
+                            <tr>
+                                <th class="bg-light text-muted w-25"><%= attr.key %></th>
+                                <td><%= attr.value %></td>
+                            </tr>
+                        <% }); %>
+                    <% } else { %>
+                        <tr>
+                            <th class="bg-light text-muted w-25">Product Name</th>
+                            <td><strong><%= product.name %></strong></td>
+                        </tr>
+                        <tr>
+                            <th class="bg-light text-muted">Category</th>
+                            <td><a href="/category/<%= encodeURIComponent(cat) %>" class="text-decoration-none fw-semibold"><%= cat %></a></td>
+                        </tr>
+                        <tr>
+                            <th class="bg-light text-muted">SKU / Barcode</th>
+                            <td><%= product.barcode %></td>
+                        </tr>
+                    <% } %>
+                    <tr>
+                        <th class="bg-light text-muted">Pricing</th>
+                        <td>₹<%= Number(product.selling_price).toFixed(2) %> (Tax Included)</td>
+                    </tr>
+                    <tr>
+                        <th class="bg-light text-muted">Availability</th>
+                        <td><%= stock > 0 ? '✓ In Stock (' + stock + ' units available for dispatch)' : 'Currently Unavailable' %></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Related Products Section -->
+    <% if (relatedProducts && relatedProducts.length > 0) { %>
+    <div class="mb-5" id="related-products">
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+            <div>
+                <h3 class="brand-font m-0" style="color: var(--sf-primary, #063A22); font-size: 1.6rem;">Related Products</h3>
+                <small class="text-muted">Handcrafted selections from our <%= cat %> collection</small>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <a href="/category/<%= encodeURIComponent(cat) %>" class="btn btn-outline-success btn-sm rounded-pill px-3 fw-bold">
+                    View All <%= cat %> →
+                </a>
+                <button type="button" 
+                        class="carousel-nav-btn" 
+                        aria-label="Scroll previous related products" 
+                        onclick="scrollRelatedProducts(-1)">
+                    ‹
+                </button>
+                <button type="button" 
+                        class="carousel-nav-btn" 
+                        aria-label="Scroll next related products" 
+                        onclick="scrollRelatedProducts(1)">
+                    ›
+                </button>
+            </div>
+        </div>
+
+        <div class="related-carousel-container" id="relatedProductsTrack" tabindex="0" role="region" aria-label="Related products carousel">
+            <% relatedProducts.forEach(function(rp) { 
+                if (rp.id === product.id) return;
+                const rpStock = (rp.total_qty || 0) - (rp.sold_qty || 0);
+                const rpHadDiscount = rp.mrp && Number(rp.mrp) > Number(rp.selling_price);
+                const rpDiscount = rpHadDiscount ? Math.round(((rp.mrp - rp.selling_price) / rp.mrp) * 100) : 0;
+                let rpEmoji = "🌰";
+                const rpCat = rp.category || 'Dry Fruits';
+                if (rpCat === 'Millets') rpEmoji = "🌾";
+                else if (rpCat === 'Seeds') rpEmoji = "🌱";
+                else if (rpCat === 'Spices') rpEmoji = "🌶️";
+                else if (rpCat === 'Nuts') rpEmoji = "🥜";
+                else if (rpCat === 'Sweets') rpEmoji = "🍬";
+            %>
+            <div class="related-carousel-card">
+                <div class="product-grid-card h-100 d-flex flex-column">
+                    <div class="product-media-wrapper position-relative">
+                        <span class="category-tag"><%= rpCat %></span>
+                        <% if (rpHadDiscount) { %>
+                            <span class="discount-pill"><%= rpDiscount %>% OFF</span>
+                        <% } %>
+                        <a href="/product/<%= rp.id %>" class="d-block w-100 h-100 text-decoration-none" aria-label="View <%= rp.name %> details">
+                            <% if (rp.image_url) { %>
+                                <img src="<%= rp.image_url %>" alt="<%= rp.name %>" loading="lazy" decoding="async" class="product-card-img" onerror="this.style.display='none';">
+                            <% } %>
+                            <div class="product-emoji-backdrop" aria-hidden="true"><%= rpEmoji %></div>
+                        </a>
+                    </div>
+                    <div class="product-details d-flex flex-column flex-grow-1 p-3">
+                        <a href="/product/<%= rp.id %>" class="grid-product-name text-decoration-none text-dark fw-bold mb-1" title="<%= rp.name %>"><%= rp.name %></a>
+                        <div class="mt-auto pt-2">
+                            <% if (rpHadDiscount) { %>
+                                <div class="grid-product-mrp text-muted small text-decoration-line-through">MRP ₹<%= Number(rp.mrp).toFixed(2) %></div>
+                            <% } %>
+                            <div class="grid-product-price text-success fw-bold mb-2">₹<%= Number(rp.selling_price).toFixed(2) %></div>
+                        </div>
+                        <a href="/product/<%= rp.id %>" class="btn btn-sm btn-outline-success w-100 fw-bold">
+                            View Product
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <% }); %>
+        </div>
+    </div>
+    <% } %>
+
+</div>
+
+<style>
+.related-carousel-container {
+    display: flex;
+    gap: 1.25rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    padding: 0.5rem 0.25rem 1rem 0.25rem;
+    scrollbar-width: thin;
+}
+.related-carousel-card {
+    flex: 0 0 calc(25% - 0.95rem);
+    min-width: 230px;
+    scroll-snap-align: start;
+}
+@media (max-width: 991px) {
+    .related-carousel-card {
+        flex: 0 0 calc(33.333% - 0.85rem);
+        min-width: 210px;
+    }
+}
+@media (max-width: 767px) {
+    .related-carousel-card {
+        flex: 0 0 calc(50% - 0.65rem);
+        min-width: 170px;
+    }
+}
+@media (max-width: 480px) {
+    .related-carousel-card {
+        flex: 0 0 80%;
+        min-width: 200px;
+    }
+}
+.carousel-nav-btn {
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 1px solid #dee2e6;
+    background: #fff;
+    color: #333;
+    font-size: 1.2rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.carousel-nav-btn:hover {
+    background: var(--sf-primary, #063A22);
+    color: #fff;
+    border-color: var(--sf-primary, #063A22);
+}
+</style>
+
+<script>
+function scrollRelatedProducts(direction) {
+    const track = document.getElementById('relatedProductsTrack');
+    if (!track) return;
+    const card = track.querySelector('.related-carousel-card');
+    const scrollAmount = card ? (card.offsetWidth + 20) * direction : 280 * direction;
+    track.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+}
+
+function adjustDetailQty(delta) {
+    const input = document.getElementById('detailProductQty');
+    if (!input) return;
+    let val = parseInt(input.value, 10) || 1;
+    const max = parseInt(input.getAttribute('max'), 10) || 99;
+    val = Math.max(1, Math.min(max, val + delta));
+    input.value = val;
+}
+
+function handleDetailAddToCart(productId, productName) {
+    const qtyInput = document.getElementById('detailProductQty');
+    const quantity = qtyInput ? (parseInt(qtyInput.value, 10) || 1) : 1;
+    if (window.Storefront && window.Storefront.addToCart) {
+        window.Storefront.addToCart(productId, quantity, productName);
+    }
+}
+
+function orderDetailViaWhatsApp(id, name, price, category) {
+    const qtyInput = document.getElementById('detailProductQty');
+    const qty = qtyInput ? (parseInt(qtyInput.value, 10) || 1) : 1;
+    const total = (price * qty).toFixed(2);
+    const storeUrl = window.location.href;
+    const msg = `Hello Sri Tirumala Dry Fruits! I would like to order:\n\n📦 *${name}*\n🏷️ Category: ${category}\n🔢 Quantity: ${qty}\n💰 Price: ₹${price} each (Total: ₹${total})\n🔗 Product Link: ${storeUrl}\n\nPlease confirm availability and dispatch details.`;
+    window.open(`https://wa.me/919133133931?text=${encodeURIComponent(msg)}`, '_blank');
+}
+</script>
+
+<%- include('footer') %>

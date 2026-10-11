@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Checkout - Sri Tirumala Dryfruits</title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/storefront.css">
+  <style>
+    :root {
+      --brand-gold: #D4AF37;
+      --brand-green: #063A22;
+      --brand-green-dark: #032113;
+    }
+    body {
+      background-color: var(--sf-cream, #FAF9F5);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .checkout-step {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 20px;
+      border: 1px solid #E5ECE7;
+      box-shadow: 0 4px 16px rgba(6, 58, 34, 0.05);
+    }
+    .checkout-step-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: var(--brand-green-dark);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .checkout-step-title .step-number {
+      background: var(--brand-gold);
+      color: var(--brand-green-dark);
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+    }
+    .order-summary {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      position: sticky;
+      top: 20px;
+    }
+    .summary-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .summary-total {
+      display: flex;
+      justify-content: space-between;
+      font-size: 1.25rem;
+      font-weight: bold;
+      border-top: 2px solid #eee;
+      padding-top: 15px;
+      margin-top: 15px;
+    }
+    .address-card {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .address-card:hover {
+      border-color: var(--brand-green);
+    }
+    .address-card.selected {
+      border-color: var(--brand-green);
+      background-color: rgba(46, 92, 49, 0.05);
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-dark" style="background-color: var(--brand-green-dark);">
+    <div class="container d-flex justify-content-center">
+      <a class="navbar-brand text-white fw-bold" href="/">
+        <i class="fas fa-leaf me-2" style="color: var(--brand-gold);"></i>
+        Secure Checkout
+      </a>
+    </div>
+  </nav>
+
+  <div class="container mt-4 mb-5">
+    <form id="checkoutForm" action="/api/store/checkout" method="POST">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="row">
+        
+        <!-- Left Column: Checkout Steps -->
+        <div class="col-lg-8">
+          
+          <!-- Step 1: Customer Details -->
+          <div class="checkout-step">
+            <div class="checkout-step-title">
+              <span class="step-number">1</span> Contact Details
+            </div>
+            <% if (!customer) { %>
+              <div class="alert alert-info">
+                Already have an account? <a href="/customer/login" class="fw-bold text-decoration-none">Log in</a> for faster checkout.
+              </div>
+            <% } %>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Full Name <span class="text-danger">*</span></label>
+                <input type="text" name="name" class="form-control" value="<%= customer ? customer.name : '' %>" required minlength="2">
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Phone Number (10 digits) <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text">+91</span>
+                  <input type="text" name="phone" class="form-control" value="<%= customer ? customer.phone : '' %>" required pattern="[6-9]\d{9}" placeholder="9876543210">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2: Delivery Method -->
+          <div class="checkout-step">
+            <div class="checkout-step-title">
+              <span class="step-number">2</span> Delivery Method
+            </div>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="address-card w-100 h-100 selected" id="methodDelivery">
+                  <div class="d-flex align-items-center">
+                    <input class="form-check-input me-3" type="radio" name="delivery_type" value="DELIVERY" checked onchange="toggleDeliveryMethod()">
+                    <div>
+                      <h6 class="mb-1"><i class="fas fa-truck text-muted me-2"></i> Home Delivery</h6>
+                      <small class="text-muted">Delivered to your address</small>
+                    </div>
+                  </div>
+                </label>
+              </div>
+              <div class="col-md-6">
+                <label class="address-card w-100 h-100" id="methodPickup">
+                  <div class="d-flex align-items-center">
+                    <input class="form-check-input me-3" type="radio" name="delivery_type" value="STORE_PICKUP" onchange="toggleDeliveryMethod()">
+                    <div>
+                      <h6 class="mb-1"><i class="fas fa-store text-muted me-2"></i> Store Pickup</h6>
+                      <small class="text-muted">Pick up from our store</small>
+                    </div>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <!-- Address Selection -->
+            <div id="addressSection" class="mt-4">
+              <h6 class="mb-3">Shipping Address <span class="text-danger">*</span></h6>
+              
+              <% if (addresses && addresses.length > 0) { %>
+                <div class="mb-3">
+                  <select class="form-select" id="savedAddresses" onchange="fillAddress(this)">
+                    <option value="">-- Choose a saved address --</option>
+                    <% addresses.forEach(addr => { %>
+                      <option value="<%= addr.id %>" data-address="<%= addr.address_line %>" data-landmark="<%= addr.landmark || '' %>" <%= addr.is_default ? 'selected' : '' %>>
+                        <%= addr.address_line %> <%= addr.landmark ? '(' + addr.landmark + ')' : '' %> <%= addr.is_default ? '(Default)' : '' %>
+                      </option>
+                    <% }) %>
+                    <option value="new">+ Enter a new address</option>
+                  </select>
+                </div>
+              <% } %>
+
+              <div class="mb-3">
+                <textarea name="address" id="addressField" class="form-control" rows="2" placeholder="Full Address (House No, Street, Area)"></textarea>
+              </div>
+              <div class="mb-3">
+                <input type="text" name="landmark" id="landmarkField" class="form-control" placeholder="Landmark (Optional)">
+              </div>
+            </div>
+            
+            <div class="mt-3">
+              <label class="form-label">Order Notes (Optional)</label>
+              <textarea name="notes" class="form-control" rows="2" placeholder="Any special instructions?"></textarea>
+            </div>
+          </div>
+
+          <!-- Step 3: Payment Method -->
+          <div class="checkout-step">
+            <div class="checkout-step-title">
+              <span class="step-number">3</span> Payment Method
+            </div>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="address-card w-100 h-100 selected" id="methodCod">
+                  <div class="d-flex align-items-center">
+                    <input class="form-check-input me-3" type="radio" name="payment_mode" value="COD" checked onchange="togglePaymentMethod()">
+                    <div>
+                      <h6 class="mb-1"><i class="fas fa-money-bill-wave text-muted me-2"></i> Cash on Delivery</h6>
+                      <small class="text-muted">Pay when you receive</small>
+                    </div>
+                  </div>
+                </label>
+              </div>
+              <div class="col-md-6">
+                <label class="address-card w-100 h-100" id="methodUpi">
+                  <div class="d-flex align-items-center">
+                    <input class="form-check-input me-3" type="radio" name="payment_mode" value="UPI_QR" onchange="togglePaymentMethod()">
+                    <div>
+                      <h6 class="mb-1"><i class="fas fa-qrcode text-muted me-2"></i> UPI QR</h6>
+                      <small class="text-muted">Scan QR and pay at delivery</small>
+                    </div>
+                  </div>
+                </label>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right Column: Order Summary -->
+        <div class="col-lg-4">
+          <div class="order-summary">
+            <h5 class="mb-4">Order Summary</h5>
+            
+            <div style="max-height: 300px; overflow-y: auto; margin-bottom: 20px; padding-right: 5px;">
+              <% cart.items.forEach(item => { %>
+                <div class="d-flex justify-content-between mb-3 border-bottom pb-2">
+                  <div>
+                    <h6 class="mb-0 fs-6 text-truncate" style="max-width: 200px;"><%= item.name %></h6>
+                    <small class="text-muted">Qty: <%= item.qty %> × ₹<%= item.price %></small>
+                  </div>
+                  <div class="fw-bold">
+                    ₹<%= (item.price * item.qty) %>
+                  </div>
+                </div>
+              <% }) %>
+            </div>
+
+            <div class="summary-item">
+              <span class="text-muted">Subtotal</span>
+              <span class="fw-bold">₹<span id="summarySubtotal"><%= cart.subtotal %></span></span>
+            </div>
+            <div class="summary-item text-success" style="display: none;" id="discountRow">
+              <span>Discount</span>
+              <span>-₹<span id="summaryDiscount">0</span></span>
+            </div>
+            <div class="summary-item">
+              <span class="text-muted">Delivery Fee</span>
+              <span class="fw-bold" id="deliveryDisplay">Calculating...</span>
+            </div>
+            
+            <div class="summary-total">
+              <span>Total Amount</span>
+              <span style="color: var(--brand-green-dark);">₹<span id="summaryTotal">...</span></span>
+            </div>
+
+            <button type="submit" class="btn w-100 mt-4 py-3 fw-bold" id="placeOrderBtn" style="background-color: var(--brand-gold); color: var(--brand-green-dark); border-radius: 8px; font-size: 1.1rem;">
+              <i class="fab fa-whatsapp me-2"></i> Complete Order
+            </button>
+            <p class="text-center text-muted small mt-2">You will receive a WhatsApp confirmation</p>
+            
+            <div id="checkoutError" class="alert alert-danger mt-3" style="display: none;"></div>
+          </div>
+        </div>
+
+      </div>
+    </form>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const subtotal = <%= cart.subtotal %>;
+    
+    function calculateTotals() {
+      const deliveryType = document.querySelector('input[name="delivery_type"]:checked').value;
+      
+      let deliveryFee = 0;
+      if (deliveryType === 'DELIVERY') {
+        deliveryFee = subtotal >= 500 ? 0 : 50;
+      }
+      
+      const deliveryDisplay = document.getElementById('deliveryDisplay');
+      if (deliveryType === 'STORE_PICKUP') {
+        deliveryDisplay.innerHTML = '<span class="text-success">Free (Pickup)</span>';
+      } else if (deliveryFee === 0) {
+        deliveryDisplay.innerHTML = '<span class="text-success">Free</span>';
+      } else {
+        deliveryDisplay.innerText = '₹' + deliveryFee;
+      }
+      
+      const total = subtotal + deliveryFee;
+      document.getElementById('summaryTotal').innerText = total;
+    }
+
+    function toggleDeliveryMethod() {
+      const deliveryType = document.querySelector('input[name="delivery_type"]:checked').value;
+      
+      document.getElementById('methodDelivery').classList.toggle('selected', deliveryType === 'DELIVERY');
+      document.getElementById('methodPickup').classList.toggle('selected', deliveryType === 'STORE_PICKUP');
+      
+      const addressSection = document.getElementById('addressSection');
+      const addressField = document.getElementById('addressField');
+      
+      if (deliveryType === 'DELIVERY') {
+        addressSection.style.display = 'block';
+        addressField.required = true;
+      } else {
+        addressSection.style.display = 'none';
+        addressField.required = false;
+      }
+      
+      calculateTotals();
+    }
+    
+    function togglePaymentMethod() {
+      const paymentMode = document.querySelector('input[name="payment_mode"]:checked').value;
+      document.getElementById('methodCod').classList.toggle('selected', paymentMode === 'COD');
+      document.getElementById('methodUpi').classList.toggle('selected', paymentMode === 'UPI_QR');
+    }
+
+    function fillAddress(selectObj) {
+      if (!selectObj.value || selectObj.value === 'new') {
+        document.getElementById('addressField').value = '';
+        document.getElementById('landmarkField').value = '';
+        return;
+      }
+      
+      const selectedOption = selectObj.options[selectObj.selectedIndex];
+      document.getElementById('addressField').value = selectedOption.getAttribute('data-address');
+      document.getElementById('landmarkField').value = selectedOption.getAttribute('data-landmark');
+    }
+
+    document.getElementById('checkoutForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const btn = document.getElementById('placeOrderBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Processing...';
+      
+      const errorDiv = document.getElementById('checkoutError');
+      errorDiv.style.display = 'none';
+      
+      const formData = new FormData(this);
+      const data = Object.fromEntries(formData.entries());
+      
+      try {
+        const response = await fetch('/api/v1/store/checkout', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Idempotency-Key': 'checkout_' + Date.now(),
+            'CSRF-Token': data._csrf
+          },
+          body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok && result.success) {
+          window.location.href = result.data.redirect || '/';
+        } else {
+          errorDiv.innerText = result.error?.message || result.message || 'Error processing checkout';
+          errorDiv.style.display = 'block';
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fab fa-whatsapp me-2"></i> Complete Order';
+        }
+      } catch (err) {
+        errorDiv.innerText = 'Network error. Please try again.';
+        errorDiv.style.display = 'block';
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fab fa-whatsapp me-2"></i> Complete Order';
+      }
+    });
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      toggleDeliveryMethod();
+      const savedAddresses = document.getElementById('savedAddresses');
+      if (savedAddresses) {
+        fillAddress(savedAddresses);
+      }
+    });
+  </script>
+</body>
+</html>

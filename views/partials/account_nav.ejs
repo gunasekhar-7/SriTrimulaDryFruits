@@ -1,0 +1,25 @@
+<div class="card border-0 shadow-sm p-3 mb-4" style="border-radius: 16px; border: 1px solid var(--sf-border) !important;">
+  <div class="small fw-bold text-muted text-uppercase mb-2 px-2" style="letter-spacing: 0.08em; font-size: 0.72rem;">Account Menu</div>
+  <nav class="nav nav-pills flex-column gap-1">
+    <a class="nav-link py-2 px-3 fw-semibold d-flex align-items-center gap-2 <%= typeof currentPath !== 'undefined' && currentPath === '/account/orders' ? 'active' : 'text-dark' %>" 
+       href="/account/orders"
+       style="<%= typeof currentPath !== 'undefined' && currentPath === '/account/orders' ? 'background-color: var(--sf-primary, #063A22); color: #fff;' : '' %> border-radius: 10px;">
+      <span>📦</span> <span>My Orders</span>
+    </a>
+    <a class="nav-link py-2 px-3 fw-semibold d-flex align-items-center gap-2 <%= typeof currentPath !== 'undefined' && currentPath === '/account/wishlist' ? 'active' : 'text-dark' %>" 
+       href="/account/wishlist"
+       style="<%= typeof currentPath !== 'undefined' && currentPath === '/account/wishlist' ? 'background-color: var(--sf-primary, #063A22); color: #fff;' : '' %> border-radius: 10px;">
+      <span>❤️</span> <span>My Wishlist</span>
+    </a>
+    <a class="nav-link py-2 px-3 fw-semibold d-flex align-items-center gap-2 <%= typeof currentPath !== 'undefined' && currentPath === '/account/addresses' ? 'active' : 'text-dark' %>" 
+       href="/account/addresses"
+       style="<%= typeof currentPath !== 'undefined' && currentPath === '/account/addresses' ? 'background-color: var(--sf-primary, #063A22); color: #fff;' : '' %> border-radius: 10px;">
+      <span>📍</span> <span>Saved Addresses</span>
+    </a>
+    <a class="nav-link py-2 px-3 fw-semibold d-flex align-items-center gap-2 <%= typeof currentPath !== 'undefined' && currentPath === '/account/profile' ? 'active' : 'text-dark' %>" 
+       href="/account/profile"
+       style="<%= typeof currentPath !== 'undefined' && currentPath === '/account/profile' ? 'background-color: var(--sf-primary, #063A22); color: #fff;' : '' %> border-radius: 10px;">
+      <span>📝</span> <span>Profile Info</span>
+    </a>
+  </nav>
+</div>

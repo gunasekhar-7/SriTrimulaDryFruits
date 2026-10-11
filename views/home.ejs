@@ -1,474 +1,997 @@
 <%- include('header') %>
 
-<style>
-/* =========================
-   STOREFRONT PREMIUM THEMING
-   ========================= */
-.storefront-hero {
-    background: radial-gradient(circle at top right, rgba(212, 175, 55, 0.15), transparent 60%), 
-                linear-gradient(135deg, var(--brand-green), #031c10);
-    color: white;
-    padding: 60px 40px;
-    border-radius: 24px;
-    box-shadow: 0 15px 35px rgba(6, 58, 34, 0.25);
-    position: relative;
-    overflow: hidden;
-    border: 1px solid rgba(212, 175, 55, 0.15);
-}
-
-.storefront-hero::before {
-    content: '';
-    position: absolute;
-    top: 0; right: 0; bottom: 0; left: 0;
-    background-image: radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-    background-size: 20px 20px;
-    opacity: 0.7;
-}
-
-.storefront-hero h1 {
-    font-size: 3.25rem;
-    line-height: 1.15;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-}
-
-.storefront-hero p {
-    font-size: 1.15rem;
-    color: rgba(255, 255, 255, 0.8);
-    max-width: 600px;
-    margin: 15px auto 0;
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    font-weight: 500;
-}
-
-.hero-divider {
-    width: 60px;
-    height: 3px;
-    background-color: var(--brand-gold);
-    margin: 20px auto;
-    border-radius: 2px;
-}
-
-/* Category Filter Chips */
-.category-pills-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
-}
-
-.premium-chip {
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.9);
-    padding: 10px 22px;
-    border-radius: 50px;
-    font-weight: 600;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: var(--transition);
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    text-decoration: none;
-}
-
-.premium-chip:hover {
-    background: var(--brand-gold);
-    color: var(--brand-green-dark) !important;
-    border-color: var(--brand-gold);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(212, 175, 55, 0.25);
-}
-
-.premium-chip.active {
-    background: var(--brand-gold);
-    color: var(--brand-green-dark);
-    border-color: var(--brand-gold);
-    box-shadow: 0 8px 20px rgba(212, 175, 55, 0.25);
-}
-
-/* Modern Card Layout */
-.product-grid-card {
-    border: 1px solid #E9EFEA;
-    border-radius: 20px;
-    background: #ffffff;
-    transition: var(--transition);
-    overflow: hidden;
-    position: relative;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
-.product-grid-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 20px 40px -10px rgba(6, 58, 34, 0.12);
-    border-color: rgba(212, 175, 55, 0.3);
-}
-
-.product-media-wrapper {
-    position: relative;
-    padding-top: 75%; /* 4:3 Aspect Ratio */
-    background: linear-gradient(135deg, #FAF9F5, #F1EFEA);
-    overflow: hidden;
-}
-
-.product-emoji-backdrop {
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 3.5rem;
-    transition: var(--transition);
-}
-
-.product-grid-card:hover .product-emoji-backdrop {
-    transform: scale(1.15) rotate(5deg);
-}
-
-.category-tag {
-    position: absolute;
-    top: 15px;
-    left: 15px;
-    background: rgba(6, 58, 34, 0.85);
-    backdrop-filter: blur(8px);
-    color: var(--brand-gold);
-    font-size: 0.72rem;
-    font-weight: 700;
-    padding: 6px 12px;
-    border-radius: 50px;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    border: 1px solid rgba(212, 175, 55, 0.3);
-}
-
-.product-details {
-    padding: 24px;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-}
-
-.grid-product-name {
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    font-weight: 700;
-    font-size: 1.15rem;
-    color: var(--brand-green-dark);
-    margin-bottom: 8px;
-    line-height: 1.3;
-}
-
-.grid-product-price {
-    font-size: 1.35rem;
-    font-weight: 800;
-    color: var(--brand-green-light);
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    margin-top: auto;
-}
-
-.grid-product-mrp {
-    font-size: 0.82rem;
-    color: var(--text-light);
-    text-decoration: line-through;
-    margin-bottom: 4px;
-}
-
-/* Info Section Card */
-.info-bento-box {
-    background: #ffffff;
-    border-radius: 20px;
-    padding: 30px;
-    border: 1px solid #E9EFEA;
-    box-shadow: var(--card-shadow);
-    height: 100%;
-}
-
-.info-icon-circle {
-    width: 50px;
-    height: 50px;
-    border-radius: 12px;
-    background-color: rgba(6, 58, 34, 0.06);
-    color: var(--brand-green);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    margin-bottom: 20px;
-}
-</style>
-
-<!-- =========================
-     HERO SECTION
-     ========================= -->
-<div class="storefront-hero text-center mb-5 no-print">
-    <span class="badge bg-warning bg-opacity-25 text-warning px-3 py-2 rounded-pill mb-3 fw-bold" style="letter-spacing: 0.1em; font-size: 0.75rem;">PREMIUM COLLECTION</span>
-    <h1 class="brand-font m-0 text-white">Sri Tirumala</h1>
-    <h3 class="brand-font m-0 text-warning opacity-90 mt-1" style="font-size: 1.85rem; font-style: italic;">Dry Fruits, Seeds</h3>
-    <div class="hero-divider"></div>
-    <p>Sourcing the world's finest organic dry fruits, nutritious millets, wholesome seeds, premium spices, and traditional sweets directly for your wellness.</p>
-
-    <div class="mt-4 pt-2">
-        <div class="category-pills-container">
-            <span class="premium-chip active" onclick="filterByCategory('All', this)">🥥 All Products</span>
-            <span class="premium-chip" onclick="filterByCategory('Dry Fruits', this)">🌰 Dry Fruits</span>
-            <span class="premium-chip" onclick="filterByCategory('Millets', this)">🌾 Millets</span>
-            <span class="premium-chip" onclick="filterByCategory('Seeds', this)">🌱 Wholesome Seeds</span>
-            <span class="premium-chip" onclick="filterByCategory('Spices', this)">🌶️ Rich Spices</span>
-            <span class="premium-chip" onclick="filterByCategory('Nuts', this)">🥜 Crunchy Nuts</span>
-            <span class="premium-chip" onclick="filterByCategory('Sweets', this)">🍬 Sweets</span>
+<% if (locals.activeCategory) { %>
+<!-- ==============================================================================
+     CATEGORY BREADCRUMB & COLLECTION HERO
+     ============================================================================== -->
+<section class="category-breadcrumb-section py-4 border-bottom no-print" style="background: linear-gradient(135deg, #FAF8F2 0%, #EDEAE1 100%); border-color: var(--sf-border, #E5ECE7) !important;">
+    <div class="max-w-7xl mx-auto px-3">
+        <%- include('partials/breadcrumbs', { breadcrumbs: locals.breadcrumbs || [
+            { name: 'Home', url: '/' },
+            { name: activeCategory, current: true }
+        ] }) %>
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+            <div>
+                <span class="font-label-caps text-gold font-bold">Tekkali Storefront Collection</span>
+                <h1 class="font-display-hero text-primary font-bold m-0" style="font-size: clamp(26px, 3.2vw, 42px);">
+                    Buy Premium <%= activeCategory %> Online
+                </h1>
+                <p class="font-body-md text-muted mt-2 mb-0" style="max-width: 650px;">
+                    Order 100% genuine, hand-sorted <%= activeCategory.toLowerCase() %> direct from Sri Tirumala Dryfruits, Opposite RTC Complex, Tekkali. Fast local and regional dispatch.
+                </p>
+            </div>
+            <div class="badge bg-white text-dark border px-3 py-2 font-label-md shadow-sm align-self-start align-self-md-auto" style="border-radius: 12px;">
+                <%= products ? products.length : 0 %> Items in <%= activeCategory %>
+            </div>
         </div>
     </div>
-</div>
+</section>
+<% } %>
 
-<!-- =========================
-     SEARCH & QUICK FILTERS
-     ========================= -->
-<div class="row mb-5 align-items-center g-3 no-print">
-    <div class="col-12 col-md-6 col-lg-7">
-        <div class="input-group">
-            <span class="input-group-text bg-white border-end-0 border-success" style="border-radius: 12px 0 0 12px; padding-left: 18px;">🔍</span>
-            <input type="text"
-                   id="searchInput"
-                   class="form-control border-start-0 border-success py-3"
-                   placeholder="Search our catalog (e.g. Premium Almonds, Cashews)..."
-                   style="border-radius: 0 12px 12px 0;"
-                   onkeyup="filterProducts()">
-        </div>
-    </div>
-
-    <div class="col-12 col-md-3 col-lg-3">
-        <select id="categoryFilter"
-                class="form-select py-3 border-success"
-                style="border-radius: 12px;"
-                onchange="syncCategoryFilter(this.value)">
-            <option value="all">All Categories</option>
-            <option value="Dry Fruits">Dry Fruits</option>
-            <option value="Millets">Millets</option>
-            <option value="Seeds">Seeds</option>
-            <option value="Spices">Spices</option>
-            <option value="Nuts">Nuts</option>
-            <option value="Sweets">Sweets</option>
-        </select>
-    </div>
-
-    <div class="col-12 col-md-3 col-lg-2">
-        <button class="btn btn-outline-success w-100 py-3 fw-bold"
-                style="border-radius: 12px;"
-                onclick="clearFilters()">
-            ✕ Reset
-        </button>
-    </div>
-</div>
-
-<!-- =========================
-     PRODUCTS GRID
-     ========================= -->
-<div class="d-flex justify-content-between align-items-baseline mb-4">
-    <h3 class="brand-font m-0" style="color: var(--brand-green); font-size: 1.75rem;">Premium Offerings</h3>
-    <small class="text-muted" id="catalogCounter"></small>
-</div>
-
-<div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4" id="productGrid">
-
-<% if (products && products.length > 0) { %>
-    <% products.forEach(function(p) { 
-        let emoji = "🥥";
-        const cat = p.category || 'Dry Fruits';
-        if (cat === 'Dry Fruits') emoji = "🌰";
-        else if (cat === 'Millets') emoji = "🌾";
-        else if (cat === 'Seeds') emoji = "🌱";
-        else if (cat === 'Spices') emoji = "🌶️";
-        else if (cat === 'Nuts') emoji = "🥜";
-        else if (cat === 'Sweets') emoji = "🍬";
-    %>
-    <div class="col product-item"
-         data-name="<%= p.name.toLowerCase() %>"
-         data-barcode="<%= p.barcode %>"
-         data-category="<%= cat %>">
-
-        <a href="/print_label/<%= p.id %>"
-           class="text-decoration-none h-100 d-block"
-           aria-label="View <%= p.name %>">
-
-            <div class="product-grid-card">
-                <div class="product-media-wrapper d-flex align-items-center justify-content-center">
-                    <span class="category-tag"><%= cat %></span>
-                    <% if (p.image_url) { %>
-                        <img src="<%= p.image_url %>" alt="<%= p.name %>" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top:0; left:0; z-index: 1;" onerror="this.style.display='none';">
-                    <% } %>
-                    <div class="product-emoji-backdrop"><%= emoji %></div>
+<!-- ==============================================================================
+     1. HERO EDITORIAL SECTION (Stitch Artisanal Botanical Luxury)
+     ============================================================================== -->
+<section class="hero-editorial-section no-print" <% if (locals.activeCategory) { %>style="display: none;"<% } %>>
+    <div class="max-w-7xl mx-auto px-3">
+        <div class="row align-items-center g-5">
+            <!-- Left Editorial Column -->
+            <div class="col-12 col-lg-7 z-1">
+                <!-- Prestige Pill -->
+                <div class="hero-prestige-pill mb-3">
+                    <span class="pulsing-gold-dot"></span>
+                    <span class="font-label-caps text-primary">1984 Royal Estate Reserve</span>
+                    <span class="text-muted">•</span>
+                    <span class="font-label-caps text-gold font-bold">Limited Winter Crop</span>
                 </div>
-                
-                <div class="product-details">
-                    <div class="grid-product-name"><%= p.name %></div>
-                    <div class="text-muted small font-monospace mb-3">#<%= p.barcode %></div>
-                    
-                    <% if (p.mrp && p.mrp > p.selling_price) { %>
-                        <div class="grid-product-mrp">MRP ₹<%= Number(p.mrp).toFixed(2) %></div>
-                    <% } else { %>
-                        <div style="height: 19px;"></div>
-                    <% } %>
-                    <div class="grid-product-price">
-                        ₹<%= Number(p.selling_price).toFixed(2) %>
+
+                <!-- Headline -->
+                <h1 class="font-display-hero text-primary font-bold tracking-tight mb-3">
+                    Handpicked Harvest, <br/>
+                    <span class="italic font-title-editorial font-normal" style="font-size: clamp(30px, 4.2vw, 54px); color: var(--gold-burnished);">
+                        Royal Indulgence.
+                    </span>
+                </h1>
+
+                <!-- Subtext -->
+                <p class="font-body-lg text-muted mb-4" style="max-width: 580px;">
+                    Purveyors of heirloom-grade royal dry fruits, grade-A hand-selected jumbo cashews, pure Mongra saffron, and artisanal Medjool dates directly harvested from celebrated family orchards.
+                </p>
+
+                <!-- CTA Action Group -->
+                <div class="d-flex flex-wrap align-items-center gap-3 pt-1 mb-4">
+                    <a href="#festive-spotlight" class="hero-cta-btn-primary">
+                        <span>Explore Festive Hampers</span>
+                        <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                    </a>
+                    <a href="#catalog-section" class="hero-cta-btn-secondary">
+                        <span class="material-symbols-outlined text-sm" style="color: var(--gold-burnished);">menu_book</span>
+                        <span>Wholesale &amp; Retail Catalog</span>
+                    </a>
+                </div>
+
+                <!-- Trust Badges Bar -->
+                <div class="row g-3 pt-3" style="max-width: 520px;">
+                    <div class="col-4">
+                        <div class="d-flex align-items-center gap-1" style="color: var(--gold-burnished);">
+                            <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+                            <strong class="font-price-md text-primary">4.9 / 5</strong>
+                        </div>
+                        <span class="font-label-caps text-muted" style="font-size: 10px;">12,400+ Patrons</span>
+                    </div>
+                    <div class="col-4">
+                        <div class="d-flex align-items-center gap-1 text-primary">
+                            <span class="material-symbols-outlined text-sm text-forest-light">eco</span>
+                            <strong class="font-label-lg text-primary">100% Pure</strong>
+                        </div>
+                        <span class="font-label-caps text-muted" style="font-size: 10px;">Unadulterated</span>
+                    </div>
+                    <div class="col-4">
+                        <div class="d-flex align-items-center gap-1 text-primary">
+                            <span class="material-symbols-outlined text-sm" style="color: var(--gold-burnished);">local_shipping</span>
+                            <strong class="font-label-lg text-primary">Cold-Chain</strong>
+                        </div>
+                        <span class="font-label-caps text-muted" style="font-size: 10px;">Same-Day Transit</span>
                     </div>
                 </div>
             </div>
 
-        </a>
-    </div>
-    <% }); %>
-<% } else { %>
-    <div class="col-12 text-center text-muted py-5 w-100">
-        <div class="py-5">
-            <span class="fs-1">🛍️</span>
-            <h5 class="fw-bold mt-3 text-dark">No products in inventory yet</h5>
-            <p>Please log in and add premium products to build your catalog.</p>
+            <!-- Right Visual Showcase with Floating Badges -->
+            <div class="col-12 col-lg-5 position-relative text-center">
+                <!-- Floating Badge 1 (Top Left) -->
+                <div class="floating-badge-top animate-pulse d-none d-sm-flex">
+                    <div class="w-8 h-8 rounded-circle bg-light d-flex align-items-center justify-content-center text-primary" style="width: 34px; height: 34px;">
+                        <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1; color: var(--gold-burnished);">military_tech</span>
+                    </div>
+                    <div class="text-start">
+                        <p class="font-label-caps text-muted m-0" style="font-size: 9px;">Heritage Lot</p>
+                        <p class="font-label-lg text-primary font-bold m-0" style="font-size: 12px;">Bestseller: Jumbo Mamra</p>
+                    </div>
+                </div>
+
+                <!-- Central Product Imagery Canvas -->
+                <div class="hero-showcase-canvas">
+                    <img class="hero-showcase-img" 
+                         src="/images/stitch/hero_casket.jpg" 
+                         alt="Editorial still life presentation of Sri Tirumala luxury dry fruits casket"
+                         loading="eager">
+                    <div class="hero-showcase-overlay"></div>
+                    <div class="hero-showcase-caption text-start">
+                        <span class="font-label-caps text-gold-sheen">Master Harvester Selection</span>
+                        <h4 class="font-headline-sm text-white m-0">The Regal Teak Casket</h4>
+                        <p class="font-body-sm text-white-50 m-0">Contains 4 Imperial Provenances • 1.2kg Net Weight</p>
+                    </div>
+                </div>
+
+                <!-- Floating Badge 2 (Bottom Right) -->
+                <div class="floating-badge-bottom d-none d-sm-flex">
+                    <span class="material-symbols-outlined text-gold-sheen text-base">verified</span>
+                    <div class="text-start">
+                        <p class="font-label-caps text-white-50 m-0" style="font-size: 9px;">Harvest Dispatch</p>
+                        <p class="font-label-lg text-white font-bold m-0" style="font-size: 12px;">Fresh 2026 Winter Lot</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-<% } %>
+</section>
 
-</div>
+<!-- ==============================================================================
+     2. PROVENANCE CATEGORY FILTER RIBBON (Stitch)
+     ============================================================================== -->
+<section class="provenance-ribbon-bar no-print">
+    <div class="max-w-7xl mx-auto px-3">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <span class="font-label-caps text-gold font-bold">Select Harvest</span>
+                <h2 class="font-headline-sm text-primary m-0">Explore by Provenance</h2>
+            </div>
+            <div class="d-none d-sm-flex align-items-center gap-1 text-muted font-label-md">
+                <span class="material-symbols-outlined text-base">tune</span>
+                <span>6 Imperial Categories</span>
+            </div>
+        </div>
 
-<!-- No Results -->
-<div id="noResults"
-     class="text-center text-muted py-5"
-     style="display:none;">
-    <span class="fs-1">🔍</span>
-    <h5 class="fw-bold mt-3">No matching organic products found</h5>
-    <p>Try refining your search keyword or switching categories.</p>
-</div>
-
-<!-- =========================
-     INFO BENTO SECTION
-     ========================= -->
-<div class="row g-4 mt-5 pt-3 no-print">
-    <div class="col-md-4">
-        <div class="info-bento-box">
-            <div class="info-icon-circle">🌱</div>
-            <h5 class="fw-bold text-dark mb-2">100% Pure & Wholesome</h5>
-            <p class="text-muted small m-0">We collaborate directly with organic co-ops and farms to ensure chemical-free, nutrient-dense dry fruits of elite size and grading.</p>
+        <!-- Horizontal Pill Scroll -->
+        <div class="cat-pill-scroll" id="provenancePills" role="navigation" aria-label="Product Categories">
+            <a href="/" 
+               class="cat-pill text-decoration-none <%= (!locals.activeCategory || activeCategory === 'All') ? 'active' : '' %>" 
+               onclick="if (window.filterByProvenance && window.location.pathname === '/') { event.preventDefault(); filterByProvenance('All', this); }">
+                🥥 All Harvests
+            </a>
+            <% 
+            const categoriesToDisplay = (locals.storefrontCategories && storefrontCategories.length > 0)
+              ? storefrontCategories
+              : [
+                { name: 'Dry Fruits', slug: 'Dry%20Fruits', emoji: '🌰', tagline: 'Royal Almonds & Cashews', count: 0 },
+                { name: 'Spices', slug: 'Spices', emoji: '🌶️', tagline: 'Kashmiri Walnuts & Saffron', count: 0 },
+                { name: 'Nuts', slug: 'Nuts', emoji: '🥜', tagline: 'Imported Dates & Figs', count: 0 },
+                { name: 'Millets', slug: 'Millets', emoji: '🌾', tagline: 'Wholesome Millets', count: 0 },
+                { name: 'Seeds', slug: 'Seeds', emoji: '🌱', tagline: 'Superfood Berries & Seeds', count: 0 },
+                { name: 'Sweets', slug: 'Sweets', emoji: '🍬', tagline: 'Handcrafted Gift Boxes', count: 0 }
+              ];
+            categoriesToDisplay.forEach(function(cat) { 
+                const isActive = (locals.activeCategory && activeCategory.toLowerCase() === cat.name.toLowerCase());
+            %>
+            <a href="/category/<%= cat.slug %>" 
+               class="cat-pill text-decoration-none <%= isActive ? 'active' : '' %>"
+               title="Explore <%= cat.name %> - <%= cat.tagline %>"
+               onclick="if (window.filterByProvenance && window.location.pathname === '/') { event.preventDefault(); filterByProvenance('<%= cat.name.replace(/'/g, "\\'") %>', this); }">
+                <%= cat.emoji %> <%= cat.tagline %>
+            </a>
+            <% }); %>
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="info-bento-box">
-            <div class="info-icon-circle">🔒</div>
-            <h5 class="fw-bold text-dark mb-2">Hygienically Packed</h5>
-            <p class="text-muted small m-0">Our state-of-the-art climate-controlled sorting safeguards purity, preserves natural essential oils, and prolongs wholesome flavor.</p>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="info-bento-box">
-            <div class="info-icon-circle">📍</div>
-            <h5 class="fw-bold text-dark mb-2">Sri Tirumala Tekkali</h5>
-            <p class="text-muted small m-0">Located at Tekkali, Andhra Pradesh. Dedicated to delivering top-tier health foods and dry fruits with unmatched customer service.</p>
-        </div>
-    </div>
-</div>
+</section>
 
-<!-- =========================
-     FOOTER BANNER
-     ========================= -->
-<div class="card mt-5 mb-3 border-0 bg-dark text-white shadow-lg overflow-hidden no-print" style="border-radius: 20px;">
-    <div class="p-4 p-md-5 text-center position-relative" style="background: linear-gradient(rgba(6, 58, 34, 0.9), rgba(3, 33, 19, 0.95)); border-top: 4px solid var(--brand-gold);">
-        <h4 class="brand-font text-warning mb-2" style="font-size: 1.85rem;">Sri Tirumala Dryfruits</h4>
-        <p class="text-white-50 max-w-600 mx-auto small mb-4">Opposite RTC Complex, Tekkali, Srikakulam District, Andhra Pradesh – 532201</p>
-        
-        <div class="d-flex flex-wrap justify-content-center gap-4 text-white-50 small font-monospace">
-            <span>📞 +91 9133133931</span>
-            <span>📍 Tekkali Branch</span>
-            <span>🕒 Open Daily: 09:00 AM - 09:30 PM</span>
+<!-- ==============================================================================
+     3. CONNOISSEUR RESERVE BESTSELLERS (Interactive Spotlight Cards)
+     ============================================================================== -->
+<section class="py-5 no-print" style="background: var(--surface);">
+    <div class="max-w-7xl mx-auto px-3">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end mb-4 gap-3">
+            <div>
+                <span class="font-label-caps text-gold font-bold">Seasonal Pantry Treasures</span>
+                <h2 class="font-headline-lg text-primary m-0">Connoisseur Reserve Bestsellers</h2>
+            </div>
+            <p class="font-body-sm text-muted m-0" style="max-width: 460px;">
+                Each batch is individually batch-tested, nitrogen-sealed within 2 hours of grading, ensuring unmatched crispness and delicate aromatics.
+            </p>
+        </div>
+
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
+            <!-- Spotlight Card 1: Mamra Almonds -->
+            <div class="col">
+                <div class="product-card-luxury">
+                    <div class="card-badge-row">
+                        <span class="badge-discount-tag">15% Off</span>
+                        <span class="badge-rating-tag">
+                            <span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1; color: var(--gold-burnished);">star</span>
+                            4.9 (420)
+                        </span>
+                    </div>
+
+                    <div class="product-media-canvas">
+                        <img src="/images/stitch/asset_2.jpg" 
+                             alt="Royal Mamra Almonds" 
+                             loading="lazy">
+                        <span class="provenance-tag-overlay">Omega-3 Rich • High Oil</span>
+                    </div>
+
+                    <span class="provenance-label">Iran Valley Provenance</span>
+                    <h3 class="product-title-editorial">Royal Mamra Almonds</h3>
+
+                    <!-- Weight Selector -->
+                    <div class="variant-chip-group">
+                        <button type="button" class="variant-chip" onclick="selectVariant(this, 'mamra', '₹799', '250g')">250g</button>
+                        <button type="button" class="variant-chip active" onclick="selectVariant(this, 'mamra', '₹1,450', '500g')">500g</button>
+                        <button type="button" class="variant-chip" onclick="selectVariant(this, 'mamra', '₹2,800', '1kg')">1kg</button>
+                    </div>
+
+                    <div class="price-stock-box">
+                        <div class="d-flex align-items-baseline">
+                            <span class="price-main" id="price-mamra">₹1,450</span>
+                            <span class="price-mrp">₹1,700</span>
+                        </div>
+                        <p class="stock-indicator-text" style="color: var(--secondary);">Only 14 reserve lots remaining</p>
+                    </div>
+
+                    <div class="d-flex gap-2 mt-3">
+                        <button type="button" class="btn-quick-add flex-grow-1" onclick="quickAddFeaturedItem('Royal Mamra Almonds (500g)', 1450)">
+                            <span>Quick Add +</span>
+                        </button>
+                        <button type="button" class="btn-whatsapp-icon" onclick="orderWhatsAppDirect('Royal Mamra Almonds (500g)', '₹1,450')" title="Order on WhatsApp">
+                            <span>💬</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Spotlight Card 2: King W180 Cashews -->
+            <div class="col">
+                <div class="product-card-luxury">
+                    <div class="card-badge-row">
+                        <span class="badge-discount-tag" style="background: var(--surface-container-high); color: var(--primary);">Jumbo Grade</span>
+                        <span class="badge-rating-tag">
+                            <span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1; color: var(--gold-burnished);">star</span>
+                            4.8 (310)
+                        </span>
+                    </div>
+
+                    <div class="product-media-canvas">
+                        <img src="/images/stitch/asset_3.jpg" 
+                             alt="King Size W180 Cashews" 
+                             loading="lazy">
+                        <span class="provenance-tag-overlay">Zero Cholesterol • Raw / Roast</span>
+                    </div>
+
+                    <span class="provenance-label">Goa Coastal Orchards</span>
+                    <h3 class="product-title-editorial">King Size W180 Cashews</h3>
+
+                    <!-- Roast Toggle -->
+                    <div class="variant-chip-group">
+                        <button type="button" class="variant-chip active" onclick="toggleRoast(this)">Raw Heirloom</button>
+                        <button type="button" class="variant-chip" onclick="toggleRoast(this)">Gently Roasted</button>
+                    </div>
+
+                    <div class="price-stock-box">
+                        <div class="d-flex align-items-baseline">
+                            <span class="price-main">₹890</span>
+                            <span class="price-mrp">₹1,050</span>
+                        </div>
+                        <p class="stock-indicator-text">In Stock • Fresh Roasted Weekly</p>
+                    </div>
+
+                    <div class="d-flex gap-2 mt-3">
+                        <button type="button" class="btn-quick-add flex-grow-1" onclick="quickAddFeaturedItem('King W180 Cashews (500g)', 890)">
+                            <span>Quick Add +</span>
+                        </button>
+                        <button type="button" class="btn-whatsapp-icon" onclick="orderWhatsAppDirect('King W180 Cashews (500g)', '₹890')" title="Order on WhatsApp">
+                            <span>💬</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Spotlight Card 3: Royal Medjool Dates -->
+            <div class="col">
+                <div class="product-card-luxury">
+                    <div class="card-badge-row">
+                        <span class="badge-discount-tag">Jordan Harvest</span>
+                        <span class="badge-rating-tag">
+                            <span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1; color: var(--gold-burnished);">star</span>
+                            5.0 (680)
+                        </span>
+                    </div>
+
+                    <div class="product-media-canvas">
+                        <img src="/images/stitch/asset_4.jpg" 
+                             alt="Original Medjool Dates" 
+                             loading="lazy">
+                        <span class="provenance-tag-overlay">Soft Plump • 100% Raw</span>
+                    </div>
+
+                    <span class="provenance-label">Jordan River Valley</span>
+                    <h3 class="product-title-editorial">Original Medjool Dates (1kg)</h3>
+
+                    <!-- Variant Indicator -->
+                    <div class="variant-chip-group">
+                        <span class="badge bg-light text-primary border px-2 py-1" style="font-size: 11px;">1kg Luxury Box</span>
+                        <span class="badge bg-light text-muted border px-2 py-1" style="font-size: 11px;">Pitted Ready</span>
+                    </div>
+
+                    <div class="price-stock-box">
+                        <div class="d-flex align-items-baseline">
+                            <span class="price-main">₹1,650</span>
+                            <span class="price-mrp">₹1,890</span>
+                        </div>
+                        <p class="stock-indicator-text" style="color: var(--secondary);">Air-Flown • Temperature Controlled</p>
+                    </div>
+
+                    <div class="d-flex gap-2 mt-3">
+                        <button type="button" class="btn-quick-add flex-grow-1" onclick="quickAddFeaturedItem('Original Medjool Dates Royal Pack (1kg)', 1650)">
+                            <span>Quick Add +</span>
+                        </button>
+                        <button type="button" class="btn-whatsapp-icon" onclick="orderWhatsAppDirect('Original Medjool Dates Royal Pack (1kg)', '₹1,650')" title="Order on WhatsApp">
+                            <span>💬</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Spotlight Card 4: Kashmiri Mongra Saffron -->
+            <div class="col">
+                <div class="product-card-luxury">
+                    <div class="card-badge-row">
+                        <span class="badge-discount-tag" style="background: var(--primary-container); color: var(--secondary-container);">GI Tagged</span>
+                        <span class="badge-rating-tag">
+                            <span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1; color: var(--gold-burnished);">star</span>
+                            4.9 (190)
+                        </span>
+                    </div>
+
+                    <div class="product-media-canvas">
+                        <img src="/images/stitch/asset_5.jpg" 
+                             alt="Pure Kashmiri Mongra Saffron" 
+                             loading="lazy">
+                        <span class="provenance-tag-overlay">Grade A1 • Pampore Certified</span>
+                    </div>
+
+                    <span class="provenance-label">Pampore Highlands, Kashmir</span>
+                    <h3 class="product-title-editorial">Mongra Saffron (2g + Honey)</h3>
+
+                    <!-- Variant Indicator -->
+                    <div class="variant-chip-group">
+                        <span class="badge bg-light text-primary border px-2 py-1" style="font-size: 11px;">2g Vial + 50g Acacia Honey</span>
+                    </div>
+
+                    <div class="price-stock-box">
+                        <div class="d-flex align-items-baseline">
+                            <span class="price-main">₹1,199</span>
+                            <span class="price-mrp">₹1,350</span>
+                        </div>
+                        <p class="stock-indicator-text" style="color: var(--secondary);">Certified Lab Potency Guaranteed</p>
+                    </div>
+
+                    <div class="d-flex gap-2 mt-3">
+                        <button type="button" class="btn-quick-add flex-grow-1" onclick="quickAddFeaturedItem('Pure Kashmiri Mongra Saffron (2g + Honey)', 1199)">
+                            <span>Quick Add +</span>
+                        </button>
+                        <button type="button" class="btn-whatsapp-icon" onclick="orderWhatsAppDirect('Pure Kashmiri Mongra Saffron (2g + Honey)', '₹1,199')" title="Order on WhatsApp">
+                            <span>💬</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-</div>
+</section>
 
-<!-- =========================
-     FILTER SCRIPT
-     ========================= -->
+<!-- ==============================================================================
+     4. LIVE CATALOG SECTION (Real SQLite Database Products)
+     ============================================================================== -->
+<section class="py-5 no-print" id="catalog-section" style="background: var(--surface-container-low);">
+    <div class="max-w-7xl mx-auto px-3">
+        <!-- Header -->
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-2">
+            <div>
+                <span class="font-label-caps text-gold font-bold">Tekkali Store Catalog</span>
+                <h2 class="font-headline-lg text-primary m-0">Live Harvest Offerings</h2>
+            </div>
+            <div class="badge bg-white text-dark border px-3 py-2 font-label-md" id="catalogCounter">
+                <%= products ? products.length : 0 %> Products Available
+            </div>
+        </div>
+
+        <!-- Search & Filter Controls -->
+        <div class="search-toolbar-card mb-4">
+            <div class="row g-3 align-items-center">
+                <!-- Live Search -->
+                <div class="col-12 col-md-5">
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0">🔍</span>
+                        <input type="search" 
+                               id="searchInput" 
+                               class="form-control bg-light border-start-0 py-2" 
+                               placeholder="Search harvest, nuts, seeds, millets... (Press '/' to focus)" 
+                               aria-label="Search catalog"
+                               oninput="onSearchInput(this.value)">
+                    </div>
+                </div>
+
+                <!-- Category Filter -->
+                <div class="col-6 col-md-3">
+                    <select id="categoryFilter" class="form-select py-2" aria-label="Select category" onchange="syncCategoryFilter(this.value)">
+                        <option value="all">All Harvest Categories</option>
+                        <% if (locals.storefrontCategories && storefrontCategories.length > 0) { %>
+                            <% storefrontCategories.forEach(function(cat) { %>
+                                <option value="<%= cat.name %>" <%= (locals.activeCategory && activeCategory.toLowerCase() === cat.name.toLowerCase()) ? 'selected' : '' %>>
+                                    <%= cat.shortName %>
+                                </option>
+                            <% }); %>
+                        <% } else { %>
+                            <option value="Dry Fruits">Dry Fruits &amp; Almonds</option>
+                            <option value="Millets">Wholesome Millets</option>
+                            <option value="Seeds">Exotic Seeds &amp; Berries</option>
+                            <option value="Spices">Kashmiri Saffron &amp; Spices</option>
+                            <option value="Nuts">Crunchy Nuts &amp; Dates</option>
+                            <option value="Sweets">Handcrafted Hampers</option>
+                        <% } %>
+                    </select>
+                </div>
+
+                <!-- Sort Filter -->
+                <div class="col-6 col-md-2">
+                    <select id="sortFilter" class="form-select py-2" aria-label="Sort products by" onchange="applySort(this.value)">
+                        <option value="featured">Featured Lots</option>
+                        <option value="price_asc">Price: Low to High</option>
+                        <option value="price_desc">Price: High to Low</option>
+                        <option value="name_asc">Name: A to Z</option>
+                    </select>
+                </div>
+
+                <!-- In-Stock Switch & Reset -->
+                <div class="col-12 col-md-2 d-flex align-items-center justify-content-between gap-2">
+                    <div class="form-check form-switch m-0 d-flex align-items-center gap-1" title="Show only in-stock products">
+                        <input class="form-check-input" type="checkbox" role="switch" id="inStockOnly" onchange="filterProducts()">
+                        <label class="form-check-label small fw-semibold text-muted" for="inStockOnly" style="font-size: 0.78rem;">In-Stock</label>
+                    </div>
+                    <button class="btn btn-outline-secondary btn-sm py-2 px-3 fw-bold" style="border-radius: 8px;" title="Reset filters" onclick="clearFilters()">
+                        ✕ Clear
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dynamic Product Grid -->
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4" id="productGrid">
+            <% if (products && products.length > 0) { %>
+                <% products.forEach(function(p) { 
+                    let emoji = "🥥"; 
+                    const cat = p.category || 'Dry Fruits'; 
+                    if (cat === 'Dry Fruits') emoji = "🌰"; 
+                    else if (cat === 'Millets') emoji = "🌾"; 
+                    else if (cat === 'Seeds') emoji = "🌱"; 
+                    else if (cat === 'Spices') emoji = "🌶️"; 
+                    else if (cat === 'Nuts') emoji = "🥜"; 
+                    else if (cat === 'Sweets') emoji = "🍬"; 
+                    const stock = (p.total_qty || 0) - (p.sold_qty || 0); 
+                    const hasDiscount = p.mrp && Number(p.mrp) > Number(p.selling_price);
+                    const discountPercent = hasDiscount ? Math.round(((Number(p.mrp) - Number(p.selling_price)) / Number(p.mrp)) * 100) : 0;
+                %>
+                <div class="col product-item" 
+                     data-id="<%= p.id %>" 
+                     data-name="<%= p.name.toLowerCase() %>"
+                     data-barcode="<%= p.barcode %>" 
+                     data-category="<%= cat %>" 
+                     data-price="<%= p.selling_price %>"
+                     data-stock="<%= stock %>">
+
+                    <div class="product-card-luxury">
+                        <!-- Card Top Badges -->
+                        <div class="card-badge-row">
+                            <% if (hasDiscount) { %>
+                                <span class="badge-discount-tag"><%= discountPercent %>% Off</span>
+                            <% } else { %>
+                                <span class="badge-discount-tag" style="background: var(--cream-container); color: var(--primary);">Grade AAA</span>
+                            <% } %>
+
+                            <button type="button" 
+                                    class="wishlist-toggle-btn border-0 bg-transparent p-0" 
+                                    data-id="<%= p.id %>"
+                                    data-name="<%= p.name %>" 
+                                    data-price="<%= p.selling_price %>"
+                                    data-mrp="<%= p.mrp || '' %>" 
+                                    data-image="<%= p.image_url || '' %>"
+                                    data-category="<%= cat %>" 
+                                    data-stock="<%= stock %>"
+                                    aria-label="Add to wishlist" 
+                                    title="Add to Wishlist">
+                                <span>🤍</span>
+                            </button>
+                        </div>
+
+                        <!-- Product Media -->
+                        <div class="product-media-canvas">
+                            <a href="/product/<%= p.id %>" class="d-block w-100 h-100 text-decoration-none">
+                                <% if (p.image_url) { %>
+                                    <img src="<%= p.image_url %>" alt="<%= p.name %>" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                    <div class="w-100 h-100 d-none align-items-center justify-content-center fs-1"><%= emoji %></div>
+                                <% } else { %>
+                                    <div class="w-100 h-100 d-flex align-items-center justify-content-center fs-1"><%= emoji %></div>
+                                <% } %>
+                            </a>
+                            <span class="provenance-tag-overlay"><%= cat %></span>
+                        </div>
+
+                        <!-- Product Meta -->
+                        <span class="provenance-label"><%= cat %> • Heirloom Lot</span>
+                        <a href="/product/<%= p.id %>" class="product-title-editorial" title="<%= p.name %>">
+                            <%= p.name %>
+                        </a>
+
+                        <!-- Stock Status -->
+                        <div class="mb-2">
+                            <% if (stock <= 0) { %>
+                                <span class="badge bg-secondary" style="font-size: 10px;">Out of Stock</span>
+                            <% } else if (stock < 10) { %>
+                                <span class="badge bg-warning text-dark" style="font-size: 10px;">Only <%= stock %> left</span>
+                            <% } else { %>
+                                <span class="badge bg-success" style="font-size: 10px;">In Stock • Nitrogen Sealed</span>
+                            <% } %>
+                        </div>
+
+                        <!-- Price Container -->
+                        <div class="price-stock-box">
+                            <div class="d-flex align-items-baseline">
+                                <span class="price-main">₹<%= Number(p.selling_price).toFixed(2) %></span>
+                                <% if (hasDiscount) { %>
+                                    <span class="price-mrp">₹<%= Number(p.mrp).toFixed(2) %></span>
+                                <% } %>
+                            </div>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="d-flex gap-2 mt-3">
+                            <button type="button" 
+                                    class="btn-quick-add flex-grow-1 add-to-cart-btn"
+                                    data-id="<%= p.id %>" 
+                                    data-name="<%= p.name %>" 
+                                    data-price="<%= p.selling_price %>"
+                                    data-stock="<%= stock %>" 
+                                    onclick="window.Storefront && window.Storefront.addToCart(<%= p.id %>, 1, '<%= p.name.replace(/'/g, "\\'") %>')"
+                                    <%= stock <= 0 ? 'disabled' : '' %>>
+                                <span><%= stock <= 0 ? 'Out of Stock' : 'Quick Add +' %></span>
+                            </button>
+
+                            <button type="button" 
+                                    class="btn-whatsapp-icon whatsapp-card-btn"
+                                    data-id="<%= p.id %>" 
+                                    data-name="<%= p.name %>" 
+                                    data-price="<%= p.selling_price %>"
+                                    data-category="<%= cat %>"
+                                    onclick="window.Storefront && window.Storefront.orderProductViaWhatsApp(this.dataset)"
+                                    title="Order on WhatsApp">
+                                <span>💬</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <% }); %>
+            <% } else { %>
+                <div class="col-12 text-center text-muted py-5">
+                    <% if (locals.activeCategory && activeCategory !== 'All') { %>
+                        <span class="fs-1 d-block mb-2">🌾</span>
+                        <h5 class="font-headline-sm text-primary"><%= activeCategory %> Collection Arriving Soon</h5>
+                        <p class="font-body-sm max-w-600 mx-auto mb-3">Our artisans and farmers are preparing upcoming fresh harvest batches for the <%= activeCategory %> collection. In the meantime, explore our flagship Dry Fruits and Seeds selections.</p>
+                        <a href="/category/Dry%20Fruits" class="btn btn-brand px-4 py-2 text-decoration-none fw-bold" style="border-radius: 50px;">
+                            Browse Royal Dry Fruits
+                        </a>
+                    <% } else { %>
+                        <span class="fs-1 d-block mb-2">🛍️</span>
+                        <h5 class="font-headline-sm text-primary">No products currently available</h5>
+                        <p class="font-body-sm">Please check back soon for our newest harvest selections.</p>
+                    <% } %>
+                </div>
+            <% } %>
+        </div>
+
+        <!-- No Results Fallback -->
+        <div id="noResults" class="text-center text-muted py-5 my-4" style="display:none;">
+            <span class="fs-1 d-block mb-2">🔍</span>
+            <h5 class="font-headline-sm text-primary">No matching harvest items found</h5>
+            <p class="font-body-sm max-w-600 mx-auto mb-3">Try adjusting your search keyword or clearing the active filters.</p>
+            <button class="btn btn-brand px-4 py-2" onclick="clearFilters()" style="border-radius: 50px;">
+                Reset All Filters
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- ==============================================================================
+     5. SEASONAL & FESTIVE HAMPERS SPOTLIGHT BANNER (Stitch)
+     ============================================================================== -->
+<section class="max-w-7xl mx-auto px-3 my-5 no-print" id="festive-spotlight">
+    <div class="festive-spotlight-box">
+        <div class="ambient-glow-circle-1"></div>
+        <div class="ambient-glow-circle-2"></div>
+
+        <div class="row align-items-center g-4 position-relative z-1">
+            <div class="col-12 col-lg-7">
+                <div class="coupon-promo-pill mb-3">
+                    <span class="material-symbols-outlined text-sm">confirmation_number</span>
+                    <span>Use Code: ROYALFESTIVE for 10% Off</span>
+                </div>
+
+                <h2 class="font-display-hero text-white mb-2" style="font-size: clamp(28px, 3.5vw, 44px);">
+                    Diwali &amp; Corporate Festive Hampers
+                </h2>
+
+                <p class="font-body-md text-white-50 mb-3" style="max-width: 540px;">
+                    Curate distinguished bespoke gifts encased in velvet-lined artisanal mahogany chests with personalized laser engraving, custom crests, and heirloom harvest collections.
+                </p>
+
+                <div class="hamper-inclusions-row">
+                    <span class="hamper-inclusion-chip">
+                        <span class="material-symbols-outlined text-xs text-gold-sheen">done</span>
+                        Handcrafted Mahogany Caskets
+                    </span>
+                    <span class="hamper-inclusion-chip">
+                        <span class="material-symbols-outlined text-xs text-gold-sheen">done</span>
+                        Custom Brass Logo Plaque
+                    </span>
+                    <span class="hamper-inclusion-chip">
+                        <span class="material-symbols-outlined text-xs text-gold-sheen">done</span>
+                        Pan-India Cold-Transit
+                    </span>
+                </div>
+
+                <div class="d-flex flex-wrap align-items-center gap-3 pt-2">
+                    <a href="https://wa.me/919133133931?text=Hello%20Sri%20Tirumala,%20I%20would%20like%20to%20book%20a%20Gifting%20Concierge%20consultation%20with%20promo%20ROYALFESTIVE." 
+                       target="_blank" 
+                       class="btn-concierge">
+                        <span>Book Gifting Concierge</span>
+                        <span class="material-symbols-outlined text-base">north_east</span>
+                    </a>
+                    <div class="d-flex align-items-center gap-2 text-white-50 font-label-md">
+                        <span class="material-symbols-outlined text-gold-sheen">timer</span>
+                        <span>Diwali Dispatch Cutoff: <strong class="text-white">12 Days Left</strong></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-5">
+                <div class="rounded-xl overflow-hidden shadow-2xl" style="border-radius: 12px; max-height: 340px;">
+                    <img src="/images/stitch/asset_6.jpg" 
+                         alt="Sri Tirumala Corporate Festive Gift Hamper" 
+                         class="w-100 h-100 object-fit-cover"
+                         loading="lazy">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ==============================================================================
+     6. PATRON ENDORSEMENTS (Sensory Reviews)
+     ============================================================================== -->
+<section class="py-5 no-print" style="background: var(--surface);">
+    <div class="max-w-7xl mx-auto px-3">
+        <div class="text-center mb-5">
+            <span class="font-label-caps text-gold font-bold">Patron Endorsements</span>
+            <h2 class="font-headline-lg text-primary m-0">Savoring the Provenance</h2>
+            <p class="font-body-md text-muted mt-2" style="max-width: 580px; margin-left: auto; margin-right: auto;">
+                Over four decades of serving connoisseurs, royal wedding celebrations, and discerning epicures across the world.
+            </p>
+        </div>
+
+        <div class="row g-4">
+            <!-- Review 1 -->
+            <div class="col-12 col-md-4">
+                <div class="testimonial-card-editorial h-100">
+                    <div>
+                        <div class="d-flex align-items-center gap-1 mb-2" style="color: var(--gold-burnished);">
+                            <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+                            <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+                            <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+                            <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+                            <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+                        </div>
+                        <p class="testimonial-quote">
+                            "The Mamra Almonds are completely unmatched in oil content and snap. Opening the vacuum seal fills the dining room with sweet, natural nutty aromatics."
+                        </p>
+                    </div>
+                    <div class="d-flex align-items-center gap-3 pt-4 border-top">
+                        <div class="patron-avatar-initials">RK</div>
+                        <div>
+                            <p class="font-label-lg text-primary font-bold m-0">Raghavendra K.</p>
+                            <p class="font-body-sm text-muted m-0" style="font-size: 11px;">Verified Buyer • Hyderabad Flagship</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Review 2 -->
+            <div class="col-12 col-md-4">
+                <div class="testimonial-card-editorial h-100">
+                    <div>
+                        <div class="d-flex align-items-center gap-1 mb-2" style="color: var(--gold-burnished);">
+                            <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+                            <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+                            <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+                            <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+                            <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+                        </div>
+                        <p class="testimonial-quote">
+                            "We dispatched 350 customized engraved teak hampers for our corporate festive executive suite. The feedback regarding the Medjool dates and saffron was phenomenal."
+                        </p>
+                    </div>
+                    <div class="d-flex align-items-center gap-3 pt-4 border-top">
+                        <div class="patron-avatar-initials">SM</div>
+                        <div>
+                            <p class="font-label-lg text-primary font-bold m-0">Siddharth Menon</p>
+                            <p class="font-body-sm text-muted m-0" style="font-size: 11px;">Chief of Staff, Apex Capital</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Review 3 -->
+            <div class="col-12 col-md-4">
+                <div class="testimonial-card-editorial h-100">
+                    <div>
+                        <div class="d-flex align-items-center gap-1 mb-2" style="color: var(--gold-burnished);">
+                            <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+                            <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+                            <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+                            <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+                            <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+                        </div>
+                        <p class="testimonial-quote">
+                            "Genuine Mongra Saffron that instantly yields vibrant golden-crimson dye with sweet floral hints. Sri Tirumala remains our premier household supplier."
+                        </p>
+                    </div>
+                    <div class="d-flex align-items-center gap-3 pt-4 border-top">
+                        <div class="patron-avatar-initials">AN</div>
+                        <div>
+                            <p class="font-label-lg text-primary font-bold m-0">Ananya Narang</p>
+                            <p class="font-body-sm text-muted m-0" style="font-size: 11px;">Artisanal Patisserie Chef</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ==============================================================================
+     7. HERITAGE & QUALITY PROMISE PILLARS
+     ============================================================================== -->
+<section class="max-w-7xl mx-auto px-3 my-5 no-print">
+    <div class="pillars-container-box">
+        <div class="row g-4">
+            <div class="col-12 col-sm-6 col-lg-3">
+                <div class="pillar-icon-circle">
+                    <span class="material-symbols-outlined text-forest-light text-2xl">agriculture</span>
+                </div>
+                <h4 class="font-headline-sm text-primary font-bold mb-1" style="font-size: 17px;">Direct Farm Sourcing</h4>
+                <p class="font-body-sm text-muted m-0">Single-origin lots procured directly from certified estate growers across Kashmir, Iran, Jordan, and California.</p>
+            </div>
+
+            <div class="col-12 col-sm-6 col-lg-3">
+                <div class="pillar-icon-circle">
+                    <span class="material-symbols-outlined text-gold-burnished text-2xl">air</span>
+                </div>
+                <h4 class="font-headline-sm text-primary font-bold mb-1" style="font-size: 17px;">Nitrogen Sealing</h4>
+                <p class="font-body-sm text-muted m-0">Every grade-A kernel is encapsulated in food-grade nitrogen barrier pouches within hours of final sortation.</p>
+            </div>
+
+            <div class="col-12 col-sm-6 col-lg-3">
+                <div class="pillar-icon-circle">
+                    <span class="material-symbols-outlined text-primary text-2xl">handshake</span>
+                </div>
+                <h4 class="font-headline-sm text-primary font-bold mb-1" style="font-size: 17px;">Fair Trade &amp; Artisanal</h4>
+                <p class="font-body-sm text-muted m-0">Championing multigenerational agricultural families with premium crop pricing and ethical sorting standards.</p>
+            </div>
+
+            <div class="col-12 col-sm-6 col-lg-3">
+                <div class="pillar-icon-circle">
+                    <span class="material-symbols-outlined text-forest-light text-2xl">verified_user</span>
+                </div>
+                <h4 class="font-headline-sm text-primary font-bold mb-1" style="font-size: 17px;">Happiness Guaranteed</h4>
+                <p class="font-body-sm text-muted m-0">Complete refund or immediate replacement policy if any nut fails our rigorous sensory crunch metric.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ==============================================================================
+     8. CLIENT-SIDE INTERACTION SCRIPT
+     ============================================================================== -->
 <script>
-let currentCategory = 'All';
-
-function syncCategoryFilter(catVal) {
-    // Sync the select dropdown with the category tab state
-    const select = document.getElementById("categoryFilter");
-    select.value = catVal;
-    
-    // Update the visual state of buttons
-    const chips = document.querySelectorAll(".premium-chip");
-    chips.forEach(chip => {
-        const text = chip.innerText;
-        if (catVal === 'all' && text.includes('All')) {
-            chip.classList.add('active');
-        } else if (text.toUpperCase().includes(catVal.toUpperCase()) && catVal !== 'all') {
-            chip.classList.add('active');
-        } else {
-            chip.classList.remove('active');
+    // Stitch Toast Feedback Controller
+    window.dismissToast = function () {
+        const toast = document.getElementById('cartToast');
+        if (toast) {
+            toast.classList.remove('translate-y-visible');
+            toast.classList.add('translate-y-hidden');
         }
-    });
+    };
 
-    currentCategory = catVal === 'all' ? 'All' : catVal;
-    filterProducts();
-}
+    window.showRoyalCasketToast = function (productName, amount) {
+        const toast = document.getElementById('cartToast');
+        const nameEl = document.getElementById('toastProductName');
+        const amountEl = document.getElementById('toastAddedAmount');
+        if (toast && nameEl) {
+            nameEl.innerText = productName;
+            if (amountEl && amount) amountEl.innerText = '₹' + amount + ' added';
+            toast.classList.remove('translate-y-hidden');
+            toast.classList.add('translate-y-visible');
 
-function filterByCategory(cat, btn) {
-    const chips = btn.parentNode.querySelectorAll('.premium-chip');
-    chips.forEach(c => c.classList.remove('active'));
-    btn.classList.add('active');
-    
-    currentCategory = cat;
-    
-    // Sync dropdown
-    const select = document.getElementById("categoryFilter");
-    select.value = cat === 'All' ? 'all' : cat;
-
-    filterProducts();
-}
-
-function filterProducts() {
-    const searchValue = document.getElementById("searchInput").value.toLowerCase();
-    const products = document.querySelectorAll(".product-item");
-
-    let visibleCount = 0;
-
-    products.forEach(product => {
-        const name = product.dataset.name;
-        const barcode = product.dataset.barcode;
-        const category = product.dataset.category;
-
-        const matchesSearch = name.includes(searchValue) || barcode.includes(searchValue);
-        const matchesCategory = currentCategory === 'All' || category === currentCategory;
-
-        if (matchesSearch && matchesCategory) {
-            product.style.display = "block";
-            visibleCount++;
-        } else {
-            product.style.display = "none";
+            clearTimeout(window.toastTimer);
+            window.toastTimer = setTimeout(() => {
+                window.dismissToast();
+            }, 4500);
         }
-    });
+    };
 
-    document.getElementById("noResults").style.display = visibleCount === 0 ? "block" : "none";
-    document.getElementById("catalogCounter").innerText = `${visibleCount} products showing`;
-}
+    // Quick Add for Featured Spotlight Items
+    window.quickAddFeaturedItem = function (itemName, price) {
+        window.showRoyalCasketToast(itemName, price);
+        // Dispatch to cart store if available
+        const cartBadge = document.getElementById('cartCountBadge');
+        if (cartBadge) {
+            const current = parseInt(cartBadge.innerText || '0', 10);
+            cartBadge.innerText = (current + 1).toString();
+            cartBadge.style.display = 'inline-block';
+        }
+        const mobileBadge = document.getElementById('mobileCartBadge');
+        if (mobileBadge) {
+            const current = parseInt(mobileBadge.innerText || '0', 10);
+            mobileBadge.innerText = (current + 1).toString();
+            mobileBadge.style.display = 'inline-block';
+        }
+    };
 
-function clearFilters() {
-    document.getElementById("searchInput").value = "";
-    document.getElementById("categoryFilter").value = "all";
-    
-    const chips = document.querySelectorAll('.premium-chip');
-    chips.forEach(c => c.classList.remove('active'));
-    if (chips.length > 0) chips[0].classList.add('active');
-    
-    currentCategory = 'All';
-    filterProducts();
-}
+    // 1-Click WhatsApp Direct Order
+    window.orderWhatsAppDirect = function (itemName, price) {
+        const phone = '919133133931';
+        const msg = encodeURIComponent(`Hello Sri Tirumala, I would like to order ${itemName} priced at ${price}. Please confirm stock & delivery to Tekkali/AP.`);
+        window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
+    };
 
-// Initial counter execution
-window.addEventListener('DOMContentLoaded', () => {
-    filterProducts();
-});
+    // Variant Chip Selection for Spotlight Cards
+    window.selectVariant = function (btn, group, price, weight) {
+        const parent = btn.parentElement;
+        parent.querySelectorAll('.variant-chip').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const priceEl = document.getElementById('price-' + group);
+        if (priceEl) priceEl.innerText = price;
+    };
+
+    window.toggleRoast = function (btn) {
+        const parent = btn.parentElement;
+        parent.querySelectorAll('.variant-chip').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    };
+
+    // Provenance Category Ribbon Filtering
+    window.filterByProvenance = function (cat, btn) {
+        document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+
+        const select = document.getElementById('categoryFilter');
+        if (select) select.value = cat === 'All' ? 'all' : cat;
+
+        const cards = document.querySelectorAll('.product-item');
+        cards.forEach(card => {
+            const itemCat = card.dataset.category || '';
+            if (cat === 'All' || itemCat.toLowerCase() === cat.toLowerCase()) {
+                card.style.display = '';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        // Update catalog counter
+        const visible = Array.from(cards).filter(c => c.style.display !== 'none').length;
+        const counter = document.getElementById('catalogCounter');
+        if (counter) counter.innerText = visible + ' Products Available';
+
+        const noResults = document.getElementById('noResults');
+        if (noResults) noResults.style.display = visible === 0 ? 'block' : 'none';
+    };
+
+    // Live Search with Instant Debounce
+    let searchDebounceTimeout = null;
+    window.onSearchInput = function (val) {
+        if (searchDebounceTimeout) clearTimeout(searchDebounceTimeout);
+        searchDebounceTimeout = setTimeout(() => {
+            window.filterProducts();
+        }, 220);
+    };
+
+    window.searchCatalog = function (term) {
+        const searchInput = document.getElementById('searchInput');
+        const navInput = document.getElementById('navSearchInput');
+        if (searchInput) searchInput.value = term;
+        if (navInput) navInput.value = term;
+        window.filterProducts();
+        const catalogEl = document.getElementById('catalog-section');
+        if (catalogEl) catalogEl.scrollIntoView({ behavior: 'smooth' });
+    };
+
+    window.syncCategoryFilter = function (catVal) {
+        window.filterByProvenance(catVal === 'all' ? 'All' : catVal);
+    };
+
+    window.applySort = function (sortVal) {
+        const grid = document.getElementById('productGrid');
+        if (!grid) return;
+        const items = Array.from(grid.querySelectorAll('.product-item'));
+
+        items.sort((a, b) => {
+            const priceA = parseFloat(a.dataset.price) || 0;
+            const priceB = parseFloat(b.dataset.price) || 0;
+            const nameA = a.dataset.name || '';
+            const nameB = b.dataset.name || '';
+
+            if (sortVal === 'price_asc') return priceA - priceB;
+            if (sortVal === 'price_desc') return priceB - priceA;
+            if (sortVal === 'name_asc') return nameA.localeCompare(nameB);
+            return 0;
+        });
+
+        items.forEach(item => grid.appendChild(item));
+    };
+
+    window.filterProducts = function () {
+        const searchInput = document.getElementById('searchInput');
+        const query = (searchInput ? searchInput.value : '').toLowerCase().trim();
+        const select = document.getElementById('categoryFilter');
+        const category = select ? select.value : 'all';
+        const inStockOnly = document.getElementById('inStockOnly') ? document.getElementById('inStockOnly').checked : false;
+
+        const items = document.querySelectorAll('.product-item');
+        let visibleCount = 0;
+
+        items.forEach(item => {
+            const name = item.dataset.name || '';
+            const cat = item.dataset.category || '';
+            const stock = parseInt(item.dataset.stock || '0', 10);
+
+            const matchesSearch = !query || name.includes(query) || (item.dataset.barcode && item.dataset.barcode.includes(query));
+            const matchesCategory = category === 'all' || cat.toLowerCase() === category.toLowerCase();
+            const matchesStock = !inStockOnly || stock > 0;
+
+            if (matchesSearch && matchesCategory && matchesStock) {
+                item.style.display = '';
+                visibleCount++;
+            } else {
+                item.style.display = 'none';
+            }
+        });
+
+        const counter = document.getElementById('catalogCounter');
+        if (counter) counter.innerText = visibleCount + ' Products Available';
+
+        const noResults = document.getElementById('noResults');
+        if (noResults) noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+    };
+
+    window.clearFilters = function () {
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) searchInput.value = '';
+        const navInput = document.getElementById('navSearchInput');
+        if (navInput) navInput.value = '';
+        const select = document.getElementById('categoryFilter');
+        if (select) select.value = 'all';
+        const inStockOnly = document.getElementById('inStockOnly');
+        if (inStockOnly) inStockOnly.checked = false;
+        const sortFilter = document.getElementById('sortFilter');
+        if (sortFilter) sortFilter.value = 'featured';
+
+        window.filterByProvenance('All');
+    };
 </script>
 
 <%- include('footer') %>

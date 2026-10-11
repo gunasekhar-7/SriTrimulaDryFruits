@@ -350,6 +350,16 @@ function numToWords(n) {
             window.location.href = '/sell';
         }
     });
+
+    // 4. AUTO-PRINT TRIGGER FOR FRESH BILLS
+    window.addEventListener('DOMContentLoaded', () => {
+        // Check if this is a fresh finalized bill (not a historical search)
+        const urlParams = new URLSearchParams(window.location.search);
+        const isSearch = urlParams.has('bill_id');
+        if (!isSearch) {
+            window.print();
+        }
+    });
 </script>
 
 <%- include('footer') %>

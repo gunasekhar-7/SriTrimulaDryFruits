@@ -1,0 +1,249 @@
+<%- include('header') %>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0 brand-font" style="color: var(--brand-green);">Online Orders Dashboard</h2>
+</div>
+
+<!-- Metrics Strip -->
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100" style="background: linear-gradient(135deg, #fff3cd, #fff9e6);">
+            <div class="card-body">
+                <h6 class="text-warning-emphasis fw-bold text-uppercase mb-1">Pending Orders</h6>
+                <h2 class="mb-0 text-dark"><%= pendingCount %></h2>
+                <small class="text-muted">Action required (New, Confirmed, Packing)</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100" style="background: linear-gradient(135deg, #e0f8e9, #f0fbf4);">
+            <div class="card-body">
+                <h6 class="text-success-emphasis fw-bold text-uppercase mb-1">Today's Orders</h6>
+                <h2 class="mb-0 text-dark"><%= todayOrderCount %></h2>
+                <small class="text-muted">Orders received today</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100" style="background: linear-gradient(135deg, #e2e3f5, #f1f2fa);">
+            <div class="card-body">
+                <h6 class="text-primary-emphasis fw-bold text-uppercase mb-1">Today's Revenue</h6>
+                <h2 class="mb-0 text-dark">₹<%= todayRevenue.toFixed(2) %></h2>
+                <small class="text-muted">Total sales from online orders today</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Advanced Filter Form -->
+<div class="card border-0 shadow-sm rounded-4 mb-4">
+    <div class="card-body bg-light rounded-4">
+        <form action="/admin/online-orders" method="GET" class="row g-3 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label small fw-bold text-muted mb-1">Status</label>
+                <select name="status" class="form-select border-0 shadow-sm">
+                    <% const statuses = ['ALL', 'NEW', 'CONFIRMED', 'PACKING', 'READY', 'DISPATCHED', 'COMPLETED', 'CANCELLED']; %>
+                    <% statuses.forEach(s => { %>
+                        <option value="<%= s %>" <%= currentFilter === s ? 'selected' : '' %>><%= s %></option>
+                    <% }) %>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small fw-bold text-muted mb-1">From Date</label>
+                <input type="date" name="startDate" class="form-control border-0 shadow-sm" value="<%= typeof startDate !== 'undefined' ? startDate : '' %>">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small fw-bold text-muted mb-1">To Date</label>
+                <input type="date" name="endDate" class="form-control border-0 shadow-sm" value="<%= typeof endDate !== 'undefined' ? endDate : '' %>">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small fw-bold text-muted mb-1">Search (Name, Phone, Order #)</label>
+                <input type="text" name="search" class="form-control border-0 shadow-sm" placeholder="Search..." value="<%= typeof search !== 'undefined' ? search : '' %>">
+            </div>
+            <div class="col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-success w-100 shadow-sm">Filter</button>
+                <a href="/admin/online-orders" class="btn btn-light border w-100 shadow-sm">Clear</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Orders Table -->
+<div class="card border-0 shadow-sm rounded-4">
+    <div class="card-body p-0">
+        <% if (orders && orders.length > 0) { %>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">Order #</th>
+                            <th>Customer</th>
+                            <th>Items</th>
+                            <th>Total</th>
+                            <th>Type</th>
+                            <th>Status</th>
+                            <th>Timestamp</th>
+                            <th class="pe-4 text-end">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% orders.forEach(o => { 
+                            let badgeColor = 'secondary';
+                            if (o.status === 'NEW') badgeColor = 'danger';
+                            if (o.status === 'CONFIRMED') badgeColor = 'primary';
+                            if (o.status === 'PACKING') badgeColor = 'warning text-dark';
+                            if (o.status === 'READY') badgeColor = 'info text-dark';
+                            if (o.status === 'DISPATCHED') badgeColor = 'primary';
+                            if (o.status === 'COMPLETED') badgeColor = 'success';
+                        %>
+                        <tr>
+                            <td class="ps-4 font-monospace fw-bold">
+                                <a href="/admin/online-orders/<%= o.id %>" class="text-decoration-none text-success">
+                                    <%= o.order_number %>
+                                </a>
+                            </td>
+                            <td>
+                                <div class="fw-bold"><%= o.customer.name %></div>
+                                <div class="small text-muted"><%= o.customer.phone %></div>
+                            </td>
+                            <td><%= o.items.length %> items</td>
+                            <td class="fw-bold">₹<%= o.total_amount.toFixed(2) %></td>
+                            <td>
+                                <% if (o.delivery_type === 'DELIVERY') { %>
+                                    <span class="badge bg-primary bg-opacity-10 text-primary border border-primary-subtle rounded-pill">🚚 Home Delivery</span>
+                                <% } else { %>
+                                    <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary-subtle rounded-pill">🏪 Store Pickup</span>
+                                <% } %>
+                            </td>
+                            <td>
+                                <span class="badge bg-<%= badgeColor %> rounded-pill px-3 py-2"><%= o.status %></span>
+                            </td>
+                            <td class="small text-muted">
+                                <%= new Date(o.created_at).toLocaleString() %>
+                            </td>
+                            <td class="pe-4 text-end">
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-light border dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                        Actions
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end shadow">
+                                        <li><a class="dropdown-item" href="/admin/online-orders/<%= o.id %>">👁️ View Details</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        
+                                        <% if (o.status === 'NEW') { %>
+                                            <li>
+                                                <form action="/admin/online-orders/<%= o.id %>/status" method="POST">
+                                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                                    <input type="hidden" name="new_status" value="CONFIRMED">
+                                                    <button type="submit" class="dropdown-item text-primary">👍 Confirm Order</button>
+                                                </form>
+                                            </li>
+                                        <% } %>
+                                        
+                                        <% if (o.status === 'CONFIRMED') { %>
+                                            <li>
+                                                <form action="/admin/online-orders/<%= o.id %>/status" method="POST">
+                                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                                    <input type="hidden" name="new_status" value="PACKING">
+                                                    <button type="submit" class="dropdown-item text-warning">📦 Mark Packing</button>
+                                                </form>
+                                            </li>
+                                        <% } %>
+
+                                        <% if (o.status === 'PACKING' && o.delivery_type === 'DELIVERY') { %>
+                                            <li>
+                                                <form action="/admin/online-orders/<%= o.id %>/status" method="POST">
+                                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                                    <input type="hidden" name="new_status" value="DISPATCHED">
+                                                    <button type="submit" class="dropdown-item text-info">🛵 Mark Dispatched</button>
+                                                </form>
+                                            </li>
+                                        <% } %>
+
+                                        <% if (o.status === 'PACKING' && o.delivery_type === 'STORE_PICKUP') { %>
+                                            <li>
+                                                <form action="/admin/online-orders/<%= o.id %>/status" method="POST">
+                                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                                    <input type="hidden" name="new_status" value="READY">
+                                                    <button type="submit" class="dropdown-item text-info">🛍️ Mark Ready</button>
+                                                </form>
+                                            </li>
+                                        <% } %>
+
+                                        <% if (['DISPATCHED', 'READY', 'NEW', 'CONFIRMED'].includes(o.status)) { %>
+                                            <li>
+                                                <form action="/admin/online-orders/<%= o.id %>/status" method="POST">
+                                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                                    <input type="hidden" name="new_status" value="COMPLETED">
+                                                    <button type="submit" class="dropdown-item text-success">✅ Mark Completed</button>
+                                                </form>
+                                            </li>
+                                        <% } %>
+                                        <% if (o.status !== 'COMPLETED' && o.status !== 'CANCELLED') { %>
+                                            <li>
+                                                <form action="/admin/online-orders/<%= o.id %>/status" method="POST">
+                                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                                    <input type="hidden" name="new_status" value="CANCELLED">
+                                                    <button type="submit" class="dropdown-item text-danger">❌ Cancel Order</button>
+                                                </form>
+                                            </li>
+                                        <% } %>
+
+                                        <% if ((o.status === 'READY' || o.status === 'NEW' || o.status === 'CONFIRMED' || o.status === 'PACKING') && o.delivery_type === 'STORE_PICKUP') { %>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li>
+                                                <form action="/admin/online-orders/<%= o.id %>/push-to-pos" method="POST">
+                                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                                    <button type="submit" class="dropdown-item text-primary fw-bold">🏪 Push to POS</button>
+                                                </form>
+                                            </li>
+                                        <% } %>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        <% } else { %>
+            <div class="text-center py-5">
+                <div class="display-1 text-muted mb-3">🍃</div>
+                <h4 class="text-muted fw-bold">No orders found</h4>
+                <p class="text-muted mb-0">No online orders match the current filter criteria.</p>
+            </div>
+        <% } %>
+    </div>
+</div>
+
+<!-- Notification Banner for New Orders -->
+<div id="newOrderNotification" class="toast align-items-center text-bg-success border-0 position-fixed top-0 end-0 m-4" style="z-index: 1060; display: none;" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="d-flex">
+        <div class="toast-body fw-bold">
+            🔔 New online order received!
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close" onclick="document.getElementById('newOrderNotification').style.display='none';"></button>
+    </div>
+</div>
+
+<script>
+    let currentPendingCount = <%= pendingCount %>;
+
+    // Polling script every 30s
+    setInterval(async () => {
+        try {
+            const res = await fetch('/api/v1/orders/pending-count');
+            const resData = await res.json();
+            if (resData.success && resData.data.count > currentPendingCount) {
+                // Show banner
+                document.getElementById('newOrderNotification').style.display = 'block';
+                // Play notification sound if desired
+                currentPendingCount = data.count;
+            }
+        } catch (e) {
+            console.error('Polling error', e);
+        }
+    }, 30000);
+</script>
+
+<%- include('footer') %>

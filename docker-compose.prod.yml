@@ -1,0 +1,43 @@
+# ==============================================================================
+# Production Docker Compose Override (docker-compose.prod.yml)
+# Sri Tirumala Dry Fruits - POS & E-Commerce Platform
+# Usage: docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+# ==============================================================================
+
+services:
+  pos-app:
+    # ─── Production Immutable Image Tag ───────────────────────────────────────
+    # Requires an explicit release tag or commit SHA (fails if default 'latest')
+    image: sri-tirumala-pos:${IMAGE_TAG:?IMAGE_TAG must be set in production}
+
+    # ─── Secure Secret Injection (Docker Secrets) ─────────────────────────────
+    # Mounts cryptographic secrets as in-memory files at /run/secrets/
+    # This prevents secrets from being exposed in docker inspect or environment dumps
+    secrets:
+      - session_secret
+      - cookie_secret
+
+    environment:
+      - NODE_ENV=production
+      - SITE_URL=https://sritirumaladryfruits.com
+      - SESSION_SECRET_FILE=/run/secrets/session_secret
+      - COOKIE_SECRET_FILE=/run/secrets/cookie_secret
+
+    # ─── Production Resource Allocations ──────────────────────────────────────
+    deploy:
+      resources:
+        limits:
+          cpus: '2.00'
+          memory: 1536M
+        reservations:
+          cpus: '0.50'
+          memory: 512M
+
+# ─── Production Docker Secrets Definition ─────────────────────────────────────
+# In production, secrets are provisioned via Docker Swarm, Docker Compose secret files,
+# or injected from HashiCorp Vault / AWS Secrets Manager
+secrets:
+  session_secret:
+    file: ./secrets/session_secret.txt
+  cookie_secret:
+    file: ./secrets/cookie_secret.txt

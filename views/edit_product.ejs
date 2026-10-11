@@ -29,7 +29,10 @@
                     </div>
                     <div class="col-md-4">
                         <label class="form-label fw-bold text-dark mb-2">Barcode Identifier</label>
-                        <input name="barcode" class="form-control" value="<%= product.barcode %>" required placeholder="Barcode">
+                        <div class="input-group">
+                            <input type="text" id="barcodeInput" name="barcode" class="form-control" value="<%= product.barcode %>" required placeholder="Barcode">
+                            <button type="button" class="btn btn-success" id="autoBarcodeBtn">Auto 🎲</button>
+                        </div>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label fw-bold text-dark mb-2">Category</label>
@@ -98,5 +101,17 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const autoBtn = document.getElementById('autoBarcodeBtn');
+    if (autoBtn) {
+        autoBtn.addEventListener('click', function() {
+            const randomNum = Math.floor(10000000 + Math.random() * 90000000);
+            document.getElementById('barcodeInput').value = randomNum;
+        });
+    }
+});
+</script>
 
 <%- include('footer') %>

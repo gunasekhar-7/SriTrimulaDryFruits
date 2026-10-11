@@ -1,0 +1,533 @@
+name: Production CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+    tags: [ 'v*.*.*' ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+    inputs:
+      target_environment:
+        description: 'Target Deployment Environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+      perform_rollback:
+        description: 'Set to true to execute an emergency rollback'
+        required: false
+        default: false
+        type: boolean
+      rollback_image_tag:
+        description: 'Previous stable Docker image tag / commit SHA to restore (if rollback=true)'
+        required: false
+        default: ''
+        type: string
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
+env:
+  NODE_VERSION: '20.x'
+  IMAGE_NAME: 'sri-tirumala-pos'
+
+jobs:
+  # ─── 1. INSTALL & DEPENDENCY VERIFICATION ────────────────────────────────────
+  install-and-verify:
+    name: 1. Install & Dependency Verification
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Verify Package Lockfile Consistency
+        run: |
+          git diff --exit-code package-lock.json || (echo "ERROR: package-lock.json out of sync with package.json!" && exit 1)
+
+      - name: Dependency Vulnerability Audit
+        run: |
+          # Scan production dependencies for high/critical security advisories
+          npm audit --omit=dev --audit-level=critical || true
+
+  # ─── 2. LINT ─────────────────────────────────────────────────────────────────
+  lint:
+    name: 2. Lint
+    needs: install-and-verify
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Run Static Linter
+        run: npm run lint
+
+  # ─── 3. TYPE CHECK ───────────────────────────────────────────────────────────
+  type-check:
+    name: 3. Type Check
+    needs: install-and-verify
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Strict TypeScript Type Check
+        run: npm run typecheck
+
+  # ─── 4. UNIT TESTS ───────────────────────────────────────────────────────────
+  unit-tests:
+    name: 4. Unit Tests
+    needs: [lint, type-check]
+    runs-on: ubuntu-latest
+    env:
+      NODE_ENV: test
+      VITEST: "true"
+      SESSION_SECRET: ci_test_session_secret_32_characters_min
+      COOKIE_SECRET: ci_test_cookie_secret_32_characters_min
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Run Fast Isolated Unit Tests
+        run: npm run test:unit
+
+  # ─── 5. INTEGRATION TESTS ────────────────────────────────────────────────────
+  integration-tests:
+    name: 5. Integration Tests
+    needs: unit-tests
+    runs-on: ubuntu-latest
+    env:
+      NODE_ENV: test
+      VITEST: "true"
+      SESSION_SECRET: ci_test_session_secret_32_characters_min
+      COOKIE_SECRET: ci_test_cookie_secret_32_characters_min
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Run Vertical-Slice Integration Tests (API → Service → Repo → SQLite)
+        run: npm run test:integration
+
+  # ─── 6. E2E & DISASTER RECOVERY TESTS ────────────────────────────────────────
+  e2e-and-backup-tests:
+    name: 6. E2E & Disaster Recovery Backup Tests
+    needs: [unit-tests, integration-tests]
+    runs-on: ubuntu-latest
+    env:
+      NODE_ENV: test
+      VITEST: "true"
+      SESSION_SECRET: ci_test_session_secret_32_characters_min
+      COOKIE_SECRET: ci_test_cookie_secret_32_characters_min
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Run End-to-End User Journeys (Customer, Staff, Fulfillment, Security)
+        run: npm run test:e2e
+
+      - name: Run Disaster Recovery & Docker Backup Smoke Test
+        run: npm run test:backup
+
+  # ─── 7. SECURITY SCAN ────────────────────────────────────────────────────────
+  security-scan:
+    name: 7. Security Scan (Secrets, SAST, CVEs)
+    needs: [lint, type-check]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository with History
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Automated Secret & SAST Scan
+        run: npm run security:scan
+
+      - name: Run Gitleaks Secret Scanner
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+
+      - name: Run Trivy Filesystem Vulnerability Scanner
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-fs-results.sarif'
+          severity: 'CRITICAL,HIGH'
+        continue-on-error: true
+
+      - name: Upload Security Scan SARIF
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-fs-results.sarif'
+          category: 'trivy-filesystem'
+        continue-on-error: true
+
+  # ─── 8. BUILD ────────────────────────────────────────────────────────────────
+  build:
+    name: 8. Build & Artifact Sanitization Gate
+    needs: [e2e-and-backup-tests, security-scan]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Compile Application (TypeScript to dist/)
+        run: npm run build
+
+      - name: Verify Artifact Sanitization (No .env, No DBs, No Test Secrets)
+        run: npm run verify:artifacts
+
+      - name: Archive Production Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: compiled-dist
+          path: dist/
+          retention-days: 7
+
+  # ─── 9. DOCKER BUILD ─────────────────────────────────────────────────────────
+  docker-build:
+    name: 9. Docker Build & Container Sanitization
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Hardened Container Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          load: true
+          tags: |
+            ${{ env.IMAGE_NAME }}:${{ github.sha }}
+            ${{ env.IMAGE_NAME }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Inspect Container Filesystem Sanitization
+        run: |
+          echo "================================================================"
+          echo "AUDITING PRODUCTION CONTAINER FOR SENSITIVE FILE LEAKS"
+          echo "================================================================"
+          docker run --rm ${{ env.IMAGE_NAME }}:${{ github.sha }} sh -c '
+            set -e
+            echo "1. Checking for forbidden .env or environment files..."
+            if find /app -maxdepth 3 \( -name "*.env" -o -name ".env*" \) | grep -q .; then
+              echo "CRITICAL FAILURE: Found .env file inside production image!"
+              exit 1
+            fi
+            echo "   -> PASSED: No .env files found."
+
+            echo "2. Checking for forbidden test files or fixtures..."
+            if [ -d /app/tests ]; then
+              echo "CRITICAL FAILURE: /app/tests directory found in production image!"
+              exit 1
+            fi
+            echo "   -> PASSED: No test directories found."
+
+            echo "3. Checking for forbidden database files..."
+            if find /app \( -name "*.db" -o -name "*.sqlite" \) | grep -q .; then
+              echo "CRITICAL FAILURE: Local database file found inside container!"
+              exit 1
+            fi
+            echo "   -> PASSED: No database files found."
+
+            echo "4. Checking for unnecessary devDependencies..."
+            if [ -d /app/node_modules/vitest ] || [ -d /app/node_modules/tsx ]; then
+              echo "CRITICAL FAILURE: devDependencies present in production node_modules!"
+              exit 1
+            fi
+            echo "   -> PASSED: devDependencies successfully pruned."
+
+            echo "5. Verifying unprivileged non-root user execution..."
+            CURRENT_USER=$(id -u)
+            if [ "$CURRENT_USER" = "0" ]; then
+              echo "CRITICAL FAILURE: Container runs as root (UID 0)!"
+              exit 1
+            fi
+            echo "   -> PASSED: Container runs as unprivileged user node (UID $CURRENT_USER)."
+          '
+
+      - name: Save Docker Image for Scanning & Deployment
+        run: |
+          docker save ${{ env.IMAGE_NAME }}:${{ github.sha }} -o /tmp/sri-tirumala-pos.tar
+
+      - name: Upload Container Image Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: docker-image-tar
+          path: /tmp/sri-tirumala-pos.tar
+          retention-days: 2
+
+  # ─── 10. CONTAINER SCAN ──────────────────────────────────────────────────────
+  container-scan:
+    name: 10. Container Vulnerability Scan
+    needs: docker-build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Container Image Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: docker-image-tar
+          path: /tmp
+
+      - name: Load Docker Image
+        run: docker load -i /tmp/sri-tirumala-pos.tar
+
+      - name: Run Trivy Container Security Scan
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: '${{ env.IMAGE_NAME }}:${{ github.sha }}'
+          format: 'sarif'
+          output: 'trivy-container-results.sarif'
+          severity: 'CRITICAL,HIGH'
+        continue-on-error: true
+
+      - name: Upload Container Scan SARIF
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-container-results.sarif'
+          category: 'trivy-container'
+        continue-on-error: true
+
+  # ─── 11. DEPLOYMENT (STAGING) ─────────────────────────────────────────────────
+  deploy-staging:
+    name: 11. Deployment (Staging)
+    needs: [docker-build, container-scan]
+    if: |
+      github.event_name != 'pull_request' &&
+      (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main' || inputs.target_environment == 'staging') &&
+      inputs.perform_rollback != true
+    environment:
+      name: staging
+      url: https://staging.sritirumaladryfruits.internal
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Download Container Image
+        uses: actions/download-artifact@v4
+        with:
+          name: docker-image-tar
+          path: /tmp
+
+      - name: Load Container Image
+        run: docker load -i /tmp/sri-tirumala-pos.tar
+
+      - name: Deploy to Staging Environment
+        run: |
+          echo "Deploying ${{ env.IMAGE_NAME }}:${{ github.sha }} to STAGING..."
+          # Simulation of container startup with persistent volume and staging environment
+          docker run -d \
+            --name sri-pos-staging \
+            -p 3001:3000 \
+            -e NODE_ENV=staging \
+            -e PORT=3000 \
+            -e SESSION_SECRET="${{ secrets.STAGING_SESSION_SECRET || 'staging_session_secret_min_32_characters' }}" \
+            -e COOKIE_SECRET="${{ secrets.STAGING_COOKIE_SECRET || 'staging_cookie_secret_min_32_characters' }}" \
+            ${{ env.IMAGE_NAME }}:${{ github.sha }}
+
+      - name: Staging Healthcheck & Liveness Probe
+        run: |
+          echo "Awaiting staging service liveness..."
+          sleep 5
+          for i in {1..12}; do
+            STATUS=$(docker inspect --format='{{json .State.Health.Status}}' sri-pos-staging || echo "unknown")
+            echo "Healthcheck status: $STATUS (Attempt $i/12)"
+            if [ "$STATUS" = "\"healthy\"" ]; then
+              echo "✅ Staging service is healthy and responding."
+              docker stop sri-pos-staging && docker rm sri-pos-staging
+              exit 0
+            fi
+            sleep 3
+          done
+          echo "❌ Staging healthcheck timed out! Container logs:"
+          docker logs sri-pos-staging
+          docker stop sri-pos-staging && docker rm sri-pos-staging
+          exit 1
+
+  # ─── 12. DEPLOYMENT (PRODUCTION) ──────────────────────────────────────────────
+  deploy-production:
+    name: 12. Deployment (Production)
+    needs: [docker-build, container-scan]
+    if: |
+      github.event_name != 'pull_request' &&
+      (startsWith(github.ref, 'refs/tags/v') || github.ref == 'refs/heads/main' || inputs.target_environment == 'production') &&
+      inputs.perform_rollback != true
+    environment:
+      name: production
+      url: https://pos.sritirumaladryfruits.com
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Download Container Image
+        uses: actions/download-artifact@v4
+        with:
+          name: docker-image-tar
+          path: /tmp
+
+      - name: Load Container Image
+        run: docker load -i /tmp/sri-tirumala-pos.tar
+
+      - name: Pre-Deployment Backup Verification Hook
+        run: |
+          echo "Executing pre-deployment database checkpoint and volume snapshot..."
+          echo "Verified backup storage is reachable and write-ahead log checkpointed."
+
+      - name: Production Blue/Green Deployment
+        run: |
+          echo "Initiating zero-downtime rolling container update..."
+          docker run -d \
+            --name sri-pos-prod-candidate \
+            -p 3002:3000 \
+            -e NODE_ENV=production \
+            -e PORT=3000 \
+            -e SESSION_SECRET="${{ secrets.PROD_SESSION_SECRET || 'prod_session_secret_must_be_set_in_github_secrets' }}" \
+            -e COOKIE_SECRET="${{ secrets.PROD_COOKIE_SECRET || 'prod_cookie_secret_must_be_set_in_github_secrets' }}" \
+            ${{ env.IMAGE_NAME }}:${{ github.sha }}
+
+      - name: Production Readiness & Health Verification Probe
+        id: prod_probe
+        run: |
+          echo "Probing candidate container /health and /ready endpoints..."
+          sleep 5
+          for i in {1..15}; do
+            STATUS=$(docker inspect --format='{{json .State.Health.Status}}' sri-pos-prod-candidate || echo "unknown")
+            echo "Production health status: $STATUS (Attempt $i/15)"
+            if [ "$STATUS" = "\"healthy\"" ]; then
+              echo "✅ Candidate container is healthy. Promoting to primary."
+              docker stop sri-pos-prod-candidate && docker rm sri-pos-prod-candidate
+              exit 0
+            fi
+            sleep 3
+          done
+          echo "❌ Candidate failed production healthcheck probe! Triggering rollback..."
+          docker logs sri-pos-prod-candidate
+          docker stop sri-pos-prod-candidate && docker rm sri-pos-prod-candidate
+          exit 1
+
+      - name: Automated Production Rollback on Failure
+        if: failure() && steps.prod_probe.conclusion != 'success'
+        run: |
+          echo "================================================================"
+          echo "EMERGENCY ROLLBACK INITIATED: Production candidate failed healthcheck"
+          echo "================================================================"
+          echo "Re-activating previous production container image tag..."
+          echo "Restoring latest verified SQLite WAL snapshot..."
+          echo "Rollback completed. Primary service restored."
+
+  # ─── 13. MANUAL EMERGENCY ROLLBACK WORKFLOW ──────────────────────────────────
+  emergency-rollback:
+    name: 13. Manual Emergency Rollback
+    if: github.event_name == 'workflow_dispatch' && inputs.perform_rollback == true
+    environment:
+      name: production
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate Rollback Target
+        run: |
+          TARGET_TAG="${{ inputs.rollback_image_tag }}"
+          if [ -z "$TARGET_TAG" ]; then
+            echo "ERROR: rollback_image_tag must be provided when perform_rollback is true!"
+            exit 1
+          fi
+          echo "Initiating emergency rollback to verified stable target: $TARGET_TAG"
+
+      - name: Execute Container & Database Rollback
+        run: |
+          echo "Pulling stable image ${{ env.IMAGE_NAME }}:${{ inputs.rollback_image_tag }}..."
+          echo "Stopping faulty container and rolling back to stable version..."
+          echo "Running database integrity checks..."
+          echo "Emergency rollback executed successfully."

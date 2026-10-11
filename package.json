@@ -6,11 +6,27 @@
   "type": "module",
   "scripts": {
     "dev": "tsx server.ts",
+    "prebuild": "node -e \"import('fs').then(fs => fs.rmSync('dist', { recursive: true, force: true }))\"",
     "build": "tsc",
-    "start": "tsx server.ts",
-    "lint": "tsc --noEmit"
+    "start": "node dist/server.js",
+    "lint": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
+    "security:scan": "node scripts/security_scan.js",
+    "verify:artifacts": "node scripts/verify_artifacts.js",
+    "backup": "node dist/scripts/run_backup.js",
+    "backup:offsite": "node dist/scripts/backup_offsite.js",
+    "backup:restore": "node dist/scripts/restore_backup.js",
+    "test": "vitest run --fileParallelism=false",
+    "test:unit": "vitest run tests/unit --fileParallelism=false",
+    "test:integration": "vitest run tests/integration --fileParallelism=false",
+    "test:e2e": "vitest run tests/e2e --fileParallelism=false",
+    "test:security": "vitest run tests/e2e/security.e2e.test.ts --fileParallelism=false",
+    "test:backup": "vitest run tests/docker-backup.smoke.test.ts --fileParallelism=false",
+    "test:ci": "vitest run --fileParallelism=false"
   },
   "dependencies": {
+    "@opentelemetry/api": "^1.9.1",
+    "@opentelemetry/sdk-trace-base": "^2.12.0",
     "bcryptjs": "^3.0.3",
     "better-sqlite3": "^13.0.3",
     "connect-flash": "^0.1.1",
@@ -26,6 +42,7 @@
     "morgan": "^1.12.1",
     "node-cron": "^4.6.0",
     "pdfkit": "^0.20.2",
+    "prom-client": "^15.1.3",
     "winston": "^3.19.0",
     "zod": "^4.6.5"
   },
@@ -42,7 +59,11 @@
     "@types/node": "^20.12.12",
     "@types/node-cron": "^3.0.11",
     "@types/pdfkit": "^0.17.6",
+    "@types/supertest": "^7.2.1",
+    "supertest": "^7.3.1",
     "tsx": "^4.11.0",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "vite": "^8.3.3",
+    "vitest": "^5.0.3"
   }
 }

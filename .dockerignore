@@ -1,0 +1,51 @@
+# ─── Secrets, Credentials & Local Environments ─────────────────────────
+.env
+.env.*
+*.env
+*.pem
+*.key
+*.crt
+*.cert
+
+# ─── Databases & Runtime State ─────────────────────────────────────────
+data/
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+database.json*
+pos.db
+templates/*.db
+backups/
+logs/
+
+# ─── Test Files, Mocks & Test Config ───────────────────────────────────
+tests/
+__tests__/
+*.test.ts
+*.spec.ts
+*.test.js
+*.spec.js
+vitest.config.ts
+coverage/
+
+# ─── Development & Build Dependencies ──────────────────────────────────
+node_modules/
+dist/
+legacy_archive/
+templates/
+docs/
+.git/
+.github/
+.gitignore
+.dockerignore
+metadata.json
+
+# ─── IDE & OS Artifacts ────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.log
+npm-debug.log*
+yarn-debug.log*

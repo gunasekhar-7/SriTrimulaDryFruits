@@ -1,0 +1,243 @@
+<%- include('header') %>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <a href="/admin/online-orders" class="text-decoration-none text-muted mb-2 d-inline-block">← Back to Orders</a>
+        <h2 class="mb-0 brand-font" style="color: var(--brand-green);">Order #<%= order.order_number %></h2>
+    </div>
+    
+    <% 
+        let badgeColor = 'secondary';
+        if (order.status === 'NEW') badgeColor = 'danger';
+        if (order.status === 'CONFIRMED') badgeColor = 'primary';
+        if (order.status === 'PACKING') badgeColor = 'warning text-dark';
+        if (order.status === 'READY') badgeColor = 'info text-dark';
+        if (order.status === 'DISPATCHED') badgeColor = 'primary';
+        if (order.status === 'COMPLETED') badgeColor = 'success';
+    %>
+    <span class="badge bg-<%= badgeColor %> fs-5 px-4 py-2 rounded-pill shadow-sm"><%= order.status %></span>
+</div>
+
+<div class="row g-4">
+    <!-- LEFT COLUMN -->
+    <div class="col-lg-8">
+        
+        <div class="row g-4 mb-4">
+            <!-- Order Details Card -->
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm h-100 rounded-4">
+                    <div class="card-body">
+                        <h6 class="text-muted fw-bold text-uppercase mb-3">Order Details</h6>
+                        <table class="table table-borderless table-sm mb-0">
+                            <tbody>
+                                <tr><td class="text-muted w-50">Date:</td><td class="fw-bold"><%= new Date(order.created_at).toLocaleString() %></td></tr>
+                                <tr><td class="text-muted">Type:</td>
+                                    <td class="fw-bold">
+                                        <% if (order.delivery_type === 'DELIVERY') { %>
+                                            🚚 Home Delivery
+                                        <% } else { %>
+                                            🏪 Store Pickup
+                                        <% } %>
+                                    </td>
+                                </tr>
+                                <tr><td class="text-muted">Payment:</td><td class="fw-bold"><%= order.payment_mode === 'COD' ? '💵 Cash / Pay on Delivery' : '📱 UPI / QR' %></td></tr>
+                                <tr><td class="text-muted">Items:</td><td class="fw-bold"><%= order.items.length %></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Customer Details Card -->
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm h-100 rounded-4">
+                    <div class="card-body">
+                        <h6 class="text-muted fw-bold text-uppercase mb-3">Customer Details</h6>
+                        <div class="fw-bold fs-5 mb-1"><%= order.customer.name %></div>
+                        <div class="text-muted mb-2 font-monospace">📞 +<%= order.customer.phone %></div>
+                        
+                        <% if (order.delivery_type === 'DELIVERY') { %>
+                            <div class="small text-dark mt-3">
+                                <strong>Address:</strong><br>
+                                <%= order.customer.delivery_address %><br>
+                                <% if (order.customer.landmark) { %>
+                                    <em>Landmark: <%= order.customer.landmark %></em>
+                                <% } %>
+                            </div>
+                        <% } else { %>
+                            <div class="small text-muted mt-3">
+                                Customer will pick up from the store.
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <% if (order.notes) { %>
+            <div class="alert alert-info rounded-4 border-0 shadow-sm">
+                <strong>📝 Customer Notes:</strong><br>
+                <%= order.notes %>
+            </div>
+        <% } %>
+
+        <!-- Line Items Table -->
+        <div class="card border-0 shadow-sm rounded-4 mb-4">
+            <div class="card-header bg-white border-bottom-0 pt-4 pb-2">
+                <h5 class="mb-0 fw-bold">Order Items</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-4">Product</th>
+                                <th class="text-end">Price</th>
+                                <th class="text-center">Qty</th>
+                                <th class="text-end pe-4">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% order.items.forEach(item => { %>
+                            <tr>
+                                <td class="ps-4 fw-bold"><%= item.product_name %></td>
+                                <td class="text-end">₹<%= item.unit_price.toFixed(2) %></td>
+                                <td class="text-center fw-bold"><%= item.quantity %></td>
+                                <td class="text-end pe-4 fw-bold">₹<%= item.total_price.toFixed(2) %></td>
+                            </tr>
+                            <% }) %>
+                        </tbody>
+                        <tfoot class="table-light">
+                            <tr>
+                                <td colspan="3" class="text-end text-muted">Subtotal:</td>
+                                <td class="text-end pe-4 fw-bold">₹<%= order.subtotal.toFixed(2) %></td>
+                            </tr>
+                            <tr>
+                                <td colspan="3" class="text-end text-muted">Delivery Charge:</td>
+                                <td class="text-end pe-4 fw-bold"><%= order.delivery_charge === 0 ? 'FREE' : '₹' + order.delivery_charge.toFixed(2) %></td>
+                            </tr>
+                            <% if (order.discount > 0) { %>
+                            <tr>
+                                <td colspan="3" class="text-end text-success">Discount:</td>
+                                <td class="text-end pe-4 text-success fw-bold">-₹<%= order.discount.toFixed(2) %></td>
+                            </tr>
+                            <% } %>
+                            <tr>
+                                <td colspan="3" class="text-end fs-5">Grand Total:</td>
+                                <td class="text-end pe-4 fs-5 text-success fw-bold">₹<%= order.total_amount.toFixed(2) %></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div class="col-lg-4">
+        
+        <!-- Actions Card -->
+        <div class="card border-0 shadow-sm rounded-4 mb-4">
+            <div class="card-body">
+                <h6 class="text-muted fw-bold text-uppercase mb-3">Quick Actions</h6>
+                
+                <a href="https://wa.me/<%= order.customer.phone %>" target="_blank" class="btn btn-lg w-100 mb-3 text-white fw-bold shadow-sm" style="background-color: #25D366;">
+                    💬 Chat on WhatsApp
+                </a>
+                
+                <% if (order.status !== 'COMPLETED' && order.status !== 'CANCELLED') { %>
+                    <form action="/admin/online-orders/<%= order.id %>/push-to-pos" method="POST" class="mb-3" onsubmit="return confirm('Are you sure you want to convert this to a POS bill? This will process inventory deductions and close the order.');">
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                        <button type="submit" class="btn btn-brand btn-lg w-100 fw-bold shadow-sm">
+                            🧾 Push to POS Bill & Print
+                        </button>
+                    </form>
+                <% } %>
+                
+                <h6 class="text-muted fw-bold text-uppercase mb-3">State Transitions</h6>
+                <div class="d-grid gap-2">
+                    <% if (order.status === 'NEW') { %>
+                        <form action="/admin/online-orders/<%= order.id %>/status" method="POST">
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                            <input type="hidden" name="new_status" value="CONFIRMED">
+                            <button type="submit" class="btn btn-primary w-100 fw-bold">👍 Confirm Order</button>
+                        </form>
+                    <% } %>
+                    
+                    <% if (order.status === 'CONFIRMED') { %>
+                        <form action="/admin/online-orders/<%= order.id %>/status" method="POST">
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                            <input type="hidden" name="new_status" value="PACKING">
+                            <button type="submit" class="btn btn-warning w-100 fw-bold">📦 Mark Packing</button>
+                        </form>
+                    <% } %>
+
+                    <% if (order.status === 'PACKING' && order.delivery_type === 'DELIVERY') { %>
+                        <form action="/admin/online-orders/<%= order.id %>/status" method="POST">
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                            <input type="hidden" name="new_status" value="DISPATCHED">
+                            <button type="submit" class="btn btn-info w-100 fw-bold">🛵 Mark Dispatched</button>
+                        </form>
+                    <% } %>
+
+                    <% if (order.status === 'PACKING' && order.delivery_type === 'STORE_PICKUP') { %>
+                        <form action="/admin/online-orders/<%= order.id %>/status" method="POST">
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                            <input type="hidden" name="new_status" value="READY">
+                            <button type="submit" class="btn btn-info w-100 fw-bold">🛍️ Mark Ready</button>
+                        </form>
+                    <% } %>
+
+                    <% if (['DISPATCHED', 'READY'].includes(order.status)) { %>
+                        <form action="/admin/online-orders/<%= order.id %>/status" method="POST">
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                            <input type="hidden" name="new_status" value="COMPLETED">
+                            <button type="submit" class="btn btn-success w-100 fw-bold">✅ Mark Completed</button>
+                        </form>
+                    <% } %>
+
+                    <% if (order.status !== 'COMPLETED' && order.status !== 'CANCELLED') { %>
+                        <hr class="my-1">
+                        <form action="/admin/online-orders/<%= order.id %>/status" method="POST">
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                            <input type="hidden" name="new_status" value="CANCELLED">
+                            <button type="submit" class="btn btn-outline-danger w-100 fw-bold">❌ Cancel Order</button>
+                        </form>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+
+        <!-- Audit Timeline Card -->
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body">
+                <h6 class="text-muted fw-bold text-uppercase mb-4">Status Timeline</h6>
+                
+                <div class="position-relative ms-3 border-start border-2 border-light pb-2">
+                    <% logs.forEach((log, index) => { 
+                        let dotColor = 'secondary';
+                        if (log.new_status === 'NEW') dotColor = 'danger';
+                        if (log.new_status === 'CONFIRMED') dotColor = 'primary';
+                        if (log.new_status === 'PACKING') dotColor = 'warning';
+                        if (log.new_status === 'READY') dotColor = 'info';
+                        if (log.new_status === 'DISPATCHED') dotColor = 'primary';
+                        if (log.new_status === 'COMPLETED') dotColor = 'success';
+                    %>
+                    <div class="position-relative mb-4 ps-4">
+                        <span class="position-absolute top-0 start-0 translate-middle p-2 bg-<%= dotColor %> border border-light border-2 rounded-circle">
+                            <span class="visually-hidden">New alert</span>
+                        </span>
+                        <div class="fw-bold"><%= log.new_status %></div>
+                        <div class="small text-muted mb-1"><%= new Date(log.timestamp).toLocaleString() %></div>
+                        <div class="small text-secondary">By: <strong><%= log.changed_by %></strong></div>
+                    </div>
+                    <% }) %>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<%- include('footer') %>

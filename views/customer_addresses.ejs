@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Addresses - Sri Tirumala Dryfruits</title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/storefront.css">
+  <style>
+    body {
+      background-color: var(--sf-cream);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .address-box {
+      border-radius: 16px;
+      border: 1px solid var(--sf-border);
+      background: #ffffff;
+      box-shadow: 0 4px 16px rgba(6, 58, 34, 0.05);
+      transition: var(--sf-transition);
+    }
+  </style>
+</head>
+<body>
+  <%- include('partials/header_account') %>
+
+  <div class="container mt-4 mb-5">
+    <div class="row">
+      <div class="col-md-3 mb-4 mb-md-0">
+        <%- include('partials/account_nav', { currentPath: '/account/addresses' }) %>
+      </div>
+      
+      <div class="col-md-9">
+        <div class="row g-4">
+          <div class="col-lg-7">
+            <h4 class="brand-font mb-1" style="color: var(--brand-green);">Saved Addresses</h4>
+            <p class="text-muted small mb-4">Manage your delivery destinations in Tekkali & AP</p>
+
+            <% if (typeof error !== 'undefined' && error && error.length > 0) { %>
+              <div class="alert alert-danger border-0 shadow-sm mb-4" style="border-radius: 12px;"><%= error %></div>
+            <% } %>
+            <% if (typeof success !== 'undefined' && success && success.length > 0) { %>
+              <div class="alert alert-success border-0 shadow-sm mb-4" style="border-radius: 12px;"><%= success %></div>
+            <% } %>
+
+            <% if (addresses.length === 0) { %>
+              <div class="alert alert-info border-0 shadow-sm" style="border-radius: 14px;">No delivery addresses saved yet. Add one on the right.</div>
+            <% } else { %>
+              <div class="row g-3">
+                <% addresses.forEach(addr => { %>
+                  <div class="col-12">
+                    <div class="address-box p-3 h-100 border-<%= addr.is_default ? 'success border-2' : '' %>">
+                      <div class="d-flex justify-content-between align-items-center mb-2">
+                        <strong class="text-dark"><%= addr.label %></strong>
+                        <% if (addr.is_default) { %>
+                          <span class="badge bg-success">Default Address</span>
+                        <% } %>
+                      </div>
+                      <div class="small text-muted mb-3">
+                        <strong class="text-dark"><%= addr.recipient_name %></strong><br>
+                        <%= addr.address_line1 %><br>
+                        <% if (addr.address_line2) { %><%= addr.address_line2 %><br><% } %>
+                        <% if (addr.landmark) { %>Landmark: <%= addr.landmark %><br><% } %>
+                        <%= addr.city %>, <%= addr.state %> – <%= addr.pincode %><br>
+                        Phone: +91 <%= addr.phone %>
+                      </div>
+                      <div class="d-flex justify-content-between align-items-center border-top pt-2">
+                        <% if (!addr.is_default) { %>
+                          <form action="/account/addresses/<%= addr.id %>/default" method="POST" class="m-0">
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                            <button type="submit" class="btn btn-sm btn-outline-success" style="border-radius: 10px;">Set Default</button>
+                          </form>
+                        <% } else { %>
+                          <span></span>
+                        <% } %>
+                        <form action="/account/addresses/<%= addr.id %>/delete" method="POST" class="m-0" onsubmit="return confirm('Delete this address?');">
+                          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                          <button type="submit" class="btn btn-sm btn-outline-danger" style="border-radius: 10px;" title="Delete Address"><i class="fas fa-trash"></i></button>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                <% }); %>
+              </div>
+            <% } %>
+          </div>
+
+          <!-- Add Address Form -->
+          <div class="col-lg-5">
+            <div class="address-box p-4">
+              <h5 class="fw-bold mb-3 border-bottom pb-2">Add New Address</h5>
+              <form action="/account/addresses" method="POST">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                
+                <div class="mb-2">
+                  <label class="form-label small fw-semibold text-muted">Label (e.g. Home, Office)</label>
+                  <input type="text" name="label" class="form-control form-control-sm py-2" placeholder="Home" required style="border-radius: 8px;">
+                </div>
+                <div class="mb-2">
+                  <label class="form-label small fw-semibold text-muted">Recipient Name</label>
+                  <input type="text" name="recipient_name" class="form-control form-control-sm py-2" required style="border-radius: 8px;">
+                </div>
+                <div class="mb-2">
+                  <label class="form-label small fw-semibold text-muted">Phone Number</label>
+                  <input type="text" name="phone" class="form-control form-control-sm py-2" required pattern="[6-9]\d{9}" placeholder="10-digit number" style="border-radius: 8px;">
+                </div>
+                <div class="mb-2">
+                  <label class="form-label small fw-semibold text-muted">Address Line 1</label>
+                  <input type="text" name="address_line1" class="form-control form-control-sm py-2" placeholder="House/Flat No, Street" required style="border-radius: 8px;">
+                </div>
+                <div class="mb-2">
+                  <label class="form-label small fw-semibold text-muted">Address Line 2 (Optional)</label>
+                  <input type="text" name="address_line2" class="form-control form-control-sm py-2" placeholder="Apartment, Colony" style="border-radius: 8px;">
+                </div>
+                <div class="mb-2">
+                  <label class="form-label small fw-semibold text-muted">Landmark (Optional)</label>
+                  <input type="text" name="landmark" class="form-control form-control-sm py-2" placeholder="Near RTC Bus Stand" style="border-radius: 8px;">
+                </div>
+                <div class="row g-2 mb-2">
+                  <div class="col-6">
+                    <label class="form-label small fw-semibold text-muted">City</label>
+                    <input type="text" name="city" class="form-control form-control-sm py-2" value="Tekkali" required style="border-radius: 8px;">
+                  </div>
+                  <div class="col-6">
+                    <label class="form-label small fw-semibold text-muted">State</label>
+                    <input type="text" name="state" class="form-control form-control-sm py-2" value="Andhra Pradesh" required style="border-radius: 8px;">
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label small fw-semibold text-muted">Pincode</label>
+                  <input type="text" name="pincode" class="form-control form-control-sm py-2" value="532201" required pattern="\d{6}" style="border-radius: 8px;">
+                </div>
+                <div class="form-check mb-3">
+                  <input class="form-check-input" type="checkbox" name="is_default" id="is_default">
+                  <label class="form-check-label small text-muted" for="is_default">
+                    Set as default delivery address
+                  </label>
+                </div>
+                <button type="submit" class="btn btn-brand w-100 py-2 fw-bold" style="border-radius: 10px;">
+                  ➕ Save Address
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

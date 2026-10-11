@@ -28,7 +28,7 @@
                         <label class="form-label fw-bold text-dark mb-2">Barcode Identifier</label>
                         <div class="input-group">
                             <input type="text" id="barcodeInput" name="barcode" class="form-control" required placeholder="Scan or Click Auto">
-                            <button type="button" class="btn btn-success" onclick="generateRandomBarcode()">Auto 🎲</button>
+                            <button type="button" class="btn btn-success" id="autoBarcodeBtn">Auto 🎲</button>
                         </div>
                         <div class="form-text small">Scan actual barcode or generate random.</div>
                     </div>
@@ -106,11 +106,15 @@
 </div>
 
 <script>
-function generateRandomBarcode() {
-    // Generate a clean numeric 8-digit random barcode
-    const randomNum = Math.floor(10000000 + Math.random() * 90000000);
-    document.getElementById('barcodeInput').value = randomNum;
-}
+document.addEventListener('DOMContentLoaded', function() {
+    const autoBtn = document.getElementById('autoBarcodeBtn');
+    if (autoBtn) {
+        autoBtn.addEventListener('click', function() {
+            const randomNum = Math.floor(10000000 + Math.random() * 90000000);
+            document.getElementById('barcodeInput').value = randomNum;
+        });
+    }
+});
 </script>
 
 <%- include('footer') %>

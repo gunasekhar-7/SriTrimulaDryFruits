@@ -1,0 +1,32 @@
+<%#
+  Reusable Semantic Breadcrumb Navigation Partial
+  Props:
+    - breadcrumbs (or items): Array of { name: string, url?: string, current?: boolean }
+%>
+<%
+  const crumbList = locals.breadcrumbs || locals.items || [];
+%>
+<% if (crumbList && crumbList.length > 0) { %>
+<nav aria-label="Breadcrumb" class="storefront-breadcrumb-nav mb-4" id="storefrontBreadcrumb">
+    <ol class="breadcrumb bg-transparent p-0 m-0 d-flex flex-wrap align-items-center" style="font-size: 0.9rem; row-gap: 0.25rem;">
+        <% crumbList.forEach(function(crumb, index) { 
+            const isLast = (index === crumbList.length - 1) || crumb.current;
+        %>
+            <% if (isLast) { %>
+                <li class="breadcrumb-item active text-truncate" aria-current="page" style="color: var(--sf-muted, #5A6E63); font-weight: 600; max-width: min(320px, 65vw);">
+                    <%= crumb.name %>
+                </li>
+            <% } else { %>
+                <li class="breadcrumb-item d-flex align-items-center">
+                    <a href="<%= crumb.url %>" class="text-decoration-none breadcrumb-link" style="color: var(--sf-primary, #063A22); font-weight: 500; transition: color 0.15s ease;">
+                        <% if (index === 0 && crumb.name.toLowerCase() === 'home') { %>
+                            <span class="breadcrumb-home-icon" aria-hidden="true" style="margin-right: 4px;">🏠</span>
+                        <% } %>
+                        <span><%= crumb.name %></span>
+                    </a>
+                </li>
+            <% } %>
+        <% }); %>
+    </ol>
+</nav>
+<% } %>

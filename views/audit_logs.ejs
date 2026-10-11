@@ -1,0 +1,379 @@
+<%- include('header') %>
+
+<div class="container-fluid px-4 py-3">
+
+    <!-- Page Header & Cryptographic Integrity Banner -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <span class="badge bg-dark text-white px-2 py-1 rounded" style="font-size: 0.72rem; letter-spacing: 0.05em;">ENTERPRISE COMPLIANCE</span>
+                <span class="badge <%= integrity.isValid ? 'bg-success' : 'bg-danger' %> bg-opacity-10 <%= integrity.isValid ? 'text-success border border-success' : 'text-danger border border-danger' %> border-opacity-25 px-2 py-1 rounded" style="font-size: 0.72rem;">
+                    <%= integrity.isValid ? '🔒 IMMUTABLE LEDGER VERIFIED' : '⚠️ TAMPER ALERT DETECTED' %>
+                </span>
+            </div>
+            <h2 class="brand-font m-0" style="color: var(--brand-green);">🛡️ System Audit Logs</h2>
+            <p class="text-muted small m-0">Cryptographically hash-chained, write-only historical audit trail across all critical application events.</p>
+        </div>
+
+        <div class="d-flex gap-2">
+            <button class="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1 shadow-sm" onclick="exportAuditCsv()">
+                <span>📥</span> Export CSV
+            </button>
+            <button class="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1 shadow-sm" onclick="exportAuditJson()">
+                <span>📋</span> Export JSON
+            </button>
+            <button class="btn btn-sm btn-outline-success d-flex align-items-center gap-1 shadow-sm" onclick="verifyLedgerIntegrity()">
+                <span>🔍</span> Run Integrity Check
+            </button>
+        </div>
+    </div>
+
+    <!-- Ledger Integrity Info Alert -->
+    <% if (integrity.isValid) { %>
+    <div class="alert alert-success border-0 bg-success bg-opacity-10 py-2 px-3 mb-4 rounded-3 d-flex align-items-center justify-content-between" style="font-size: 0.82rem;">
+        <div class="d-flex align-items-center gap-2">
+            <span>🛡️</span>
+            <span><strong>Blockchain-Style Hash Verification Passed:</strong> All <strong><%= integrity.checkedCount %></strong> recorded events are verified against SHA-256 parent hash chains with zero tampering.</span>
+        </div>
+        <span class="text-success fw-bold font-monospace">STATUS: 100% UNCOMPROMISED</span>
+    </div>
+    <% } else { %>
+    <div class="alert alert-danger border-0 bg-danger bg-opacity-10 py-2 px-3 mb-4 rounded-3 d-flex align-items-center justify-content-between" style="font-size: 0.82rem;">
+        <div class="d-flex align-items-center gap-2">
+            <span>🚨</span>
+            <span><strong>CRITICAL LEDGER INTEGRITY MISMATCH:</strong> <%= integrity.reason %> (Discrepancy at record #<%= integrity.brokenAtId %>)</span>
+        </div>
+        <span class="text-danger fw-bold font-monospace">STATUS: TAMPER WARNING</span>
+    </div>
+    <% } %>
+
+    <!-- Summary Statistics Grid -->
+    <div class="row g-3 mb-4">
+        <div class="col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm p-3 h-100 bg-white" style="border-radius: 12px; border-left: 4px solid var(--brand-green) !important;">
+                <div class="text-muted small text-uppercase fw-semibold" style="font-size: 0.7rem; letter-spacing: 0.05em;">Total Audited Events</div>
+                <div class="fs-4 fw-bold text-dark mt-1"><%= (stats && stats.totalEvents) || 0 %></div>
+                <div class="text-muted small mt-1" style="font-size: 0.72rem;">All recorded transactions & actions</div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm p-3 h-100 bg-white" style="border-radius: 12px; border-left: 4px solid #dc3545 !important;">
+                <div class="text-muted small text-uppercase fw-semibold" style="font-size: 0.7rem; letter-spacing: 0.05em;">Security & Access</div>
+                <div class="fs-4 fw-bold text-danger mt-1"><%= (stats && stats.securityEvents) || 0 %></div>
+                <div class="text-muted small mt-1" style="font-size: 0.72rem;">Logins, failures & role updates</div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm p-3 h-100 bg-white" style="border-radius: 12px; border-left: 4px solid #0d6efd !important;">
+                <div class="text-muted small text-uppercase fw-semibold" style="font-size: 0.7rem; letter-spacing: 0.05em;">Commercial Events</div>
+                <div class="fs-4 fw-bold text-primary mt-1"><%= (stats && stats.commercialEvents) || 0 %></div>
+                <div class="text-muted small mt-1" style="font-size: 0.72rem;">Confirmations, cancels, returns & POS</div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm p-3 h-100 bg-white" style="border-radius: 12px; border-left: 4px solid #fd7e14 !important;">
+                <div class="text-muted small text-uppercase fw-semibold" style="font-size: 0.7rem; letter-spacing: 0.05em;">Catalog & Inventory</div>
+                <div class="fs-4 fw-bold text-warning mt-1"><%= (stats && stats.inventoryEvents) || 0 %></div>
+                <div class="text-muted small mt-1" style="font-size: 0.72rem;">Product creations, edits & adjustments</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter & Search Toolbar Card -->
+    <div class="card border-0 shadow-sm p-4 mb-4 bg-white" style="border-radius: 14px;">
+        <form method="GET" action="/admin/audit-logs" id="auditFilterForm">
+            <div class="row g-3 align-items-end">
+                
+                <!-- Action Filter -->
+                <div class="col-md-3 col-sm-6">
+                    <label class="form-label small fw-bold text-muted mb-1">Event Action</label>
+                    <select name="action" class="form-select form-select-sm" style="border-radius: 8px;">
+                        <option value="ALL" <%= filter.action === 'ALL' ? 'selected' : '' %>>All Actions</option>
+                        <option value="LOGIN" <%= filter.action === 'LOGIN' ? 'selected' : '' %>>LOGIN (User Login)</option>
+                        <option value="FAILED_LOGIN" <%= filter.action === 'FAILED_LOGIN' ? 'selected' : '' %>>FAILED_LOGIN (Auth Failure)</option>
+                        <option value="PRODUCT_CREATE" <%= filter.action === 'PRODUCT_CREATE' ? 'selected' : '' %>>PRODUCT_CREATE (Catalog Added)</option>
+                        <option value="PRODUCT_UPDATE" <%= filter.action === 'PRODUCT_UPDATE' ? 'selected' : '' %>>PRODUCT_UPDATE (Catalog Edit)</option>
+                        <option value="PRICE_MODIFY" <%= filter.action === 'PRICE_MODIFY' ? 'selected' : '' %>>PRICE_MODIFY (Price Alteration)</option>
+                        <option value="INVENTORY_ADJUST" <%= filter.action === 'INVENTORY_ADJUST' ? 'selected' : '' %>>INVENTORY_ADJUST (Stock Delta)</option>
+                        <option value="ORDER_CONFIRM" <%= filter.action === 'ORDER_CONFIRM' ? 'selected' : '' %>>ORDER_CONFIRM (Order Approved)</option>
+                        <option value="ORDER_CANCEL" <%= filter.action === 'ORDER_CANCEL' ? 'selected' : '' %>>ORDER_CANCEL (Order Revoked)</option>
+                        <option value="RETURN" <%= filter.action === 'RETURN' ? 'selected' : '' %>>RETURN (Item Return)</option>
+                        <option value="REFUND" <%= filter.action === 'REFUND' ? 'selected' : '' %>>REFUND (Amount Refunded)</option>
+                        <option value="ROLE_CHANGE" <%= filter.action === 'ROLE_CHANGE' ? 'selected' : '' %>>ROLE_CHANGE (Permission Alteration)</option>
+                        <option value="POS_CONVERT" <%= filter.action === 'POS_CONVERT' ? 'selected' : '' %>>POS_CONVERT (Converted to POS)</option>
+                    </select>
+                </div>
+
+                <!-- Entity Filter -->
+                <div class="col-md-2 col-sm-6">
+                    <label class="form-label small fw-bold text-muted mb-1">Entity Domain</label>
+                    <select name="entity" class="form-select form-select-sm" style="border-radius: 8px;">
+                        <option value="ALL" <%= filter.entity === 'ALL' ? 'selected' : '' %>>All Entities</option>
+                        <option value="USER" <%= filter.entity === 'USER' ? 'selected' : '' %>>USER</option>
+                        <option value="PRODUCT" <%= filter.entity === 'PRODUCT' ? 'selected' : '' %>>PRODUCT</option>
+                        <option value="PRODUCT_VARIANT" <%= filter.entity === 'PRODUCT_VARIANT' ? 'selected' : '' %>>PRODUCT_VARIANT</option>
+                        <option value="ORDER" <%= filter.entity === 'ORDER' ? 'selected' : '' %>>ORDER</option>
+                        <option value="BILL" <%= filter.entity === 'BILL' ? 'selected' : '' %>>BILL</option>
+                        <option value="INVENTORY" <%= filter.entity === 'INVENTORY' ? 'selected' : '' %>>INVENTORY</option>
+                        <option value="AUTH" <%= filter.entity === 'AUTH' ? 'selected' : '' %>>AUTH</option>
+                    </select>
+                </div>
+
+                <!-- Date Range: Start -->
+                <div class="col-md-2 col-sm-6">
+                    <label class="form-label small fw-bold text-muted mb-1">From Date</label>
+                    <input type="date" name="startDate" value="<%= filter.startDate || '' %>" class="form-control form-control-sm" style="border-radius: 8px;">
+                </div>
+
+                <!-- Date Range: End -->
+                <div class="col-md-2 col-sm-6">
+                    <label class="form-label small fw-bold text-muted mb-1">To Date</label>
+                    <input type="date" name="endDate" value="<%= filter.endDate || '' %>" class="form-control form-control-sm" style="border-radius: 8px;">
+                </div>
+
+                <!-- Free Text Search -->
+                <div class="col-md-3 col-sm-12">
+                    <label class="form-label small fw-bold text-muted mb-1">Search Actor / ID / Metadata</label>
+                    <div class="input-group input-group-sm">
+                        <input type="text" name="search" value="<%= filter.search || '' %>" placeholder="e.g. admin, #STDF, IP..." class="form-control" style="border-radius: 8px 0 0 8px;">
+                        <button type="submit" class="btn btn-success" style="border-radius: 0 8px 8px 0;">Filter</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Active Filter Badges & Reset -->
+            <div class="d-flex flex-wrap align-items-center justify-content-between mt-3 pt-2 border-top">
+                <div class="d-flex flex-wrap gap-2 align-items-center" style="font-size: 0.78rem;">
+                    <span class="text-muted fw-bold">Active Filter:</span>
+                    <span class="badge bg-light text-dark border">Action: <%= filter.action || 'ALL' %></span>
+                    <span class="badge bg-light text-dark border">Entity: <%= filter.entity || 'ALL' %></span>
+                    <% if (filter.startDate || filter.endDate) { %>
+                    <span class="badge bg-light text-dark border">Date: <%= filter.startDate || '...' %> to <%= filter.endDate || '...' %></span>
+                    <% } %>
+                    <% if (filter.search) { %>
+                    <span class="badge bg-light text-dark border">Query: "<%= filter.search %>"</span>
+                    <% } %>
+                </div>
+                <div>
+                    <a href="/admin/audit-logs" class="btn btn-sm btn-link text-decoration-none text-muted p-0" style="font-size: 0.8rem;">Reset Filters</a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Audit Event Log Table -->
+    <div class="card border-0 shadow-sm bg-white overflow-hidden" style="border-radius: 14px;">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0" id="auditLogTable">
+                <thead style="background-color: var(--brand-green-light); color: white; font-size: 0.75rem; letter-spacing: 0.05em;">
+                    <tr>
+                        <th class="ps-3 py-3" style="width: 70px;">ID</th>
+                        <th class="py-3" style="width: 170px;">Timestamp</th>
+                        <th class="py-3" style="width: 150px;">Action</th>
+                        <th class="py-3" style="width: 140px;">Entity</th>
+                        <th class="py-3" style="width: 160px;">Entity ID</th>
+                        <th class="py-3" style="width: 180px;">Actor</th>
+                        <th class="py-3">Source Channel</th>
+                        <th class="text-end pe-3 py-3" style="width: 110px;">Audit Payload</th>
+                    </tr>
+                </thead>
+                <tbody style="font-size: 0.82rem;">
+                    <% if (logs && logs.length > 0) { %>
+                        <% logs.forEach(function(log) { %>
+                        <tr>
+                            <!-- ID -->
+                            <td class="ps-3 fw-bold text-muted font-monospace">#<%= log.id %></td>
+
+                            <!-- Timestamp -->
+                            <td class="text-dark font-monospace text-nowrap">
+                                <span title="<%= log.timestamp %>"><%= log.timestamp.replace('T', ' ').substring(0, 19) %></span>
+                            </td>
+
+                            <!-- Action Badge -->
+                            <td>
+                                <% if (log.action === 'LOGIN') { %>
+                                    <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2 py-1">LOGIN</span>
+                                <% } else if (log.action === 'FAILED_LOGIN') { %>
+                                    <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 px-2 py-1">FAILED_LOGIN</span>
+                                <% } else if (log.action === 'PRODUCT_CREATE') { %>
+                                    <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-2 py-1">PRODUCT_CREATE</span>
+                                <% } else if (log.action === 'PRODUCT_UPDATE') { %>
+                                    <span class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-25 px-2 py-1">PRODUCT_UPDATE</span>
+                                <% } else if (log.action === 'PRICE_MODIFY') { %>
+                                    <span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 px-2 py-1">PRICE_MODIFY</span>
+                                <% } else if (log.action === 'INVENTORY_ADJUST') { %>
+                                    <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25 px-2 py-1">INVENTORY_ADJUST</span>
+                                <% } else if (log.action === 'ORDER_CONFIRM') { %>
+                                    <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2 py-1">ORDER_CONFIRM</span>
+                                <% } else if (log.action === 'ORDER_CANCEL') { %>
+                                    <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 px-2 py-1">ORDER_CANCEL</span>
+                                <% } else if (log.action === 'RETURN') { %>
+                                    <span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 px-2 py-1">RETURN</span>
+                                <% } else if (log.action === 'REFUND') { %>
+                                    <span class="badge bg-danger text-white px-2 py-1">REFUND</span>
+                                <% } else if (log.action === 'ROLE_CHANGE') { %>
+                                    <span class="badge bg-dark text-white px-2 py-1">ROLE_CHANGE</span>
+                                <% } else if (log.action === 'POS_CONVERT') { %>
+                                    <span class="badge bg-teal text-white px-2 py-1" style="background-color: #20c997;">POS_CONVERT</span>
+                                <% } else { %>
+                                    <span class="badge bg-light text-dark border px-2 py-1"><%= log.action %></span>
+                                <% } %>
+                            </td>
+
+                            <!-- Entity -->
+                            <td class="fw-semibold text-secondary"><%= log.entity %></td>
+
+                            <!-- Entity ID -->
+                            <td class="font-monospace fw-bold text-dark">
+                                <%= log.entity_id || '-' %>
+                            </td>
+
+                            <!-- Actor -->
+                            <td class="text-truncate" style="max-width: 180px;" title="<%= log.actor %>">
+                                <span class="badge bg-light text-dark border font-monospace" style="font-size: 0.76rem;"><%= log.actor %></span>
+                            </td>
+
+                            <!-- Source -->
+                            <td class="text-truncate text-muted" style="max-width: 200px;" title="<%= log.source %>">
+                                <%= log.source %>
+                            </td>
+
+                            <!-- Inspect Details Button -->
+                            <td class="text-end pe-3">
+                                <button type="button" class="btn btn-sm btn-outline-dark py-0 px-2" style="font-size: 0.75rem;" 
+                                        onclick="showPayloadModal(<%= log.id %>, '<%= log.action %>', '<%- (log.metadata || "{}").replace(/'/g, "\\'").replace(/"/g, '&quot;') %>', '<%= log.hash %>', '<%= log.prev_hash || "GENESIS" %>')">
+                                    Payload
+                                </button>
+                            </td>
+                        </tr>
+                        <% }); %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="8" class="text-center py-5 text-muted">
+                                <div class="fs-2 mb-2">📜</div>
+                                <div class="fw-bold">No Audit Events Found</div>
+                                <div class="small">No logs matched the selected filter criteria. Try adjusting your query filters.</div>
+                            </td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination Controls -->
+        <div class="d-flex flex-wrap justify-content-between align-items-center p-3 border-top bg-light" style="font-size: 0.8rem;">
+            <div class="text-muted">
+                Showing <strong><%= logs.length %></strong> of <strong><%= total %></strong> events (Page <strong><%= page %></strong> of <strong><%= totalPages %></strong>)
+            </div>
+
+            <% if (totalPages > 1) { %>
+            <nav aria-label="Audit log navigation">
+                <ul class="pagination pagination-sm m-0">
+                    <li class="page-item <%= page <= 1 ? 'disabled' : '' %>">
+                        <a class="page-link" href="?page=<%= page - 1 %>&limit=<%= limit %>&action=<%= filter.action %>&entity=<%= filter.entity %>&startDate=<%= filter.startDate %>&endDate=<%= filter.endDate %>&search=<%= filter.search %>">Previous</a>
+                    </li>
+                    <li class="page-item active">
+                        <span class="page-link"><%= page %></span>
+                    </li>
+                    <li class="page-item <%= page >= totalPages ? 'disabled' : '' %>">
+                        <a class="page-link" href="?page=<%= page + 1 %>&limit=<%= limit %>&action=<%= filter.action %>&entity=<%= filter.entity %>&startDate=<%= filter.startDate %>&endDate=<%= filter.endDate %>&search=<%= filter.search %>">Next</a>
+                    </li>
+                </ul>
+            </nav>
+            <% } %>
+        </div>
+    </div>
+
+</div>
+
+<!-- Payload Inspector Modal -->
+<div class="modal fade" id="payloadModal" tabindex="-1" aria-labelledby="payloadModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow" style="border-radius: 16px;">
+            <div class="modal-header text-white" style="background-color: var(--brand-green); border-radius: 16px 16px 0 0;">
+                <h5 class="modal-title font-monospace" id="payloadModalLabel">🛡️ Audit Payload Inspector</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="mb-3">
+                    <label class="form-label small fw-bold text-muted text-uppercase mb-1">Cryptographic Evidence Chain</label>
+                    <div class="p-2 bg-light border rounded font-monospace" style="font-size: 0.72rem; word-break: break-all;">
+                        <div><strong>Parent Hash (prev_hash):</strong> <span id="modalPrevHash" class="text-secondary"></span></div>
+                        <div class="mt-1"><strong>Record Hash (sha256):</strong> <span id="modalHash" class="text-success fw-bold"></span></div>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="form-label small fw-bold text-muted text-uppercase mb-1">Decoded Event Metadata (JSON)</label>
+                    <pre id="modalJsonBody" class="p-3 bg-dark text-light rounded font-monospace m-0" style="font-size: 0.8rem; max-height: 350px; overflow-y: auto;"></pre>
+                </div>
+            </div>
+            <div class="modal-footer bg-light" style="border-radius: 0 0 16px 16px;">
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function showPayloadModal(id, action, rawJson, hash, prevHash) {
+    document.getElementById('payloadModalLabel').innerText = `🛡️ Audit Record #${id} — ${action}`;
+    document.getElementById('modalHash').innerText = hash || 'N/A';
+    document.getElementById('modalPrevHash').innerText = prevHash || 'GENESIS';
+
+    try {
+        const parsed = JSON.parse(rawJson);
+        document.getElementById('modalJsonBody').textContent = JSON.stringify(parsed, null, 2);
+    } catch (e) {
+        document.getElementById('modalJsonBody').textContent = rawJson || '{}';
+    }
+
+    const modal = new bootstrap.Modal(document.getElementById('payloadModal'));
+    modal.show();
+}
+
+function verifyLedgerIntegrity() {
+    fetch('/api/admin/audit-logs/verify')
+        .then(res => res.json())
+        .then(data => {
+            if (data.success && data.data.isValid) {
+                alert(`✅ Ledger Integrity Verified!\n\nAll ${data.data.checkedCount} audit records passed cryptographic hash-chain validation.\nZero records have been altered, omitted, or reordered.`);
+            } else {
+                alert(`⚠️ Warning: Integrity Discrepancy Found!\n\n${data.data?.reason || 'Unknown error'}`);
+            }
+        })
+        .catch(err => {
+            alert('Error running ledger verification: ' + err.message);
+        });
+}
+
+function exportAuditCsv() {
+    const table = document.getElementById('auditLogTable');
+    let csv = [];
+    for (let row of table.rows) {
+        let cols = [];
+        for (let cell of row.cells) {
+            // Exclude the last inspect button column
+            if (cell.cellIndex === 7) continue;
+            let text = cell.innerText.replace(/"/g, '""').trim();
+            cols.push(`"${text}"`);
+        }
+        csv.push(cols.join(','));
+    }
+
+    const blob = new Blob([csv.join('\n')], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `audit-logs-${new Date().toISOString().substring(0, 10)}.csv`;
+    a.click();
+    window.URL.revokeObjectURL(url);
+}
+
+function exportAuditJson() {
+    window.location.href = `/api/v1/audit-logs?limit=500`;
+}
+</script>
+
+<%- include('footer') %>

@@ -261,7 +261,7 @@
                                 <td class="text-center">
                                     <form action="/delete_item/<%= index %>" method="POST" style="display:inline;">
                                         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                        <button type="submit" class="btn btn-sm btn-outline-danger border-0 rounded-circle py-1 px-2" title="Remove" onclick="return confirm('Remove <%= item.name %>?')">✕</button>
+                                        <button type="submit" class="btn btn-sm btn-outline-danger border-0 rounded-circle py-1 px-2" title="Remove" onclick="return confirm('Remove this item?')">✕</button>
                                     </form>
                                 </td>
                             </tr>
@@ -334,23 +334,23 @@
                 </div>
                 
                 <div class="d-grid gap-3">
-                    <button type="submit" id="btnCheckout" class="btn btn-warning btn-lg fw-bold text-dark py-3 shadow-lg" <%= (!cart || cart.length === 0) ? 'disabled' : '' %> style="border-radius: 12px; letter-spacing: 0.05rem; font-size: 1.1rem;">
+                    <% if (!cart || cart.length === 0) { %>
+                    <button type="submit" id="btnCheckout" class="btn btn-warning btn-lg fw-bold text-dark py-3 shadow-lg" disabled style="border-radius: 12px; letter-spacing: 0.05rem; font-size: 1.1rem;">
                         ✅ PRINT INVOICE <span class="shortcut-badge text-dark bg-white bg-opacity-25 ms-1">F1</span>
                     </button>
+                    <% } else { %>
+                    <button type="submit" id="btnCheckout" class="btn btn-warning btn-lg fw-bold text-dark py-3 shadow-lg" style="border-radius: 12px; letter-spacing: 0.05rem; font-size: 1.1rem;">
+                        ✅ PRINT INVOICE <span class="shortcut-badge text-dark bg-white bg-opacity-25 ms-1">F1</span>
+                    </button>
+                    <% } %>
                     
                     <div class="d-flex gap-2">
-                        <form action="/hold_bill" method="POST" class="flex-grow-1">
-                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                            <button type="button" id="btnHold" class="btn btn-secondary w-100 border-secondary border-opacity-50 py-2 fw-semibold" style="border-radius: 10px; font-size: 0.88rem;" onclick="this.closest('form').submit()">
-                                ⏸️ Suspend <span class="shortcut-badge ms-1">F2</span>
-                            </button>
-                        </form>
-                        <form action="/clear_cart" method="POST" class="flex-grow-1">
-                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                            <button type="button" id="btnClear" class="btn btn-outline-danger w-100 py-2 fw-semibold" onclick="if(confirm('Clear entire list?')) this.closest('form').submit()" style="border-radius: 10px; font-size: 0.88rem;">
-                                🗑️ Clear <span class="shortcut-badge text-white ms-1" style="background: rgba(220,53,69,0.2);">F4</span>
-                            </button>
-                        </form>
+                        <button type="submit" id="btnHold" formaction="/hold_bill" class="btn btn-secondary flex-grow-1 border-secondary border-opacity-50 py-2 fw-semibold" style="border-radius: 10px; font-size: 0.88rem;">
+                            ⏸️ Suspend <span class="shortcut-badge ms-1">F2</span>
+                        </button>
+                        <button type="submit" id="btnClear" formaction="/clear_cart" class="btn btn-outline-danger flex-grow-1 py-2 fw-semibold" onclick="return confirm('Clear entire list?')" style="border-radius: 10px; font-size: 0.88rem;">
+                            🗑️ Clear <span class="shortcut-badge text-white ms-1" style="background: rgba(220,53,69,0.2);">F4</span>
+                        </button>
                     </div>
                 </div>
 
@@ -416,7 +416,7 @@
 </div>
 
 <script>
-    const subtotalValue = <%= Number(total) %>;
+    const subtotalValue = Number("<%= total %>") || 0;
 
     function calculateNetTotal() {
         const discountInput = document.getElementById('checkoutDiscount');
@@ -437,10 +437,10 @@
     let activeIndex = -1;
 
     // Load products list on startup
-    fetch('/api/products')
+    fetch('/api/v1/products')
         .then(res => res.json())
-        .then(data => {
-            productsList = data;
+        .then(resData => {
+            productsList = resData.data.products;
         })
         .catch(err => console.error('Failed to load products list:', err));
 
@@ -557,7 +557,8 @@
         // F2: HOLD BILL
         if (event.key === "F2") {
             event.preventDefault();
-            window.location.href = "/hold_bill";
+            const btn = document.getElementById('btnHold');
+            if (btn) btn.click();
         }
 
         // F3: FOCUS AUTOCOMPLETE SEARCH INPUT
@@ -570,9 +571,8 @@
         // F4: CLEAR CART
         if (event.key === "F4") {
             event.preventDefault();
-            if(confirm("Are you sure you want to clear the entire cart?")) {
-                window.location.href = "/clear_cart";
-            }
+            const btn = document.getElementById('btnClear');
+            if (btn) btn.click();
         }
     });
 
@@ -596,10 +596,11 @@
         }
 
         // Fallback to server fetch
-        fetch(`/get_product_details/${barcode}`)
+        fetch(`/api/v1/products/${barcode}`)
             .then(response => response.json())
-            .then(data => {
-                if (data.success) {
+            .then(resData => {
+                if (resData.success && resData.data.product) {
+                    const data = resData.data.product;
                     document.getElementById('nameDisplay').value = data.name || '';
                     document.getElementById('mrpDisplay').value = (data.mrp || 0).toFixed(2);
                     document.getElementById('priceDisplay').value = (data.selling_price || 0).toFixed(2);
@@ -621,6 +622,31 @@
             })
             .catch(err => console.error("Error:", err));
     }
+
+    // --- 3. DOUBLE-SUBMISSION / DEBOUNCE GUARD ---
+    document.querySelectorAll('form').forEach(form => {
+        form.addEventListener('submit', function (e) {
+            const submitBtn = this.querySelector('button[type="submit"], input[type="submit"]');
+            if (submitBtn) {
+                // Prevent rapid double-clicks
+                if (submitBtn.dataset.submitting === 'true') {
+                    e.preventDefault();
+                    return false;
+                }
+                submitBtn.dataset.submitting = 'true';
+                submitBtn.classList.add('disabled');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '⏳ Processing...';
+                
+                // Re-enable after 5s safety timeout in case of client validation failure
+                setTimeout(() => {
+                    submitBtn.dataset.submitting = 'false';
+                    submitBtn.classList.remove('disabled');
+                    submitBtn.innerHTML = originalText;
+                }, 5000);
+            }
+        });
+    });
 </script>
 
 <%- include('footer') %>

@@ -1,155 +1,275 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<div class="row">
+<style>
+    /* Full viewport height and no scrolling on body */
+    body {
+        overflow: hidden;
+    }
     
-    <div class="col-md-8">
+    /* Reset Tabler container padding for a full-screen POS feel */
+    .page-wrapper {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+    }
+    .page-body {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        margin-top: 0; 
+    }
+    .container-xl {
+        max-width: 100% !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    /* Modern thin scrollbars */
+    ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+        background-color: rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        background-color: rgba(0, 0, 0, 0.3);
+    }
+    
+    .pos-container {
+        flex: 1;
+        display: flex;
+        overflow: hidden;
+        margin: 0;
+    }
+    
+    .left-panel {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        background-color: #f4f6fa;
+    }
+    
+    .products-grid-scroll {
+        overflow-y: auto;
+        flex: 1;
+        padding-bottom: 2rem;
+    }
+    
+    .right-panel {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        background: white;
+        box-shadow: -4px 0 15px rgba(0,0,0,0.05);
+        border-left: 1px solid #eee;
+    }
+    
+    .cart-scroll {
+        overflow-y: auto;
+        flex: 1;
+        padding: 1rem;
+    }
+    
+    .cart-summary {
+        background: white;
+        border-top: 1px solid #eee;
+        padding: 1.5rem;
+        box-shadow: 0 -4px 10px rgba(0,0,0,0.02);
+    }
+    
+    .btn-finalize {
+        background-color: #0B3D25 !important;
+        border-color: #0B3D25 !important;
+        color: white !important;
+        font-size: 1.25rem;
+        padding: 1rem;
+    }
+    .btn-finalize:hover {
+        background-color: #082d1c !important;
+    }
+</style>
+
+<div class="row g-0 pos-container w-100">
+    <!-- Left Panel (60%) -->
+    <div class="col-lg-7 col-xl-8 left-panel p-3">
         
-        <div class="card p-3 mb-3 border-success shadow-sm" style="background-color: #f8f9fa;">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-                <h5 class="text-success fw-bold m-0">🛒 Add Item (Editable)</h5>
-                <span class="badge bg-secondary">User: {{ session['user'] }}</span>
-            </div>
-            
-            <form method="post" action="/sell" id="billingForm">
-                <div class="row g-2">
-                    
-                    <div class="col-md-3">
-                        <label class="form-label small fw-bold text-muted">Barcode (Scan)</label>
-                        <input type="text" name="barcode" id="barcodeInput" class="form-control fw-bold border-success" 
-                               placeholder="Scan..." autofocus required autocomplete="off">
-                    </div>
-
-                    <div class="col-md-4">
-                        <label class="form-label small text-muted">Item Name</label>
-                        <input type="text" name="name" id="nameDisplay" class="form-control bg-white fw-bold">
-                    </div>
-
-                    <div class="col-md-2">
-                        <label class="form-label small text-muted">MRP</label>
-                        <input type="number" step="0.01" name="mrp" id="mrpDisplay" class="form-control bg-white text-muted">
-                    </div>
-
-                    <div class="col-md-3">
-                        <label class="form-label small text-muted fw-bold text-success">Selling Price</label>
-                        <input type="number" step="0.01" name="price" id="priceDisplay" class="form-control bg-white fw-bold text-success">
-                    </div>
+        <!-- Sticky Search/Barcode Form -->
+        <div class="card shadow-sm mb-3 border-0 rounded-3">
+            <div class="card-body p-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h5 class="text-success fw-bold m-0"><i class="ti ti-barcode text-success"></i> Add Item (Editable)</h5>
+                    <span class="badge bg-secondary-lt">User: {{ session['user'] }}</span>
                 </div>
-
-                <div class="row g-2 mt-2">
-                    <div class="col-md-3">
-                        <label class="form-label small text-muted">Available Stock</label>
-                        <input type="text" id="stockDisplay" class="form-control bg-light" readonly tabindex="-1">
-                    </div>
-
-                    <div class="col-md-3">
-                        <label class="form-label small fw-bold text-muted">Quantity</label>
-                        <input type="number" step="0.001" name="qty" id="qtyInput" 
-                               class="form-control fw-bold border-success" value="1">
-                    </div>
-
-                    <div class="col-md-6 d-flex align-items-end">
-                        <button type="submit" class="btn btn-success w-100 fw-bold">⬇️ Add to Bill (Enter)</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-
-        <div class="card p-0 shadow-sm border-0">
-            <div class="table-responsive">
-                <table class="table table-striped mb-0 align-middle">
-                    <thead class="bg-dark text-white">
-                        <tr>
-                            <th class="ps-3">#</th>
-                            <th>Item Name</th>
-                            <th>MRP</th>
-                            <th>Price</th>
-                            <th class="text-center">Qty</th>
-                            <th class="text-end pe-3">Total</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for item in cart %}
-                        <tr>
-                            <td class="ps-3">{{ loop.index }}</td>
-                            <td class="fw-bold">{{ item.name }}</td>
-                            <td class="text-muted"><small><s>{{ "%.2f"|format(item.mrp) }}</s></small></td>
-                            <td>{{ "%.2f"|format(item.price) }}</td>
-                            <td class="text-center">
-                                <form action="/update_cart/{{ loop.index0 }}" method="POST" style="display:inline-block; width: 70px;">
-                                    <input type="number" name="qty" value="{{ item.qty }}" step="0.001"
-                                           class="form-control form-control-sm text-center p-1" 
-                                           onchange="this.form.submit()">
-                                </form>
-                            </td>
-                            <td class="text-end pe-3 fw-bold">{{ "%.2f"|format(item.total) }}</td>
-                            <td><a href="/delete_item/{{ loop.index0 }}" class="text-danger text-decoration-none fw-bold" title="Remove">✕</a></td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            {% if not cart %}
-                <div class="text-center p-5 text-muted bg-white">
-                    <h5>Cart is empty 🛒</h5>
-                    <p>Scan a barcode to begin billing.</p>
-                </div>
-            {% endif %}
-        </div>
-    </div>
-
-    <div class="col-md-4">
-        <div class="card p-4 bg-dark text-white text-center shadow sticky-top" style="top: 20px; border-radius: 12px;">
-            <h5 class="text-white-50 text-uppercase mb-3">Grand Total</h5>
-            <h1 class="display-3 fw-bold text-warning mb-4">₹{{ "%.0f"|format(total) }}<small class="fs-6 text-white">.{{ "%.2f"|format(total % 1)|replace('0.', '') }}</small></h1>
-            
-            <div class="d-grid gap-3">
-                <a href="/finalize_bill" id="btnCheckout" class="btn btn-warning btn-lg fw-bold text-dark py-3">✅ PRINT BILL (F1)</a>
                 
-                <div class="d-flex gap-2">
-                    <a href="/hold_bill" id="btnHold" class="btn btn-secondary flex-grow-1 border-light">⏸️ Hold (F2)</a>
-                    <a href="/clear_cart" id="btnClear" class="btn btn-outline-danger flex-grow-1" onclick="return confirm('Clear entire list?')">🗑️ Clear (F4)</a>
-                </div>
+                <form method="post" action="/sell" id="billingForm">
+                    <div class="row g-2 align-items-end">
+                        <div class="col-md-2">
+                            <label class="form-label small fw-bold text-muted mb-1">Barcode (Scan)</label>
+                            <input type="text" name="barcode" id="barcodeInput" class="form-control form-control-sm fw-bold border-success shadow-none" 
+                                   placeholder="Scan..." autofocus required autocomplete="off">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small text-muted mb-1">Item Name</label>
+                            <input type="text" name="name" id="nameDisplay" class="form-control form-control-sm bg-light fw-bold shadow-none">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label small text-muted mb-1">MRP</label>
+                            <input type="number" step="0.01" name="mrp" id="mrpDisplay" class="form-control form-control-sm bg-light text-muted shadow-none">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label small text-muted fw-bold text-success mb-1">Selling Price</label>
+                            <input type="number" step="0.01" name="price" id="priceDisplay" class="form-control form-control-sm bg-light fw-bold text-success shadow-none">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label small fw-bold text-muted mb-1">Quantity</label>
+                            <input type="number" step="0.001" name="qty" id="qtyInput" 
+                                   class="form-control form-control-sm fw-bold border-success shadow-none" value="1">
+                        </div>
+                        <div class="col-md-1">
+                            <button type="submit" class="btn btn-success btn-sm w-100 fw-bold h-100" title="Add to Bill (Enter)"><i class="ti ti-plus"></i></button>
+                        </div>
+                    </div>
+                    <!-- Hidden field for stock to keep JS functioning -->
+                    <input type="hidden" id="stockDisplay" class="form-control">
+                </form>
             </div>
+        </div>
 
-            <div class="mt-4 pt-3 border-top border-secondary text-start text-white-50" style="font-size: 0.85rem;">
-                <strong>⌨️ Keyboard Shortcuts:</strong><br>
-                <span class="badge bg-light text-dark">F1</span> Print Bill<br>
-                <span class="badge bg-light text-dark">F2</span> Hold Bill<br>
-                <span class="badge bg-light text-dark">F3</span> Focus Barcode<br>
-                <span class="badge bg-light text-dark">F4</span> Clear Cart
+        <!-- Scrollable Grid of Products (Placeholder for future) -->
+        <div class="products-grid-scroll pe-2">
+            <div class="row row-cards g-2">
+                <!-- Products dynamically loaded here in the future -->
             </div>
         </div>
         
         {% if error %}
-        <div class="alert alert-danger mt-3 shadow-sm fw-bold">
-            ⚠️ {{ error }}
+        <div class="alert alert-danger shadow-sm fw-bold mb-0 mt-auto">
+            <i class="ti ti-alert-circle"></i> {{ error }}
         </div>
         {% endif %}
+        
+    </div>
 
-        {% if held_bills %}
-        <div class="card mt-3 border-0 shadow-sm">
-            <div class="card-header bg-secondary text-white fw-bold d-flex justify-content-between">
-                <span>⏸️ Held Bills</span>
-                <span class="badge bg-light text-dark">{{ held_bills|length }}</span>
+    <!-- Right Panel (40%) -->
+    <div class="col-lg-5 col-xl-4 right-panel">
+        
+        <div class="d-flex justify-content-between align-items-center p-3 border-bottom shadow-sm z-3 bg-white">
+            <h3 class="mb-0 fw-bold"><i class="ti ti-shopping-cart text-muted"></i> Current Bill</h3>
+            <div class="text-muted small">
+                <span class="badge bg-light text-dark me-1 border shadow-sm">F1</span> Print
+                <span class="badge bg-light text-dark me-1 border shadow-sm">F2</span> Hold
+                <span class="badge bg-light text-dark border shadow-sm">F4</span> Clear
             </div>
-            <ul class="list-group list-group-flush">
-                {% for bill in held_bills %}
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <div>
-                        <span class="fw-bold d-block text-dark">₹{{ "%.2f"|format(bill.total) }}</span>
-                        <small class="text-muted">🕒 {{ bill.time }}</small>
-                    </div>
-                    <div>
-                        <a href="/resume_bill/{{ loop.index0 }}" class="btn btn-sm btn-primary">Resume</a>
-                        <a href="/discard_held/{{ loop.index0 }}" class="btn btn-sm btn-outline-danger">✕</a>
-                    </div>
-                </li>
-                {% endfor %}
-            </ul>
         </div>
-        {% endif %}
+
+        <!-- Cart Items -->
+        <div class="cart-scroll bg-white">
+            {% if not cart %}
+                <div class="text-center py-5 text-muted h-100 d-flex flex-column justify-content-center align-items-center">
+                    <i class="ti ti-shopping-cart" style="font-size: 4rem; opacity: 0.2;"></i>
+                    <h5 class="mt-3 text-secondary">Cart is empty</h5>
+                    <p class="small opacity-50">Scan a barcode to begin billing.</p>
+                </div>
+            {% else %}
+                <div class="list-group list-group-flush shadow-sm rounded border">
+                    {% for item in cart %}
+                    <div class="list-group-item p-3 mb-0 border-bottom">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div class="fw-bold fs-3 text-dark">{{ item.name }}</div>
+                            <div class="fw-bold fs-3 text-dark">₹{{ "%.2f"|format(item.total) }}</div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="text-muted small d-flex flex-column">
+                                <span>MRP: <s>₹{{ "%.2f"|format(item.mrp) }}</s></span>
+                                <span>Price: <span class="text-success fw-bold">₹{{ "%.2f"|format(item.price) }}</span></span>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <form action="/update_cart/{{ loop.index0 }}" method="POST" class="d-inline-flex align-items-center m-0">
+                                    <div class="input-group input-group-sm input-group-flat shadow-sm" style="width: 100px;">
+                                        <input type="number" name="qty" value="{{ item.qty }}" step="0.001"
+                                               class="form-control text-center fw-bold text-dark border"
+                                               onchange="this.form.submit()">
+                                    </div>
+                                </form>
+                                <a href="/delete_item/{{ loop.index0 }}" class="btn btn-sm btn-outline-danger btn-icon shadow-sm rounded-circle" title="Remove">
+                                    <i class="ti ti-trash"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            
+            {% if held_bills %}
+            <div class="mt-4">
+                <div class="d-flex justify-content-between align-items-center mb-2 px-1">
+                    <h6 class="text-uppercase text-muted fw-bold mb-0"><i class="ti ti-player-pause"></i> Held Bills</h6>
+                    <span class="badge bg-secondary rounded-pill">{{ held_bills|length }}</span>
+                </div>
+                <div class="list-group list-group-flush shadow-sm rounded">
+                    {% for bill in held_bills %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center px-3 py-2 bg-light border-bottom">
+                        <div>
+                            <span class="fw-bold text-dark d-block fs-4">₹{{ "%.2f"|format(bill.total) }}</span>
+                            <small class="text-muted" style="font-size: 0.75rem;"><i class="ti ti-clock"></i> {{ bill.time }}</small>
+                        </div>
+                        <div class="btn-group shadow-sm">
+                            <a href="/resume_bill/{{ loop.index0 }}" class="btn btn-sm btn-primary">Resume</a>
+                            <a href="/discard_held/{{ loop.index0 }}" class="btn btn-sm btn-danger btn-icon" title="Discard"><i class="ti ti-x"></i></a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Summary Section -->
+        <div class="cart-summary z-3 border-top border-4 border-success">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+                <span class="text-muted fw-bold text-uppercase fs-4">Subtotal</span>
+                <span class="fw-bold fs-3">₹{{ "%.2f"|format(total) }}</span>
+            </div>
+            
+            <hr class="my-3">
+            
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <span class="h2 mb-0 text-dark fw-bold">Grand Total</span>
+                <span class="display-4 fw-bold text-success mb-0" style="line-height: 1;">₹{{ "%.0f"|format(total) }}<small class="fs-3 text-muted">.{{ "%.2f"|format(total % 1)|replace('0.', '') }}</small></span>
+            </div>
+            
+            <div class="d-grid gap-2">
+                <a href="/finalize_bill" id="btnCheckout" class="btn btn-finalize btn-lg fw-bold w-100 shadow-sm text-uppercase tracking-wide">
+                    <i class="ti ti-printer me-2 fs-2"></i> Finalize Bill (F1)
+                </a>
+                
+                <div class="row g-2 mt-1">
+                    <div class="col-6">
+                        <a href="/hold_bill" id="btnHold" class="btn btn-secondary w-100 shadow-sm fw-bold">
+                            <i class="ti ti-player-pause me-2"></i> Hold (F2)
+                        </a>
+                    </div>
+                    <div class="col-6">
+                        <a href="/clear_cart" id="btnClear" class="btn btn-outline-danger w-100 shadow-sm fw-bold" onclick="return confirm('Clear entire list?')">
+                            <i class="ti ti-trash me-2"></i> Clear (F4)
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
 

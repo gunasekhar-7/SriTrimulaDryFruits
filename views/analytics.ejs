@@ -1,125 +1,650 @@
 <%- include('header') %>
 
-<div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
-    <div>
-        <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill mb-2 fw-bold" style="font-size: 0.8rem;">SALES INTELLIGENCE</span>
-        <h2 style="color: var(--brand-green);" class="brand-font m-0">📈 Business Analytics</h2>
-    </div>
-    <span class="badge bg-dark py-2 px-3 fw-bold rounded-pill text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.05em;">DAILY VISUALIZATIONS</span>
-</div>
+<div class="container-fluid px-3 px-md-4 py-3">
 
-<div class="row g-4">
-    <!-- CHART BLOCK -->
-    <div class="col-lg-8">
-        <div class="card p-4 border-0 bg-white shadow-sm h-100" style="border-radius: 20px;">
-            <div class="d-flex justify-content-between align-items-center mb-4 border-bottom border-light pb-3">
-                <h5 class="card-title fw-bold text-success brand-font m-0" style="font-size: 1.15rem;">Top 5 Best Selling Items</h5>
-                <span class="text-muted small">Sales by Units</span>
+    <!-- ==========================================
+         PAGE HEADER & REPORT CONTROLS
+         ========================================== -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3 no-print">
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <span class="badge px-3 py-1 rounded-pill fw-bold" style="background: rgba(6, 58, 34, 0.1); color: var(--brand-green); font-size: 0.75rem; letter-spacing: 0.08em;">
+                    RETAIL & E-COMMERCE INTELLIGENCE
+                </span>
+                <span class="badge px-2 py-1 rounded-pill fw-bold" style="background: rgba(212, 175, 55, 0.2); color: var(--brand-gold-dark, #AA820A); font-size: 0.75rem;">
+                    TEKKALI STORE
+                </span>
             </div>
+            <h2 class="brand-font m-0 fw-bold" style="color: var(--brand-green); font-size: 1.85rem;">
+                📈 Admin Analytics Dashboard
+            </h2>
+            <small class="text-muted">
+                Centralized financial calculations, multi-channel performance & customer retention
+            </small>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+            <button type="button" class="btn btn-outline-secondary btn-sm px-3 py-2 fw-bold" onclick="window.print()" title="Print executive report">
+                🖨️ Print Report
+            </button>
+            <button type="button" class="btn btn-outline-success btn-sm px-3 py-2 fw-bold" onclick="exportAnalyticsCsv()" title="Export current metrics to CSV">
+                📥 Export CSV
+            </button>
+            <a href="/analytics?preset=30d" class="btn btn-outline-danger btn-sm px-3 py-2 fw-bold" title="Reset all filters">
+                ↺ Reset Filters
+            </a>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         FILTER TOOLBAR
+         ========================================== -->
+    <div class="card border-0 shadow-sm p-3 mb-4 no-print" style="border-radius: 18px; background: #ffffff; border: 1px solid var(--sf-border, #E5ECE7) !important;">
+        <form method="GET" action="/analytics" id="analyticsFilterForm">
             
-            <div style="height: 340px; position: relative;">
-                <canvas id="salesChart"></canvas>
+            <!-- Quick Date Presets -->
+            <div class="d-flex flex-wrap align-items-center gap-2 mb-3 pb-3 border-bottom">
+                <span class="small fw-bold text-muted text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.05em;">Date Presets:</span>
+                <button type="button" class="btn btn-sm <%= filter.preset === 'today' ? 'btn-success' : 'btn-light border' %> fw-bold px-3" onclick="setPreset('today')">Today</button>
+                <button type="button" class="btn btn-sm <%= filter.preset === '7d' ? 'btn-success' : 'btn-light border' %> fw-bold px-3" onclick="setPreset('7d')">Last 7 Days</button>
+                <button type="button" class="btn btn-sm <%= filter.preset === '30d' ? 'btn-success' : 'btn-light border' %> fw-bold px-3" onclick="setPreset('30d')">Last 30 Days</button>
+                <button type="button" class="btn btn-sm <%= filter.preset === 'month' ? 'btn-success' : 'btn-light border' %> fw-bold px-3" onclick="setPreset('month')">This Month</button>
+                <button type="button" class="btn btn-sm <%= filter.preset === 'year' ? 'btn-success' : 'btn-light border' %> fw-bold px-3" onclick="setPreset('year')">This Year</button>
+                <button type="button" class="btn btn-sm <%= filter.preset === 'all' ? 'btn-success' : 'btn-light border' %> fw-bold px-3" onclick="setPreset('all')">All Time</button>
+                <input type="hidden" name="preset" id="presetInput" value="<%= filter.preset %>">
+            </div>
+
+            <!-- Granular Filters Grid -->
+            <div class="row g-2 align-items-end">
+                <!-- Date Range -->
+                <div class="col-6 col-md-2">
+                    <label class="form-label small fw-bold text-muted mb-1" for="startDateInput">Start Date</label>
+                    <input type="date" name="startDate" id="startDateInput" class="form-control form-control-sm" value="<%= filter.startDate %>">
+                </div>
+                <div class="col-6 col-md-2">
+                    <label class="form-label small fw-bold text-muted mb-1" for="endDateInput">End Date</label>
+                    <input type="date" name="endDate" id="endDateInput" class="form-control form-control-sm" value="<%= filter.endDate %>">
+                </div>
+
+                <!-- Category -->
+                <div class="col-6 col-md-2">
+                    <label class="form-label small fw-bold text-muted mb-1" for="categorySelect">Category</label>
+                    <select name="category" id="categorySelect" class="form-select form-select-sm">
+                        <option value="all" <%= (!filter.category || filter.category === 'all') ? 'selected' : '' %>>All Categories</option>
+                        <% if (typeof categories !== 'undefined' && categories.length > 0) { %>
+                            <% categories.forEach(function(c) { %>
+                                <option value="<%= c %>" <%= filter.category === c ? 'selected' : '' %>><%= c %></option>
+                            <% }); %>
+                        <% } else { %>
+                            <option value="Dry Fruits" <%= filter.category === 'Dry Fruits' ? 'selected' : '' %>>Dry Fruits</option>
+                            <option value="Millets" <%= filter.category === 'Millets' ? 'selected' : '' %>>Millets</option>
+                            <option value="Seeds" <%= filter.category === 'Seeds' ? 'selected' : '' %>>Seeds</option>
+                            <option value="Spices" <%= filter.category === 'Spices' ? 'selected' : '' %>>Spices</option>
+                            <option value="Nuts" <%= filter.category === 'Nuts' ? 'selected' : '' %>>Nuts</option>
+                            <option value="Sweets" <%= filter.category === 'Sweets' ? 'selected' : '' %>>Sweets</option>
+                        <% } %>
+                    </select>
+                </div>
+
+                <!-- Product -->
+                <div class="col-6 col-md-2">
+                    <label class="form-label small fw-bold text-muted mb-1" for="productSelect">Product</label>
+                    <select name="productId" id="productSelect" class="form-select form-select-sm">
+                        <option value="" <%= !filter.productId ? 'selected' : '' %>>All Products</option>
+                        <% if (typeof products !== 'undefined' && products.length > 0) { %>
+                            <% products.forEach(function(p) { %>
+                                <option value="<%= p.id %>" <%= filter.productId === p.id ? 'selected' : '' %>><%= p.name %></option>
+                            <% }); %>
+                        <% } %>
+                    </select>
+                </div>
+
+                <!-- Channel -->
+                <div class="col-6 col-md-2">
+                    <label class="form-label small fw-bold text-muted mb-1" for="channelSelect">Channel</label>
+                    <select name="channel" id="channelSelect" class="form-select form-select-sm">
+                        <option value="ALL" <%= (!filter.channel || filter.channel === 'ALL') ? 'selected' : '' %>>All Channels</option>
+                        <option value="POS" <%= filter.channel === 'POS' ? 'selected' : '' %>>POS (In-Store)</option>
+                        <option value="ONLINE" <%= filter.channel === 'ONLINE' ? 'selected' : '' %>>Online Store</option>
+                    </select>
+                </div>
+
+                <!-- Status -->
+                <div class="col-6 col-md-1">
+                    <label class="form-label small fw-bold text-muted mb-1" for="statusSelect">Status</label>
+                    <select name="status" id="statusSelect" class="form-select form-select-sm">
+                        <option value="ALL" <%= (!filter.status || filter.status === 'ALL') ? 'selected' : '' %>>All</option>
+                        <option value="COMPLETED" <%= filter.status === 'COMPLETED' ? 'selected' : '' %>>Completed</option>
+                        <option value="PENDING" <%= filter.status === 'PENDING' ? 'selected' : '' %>>Pending</option>
+                        <option value="CANCELLED" <%= filter.status === 'CANCELLED' ? 'selected' : '' %>>Cancelled</option>
+                    </select>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="col-12 col-md-1">
+                    <button type="submit" class="btn btn-brand btn-sm w-100 py-1 fw-bold">
+                        Filter
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- ==========================================
+         TOP REVENUE BENCHMARKS (Reference Row)
+         ========================================== -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+            <div class="card p-3 border-0 bg-white shadow-sm h-100" style="border-radius: 16px; border-left: 4px solid var(--brand-green) !important;">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <small class="text-muted fw-bold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.05em;">Today's Revenue</small>
+                    <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-2 py-1" style="font-size: 0.65rem;">LIVE</span>
+                </div>
+                <h3 class="fw-extrabold text-dark m-0" style="font-family: 'Plus Jakarta Sans', sans-serif;">
+                    ₹<%= Number(analytics.todayRevenue).toFixed(2) %>
+                </h3>
+                <small class="text-muted mt-1" style="font-size: 0.72rem;">00:00 to 23:59 IST</small>
+            </div>
+        </div>
+
+        <div class="col-6 col-md-3">
+            <div class="card p-3 border-0 bg-white shadow-sm h-100" style="border-radius: 16px; border-left: 4px solid var(--brand-green-light) !important;">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <small class="text-muted fw-bold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.05em;">Weekly Revenue</small>
+                    <span class="badge bg-secondary bg-opacity-10 text-secondary rounded-pill px-2 py-1" style="font-size: 0.65rem;">7 DAYS</span>
+                </div>
+                <h3 class="fw-extrabold text-dark m-0" style="font-family: 'Plus Jakarta Sans', sans-serif;">
+                    ₹<%= Number(analytics.weeklyRevenue).toFixed(2) %>
+                </h3>
+                <small class="text-muted mt-1" style="font-size: 0.72rem;">Rolling 7-day total</small>
+            </div>
+        </div>
+
+        <div class="col-6 col-md-3">
+            <div class="card p-3 border-0 bg-white shadow-sm h-100" style="border-radius: 16px; border-left: 4px solid var(--brand-gold) !important;">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <small class="text-muted fw-bold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.05em;">Monthly Revenue</small>
+                    <span class="badge bg-warning bg-opacity-25 text-dark rounded-pill px-2 py-1" style="font-size: 0.65rem;">30 DAYS</span>
+                </div>
+                <h3 class="fw-extrabold text-dark m-0" style="font-family: 'Plus Jakarta Sans', sans-serif;">
+                    ₹<%= Number(analytics.monthlyRevenue).toFixed(2) %>
+                </h3>
+                <small class="text-muted mt-1" style="font-size: 0.72rem;">Rolling 30-day total</small>
+            </div>
+        </div>
+
+        <div class="col-6 col-md-3">
+            <div class="card p-3 border-0 bg-white shadow-sm h-100" style="border-radius: 16px; border-left: 4px solid #0dcaf0 !important;">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <small class="text-muted fw-bold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.05em;">All-Time Revenue</small>
+                    <span class="badge bg-info bg-opacity-10 text-info rounded-pill px-2 py-1" style="font-size: 0.65rem;">CUMULATIVE</span>
+                </div>
+                <h3 class="fw-extrabold text-dark m-0" style="font-family: 'Plus Jakarta Sans', sans-serif;">
+                    ₹<%= Number(analytics.allTimeRevenue).toFixed(2) %>
+                </h3>
+                <small class="text-muted mt-1" style="font-size: 0.72rem;">Store history</small>
             </div>
         </div>
     </div>
 
-    <!-- LEADERBOARD PANEL -->
-    <div class="col-lg-4">
-        <div class="card p-0 border-0 bg-white shadow-sm h-100 overflow-hidden" style="border-radius: 20px;">
-            <div class="p-4 text-white" style="background: linear-gradient(135deg, var(--brand-green), #031c10); border-bottom: 3px solid var(--brand-gold);">
-                <span class="badge bg-warning bg-opacity-25 text-warning px-2 py-1 rounded-pill mb-2 fw-bold" style="font-size: 0.65rem;">PERFORMANCE</span>
-                <h5 class="mb-0 brand-font text-warning" style="font-size: 1.2rem;">🏆 Product Leaderboard</h5>
+    <!-- ==========================================
+         FILTERED EXECUTIVE KPI STATS CARDS
+         ========================================== -->
+    <div class="row g-3 mb-4">
+        <!-- Filtered Total Revenue -->
+        <div class="col-12 col-md-4 col-lg-3">
+            <div class="card p-3 border-0 bg-white shadow-sm h-100" style="border-radius: 16px;">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <span class="badge bg-success text-white px-2 py-1 rounded">Filtered Total</span>
+                    <span class="fs-4">💰</span>
+                </div>
+                <div class="display-6 fw-bold text-dark mb-1" style="font-size: 1.85rem; font-family: 'Plus Jakarta Sans', sans-serif;">
+                    ₹<%= Number(analytics.totalRevenue).toFixed(2) %>
+                </div>
+                <div class="small text-muted d-flex justify-content-between">
+                    <span>POS: ₹<%= Number(analytics.posRevenue).toFixed(2) %></span>
+                    <span>Online: ₹<%= Number(analytics.onlineRevenue).toFixed(2) %></span>
+                </div>
             </div>
-            
-            <ul class="list-group list-group-flush">
-                <% if (labels && labels.length > 0) { %>
-                    <% for (let i = 0; i < labels.length; i++) { %>
-                    <li class="list-group-item d-flex justify-content-between align-items-center py-3 px-4 border-light">
-                        <div class="d-flex align-items-center gap-3">
-                            <span class="fw-extrabold text-muted" style="font-family: 'JetBrains Mono', monospace; font-size: 1.1rem;"><%= i+1 %></span>
-                            <span class="fw-bold text-dark fs-6"><%= labels[i] %></span>
-                        </div>
-                        <span class="badge rounded-pill" style="background-color: var(--brand-gold-pale); color: var(--brand-green-dark); padding: 8px 16px; font-weight: 700; font-size: 0.82rem;">
-                            <%= Number(values[i]).toFixed(1) %> sold
-                        </span>
-                    </li>
+        </div>
+
+        <!-- Orders & AOV -->
+        <div class="col-6 col-md-4 col-lg-3">
+            <div class="card p-3 border-0 bg-white shadow-sm h-100" style="border-radius: 16px;">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <span class="badge bg-primary text-white px-2 py-1 rounded">Volume & AOV</span>
+                    <span class="fs-4">🧾</span>
+                </div>
+                <div class="d-flex align-items-baseline gap-2 mb-1">
+                    <span class="display-6 fw-bold text-dark" style="font-size: 1.85rem;"><%= analytics.orderCount %></span>
+                    <small class="text-muted">Orders</small>
+                </div>
+                <div class="small text-muted">
+                    <strong>AOV: ₹<%= Number(analytics.averageOrderValue).toFixed(2) %></strong> (POS: ₹<%= Number(analytics.posAov).toFixed(2) %> | Online: ₹<%= Number(analytics.onlineAov).toFixed(2) %>)
+                </div>
+            </div>
+        </div>
+
+        <!-- Gross Profit & Margin -->
+        <div class="col-6 col-md-4 col-lg-3">
+            <div class="card p-3 border-0 bg-white shadow-sm h-100" style="border-radius: 16px;">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <span class="badge bg-success bg-opacity-25 text-success fw-bold px-2 py-1 rounded">Profit & Margin</span>
+                    <span class="fs-4">📊</span>
+                </div>
+                <div class="display-6 fw-bold text-success mb-1" style="font-size: 1.85rem; font-family: 'Plus Jakarta Sans', sans-serif;">
+                    ₹<%= Number(analytics.totalProfit).toFixed(2) %>
+                </div>
+                <div class="small text-muted">
+                    Margin: <strong class="text-dark"><%= analytics.profitMarginPercent %>%</strong> (COGS: ₹<%= Number(analytics.totalCOGS).toFixed(2) %>)
+                </div>
+            </div>
+        </div>
+
+        <!-- Repeat Customers -->
+        <div class="col-6 col-md-4 col-lg-3">
+            <div class="card p-3 border-0 bg-white shadow-sm h-100" style="border-radius: 16px;">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <span class="badge bg-warning bg-opacity-25 text-dark fw-bold px-2 py-1 rounded">Repeat Customers</span>
+                    <span class="fs-4">🔁</span>
+                </div>
+                <div class="display-6 fw-bold text-dark mb-1" style="font-size: 1.85rem;">
+                    <%= analytics.repeatCustomers.repeatCustomerRatePercent %>%
+                </div>
+                <div class="small text-muted">
+                    <%= analytics.repeatCustomers.repeatCustomersCount %> repeat customers (<%= analytics.repeatCustomers.repeatOrdersCount %> repeat orders)
+                </div>
+            </div>
+        </div>
+
+        <!-- Cancellations -->
+        <div class="col-6 col-md-4 col-lg-3">
+            <div class="card p-3 border-0 bg-white shadow-sm h-100" style="border-radius: 16px;">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <span class="badge bg-danger bg-opacity-10 text-danger fw-bold px-2 py-1 rounded">Cancellations</span>
+                    <span class="fs-4">🚫</span>
+                </div>
+                <div class="display-6 fw-bold text-danger mb-1" style="font-size: 1.85rem;">
+                    <%= analytics.cancellations.cancelledOrdersCount %>
+                </div>
+                <div class="small text-muted">
+                    Rate: <strong class="text-dark"><%= analytics.cancellations.cancellationRatePercent %>%</strong> of <%= analytics.cancellations.totalOrdersAttempted %> orders
+                </div>
+            </div>
+        </div>
+
+        <!-- WhatsApp Conversion -->
+        <div class="col-6 col-md-4 col-lg-3">
+            <div class="card p-3 border-0 bg-white shadow-sm h-100" style="border-radius: 16px;">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <span class="badge bg-success bg-opacity-15 text-success fw-bold px-2 py-1 rounded">WhatsApp Conversion</span>
+                    <span class="fs-4">💬</span>
+                </div>
+                <div class="display-6 fw-bold text-success mb-1" style="font-size: 1.85rem;">
+                    <%= analytics.whatsappConversion.conversionRatePercent %>%
+                </div>
+                <div class="small text-muted">
+                    <%= analytics.whatsappConversion.confirmedOrders %> confirmed / <%= analytics.whatsappConversion.notificationsSent %> notified
+                </div>
+            </div>
+        </div>
+
+        <!-- Stock-Outs Alert -->
+        <div class="col-12 col-md-4 col-lg-3">
+            <div class="card p-3 border-0 bg-white shadow-sm h-100" style="border-radius: 16px; border-left: 4px solid <%= analytics.stockOuts.count > 0 ? '#dc3545' : '#198754' %> !important;">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <span class="badge <%= analytics.stockOuts.count > 0 ? 'bg-danger' : 'bg-success' %> text-white px-2 py-1 rounded">Inventory Status</span>
+                    <span class="fs-4">📦</span>
+                </div>
+                <div class="display-6 fw-bold <%= analytics.stockOuts.count > 0 ? 'text-danger' : 'text-success' %> mb-1" style="font-size: 1.85rem;">
+                    <%= analytics.stockOuts.count %> Stock-outs
+                </div>
+                <div class="small text-muted">
+                    <%= analytics.stockOuts.lowStockCount %> items low in stock (&lt; 5 units)
+                </div>
+            </div>
+        </div>
+
+        <!-- Channel Breakdown Quick Stat -->
+        <div class="col-12 col-md-4 col-lg-3">
+            <div class="card p-3 border-0 bg-white shadow-sm h-100" style="border-radius: 16px;">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <span class="badge bg-secondary text-white px-2 py-1 rounded">Channel Split</span>
+                    <span class="fs-4">🛒</span>
+                </div>
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <div class="progress flex-grow-1" style="height: 12px; border-radius: 8px;">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: <%= analytics.channelBreakdown.pos.sharePercent %>%;" title="POS <%= analytics.channelBreakdown.pos.sharePercent %>%"></div>
+                        <div class="progress-bar bg-warning text-dark" role="progressbar" style="width: <%= analytics.channelBreakdown.online.sharePercent %>%;" title="Online <%= analytics.channelBreakdown.online.sharePercent %>%"></div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between small text-muted">
+                    <span>🏬 POS: <%= analytics.channelBreakdown.pos.sharePercent %>%</span>
+                    <span>📲 Online: <%= analytics.channelBreakdown.online.sharePercent %>%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         VISUALIZATION CHARTS ROW
+         ========================================== -->
+    <div class="row g-4 mb-4">
+        <!-- Timeline Revenue Chart -->
+        <div class="col-12 col-lg-8">
+            <div class="card p-4 border-0 bg-white shadow-sm h-100" style="border-radius: 20px;">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <h5 class="fw-bold m-0" style="color: var(--brand-green);">Revenue Trend Over Time</h5>
+                        <small class="text-muted">Daily breakdown of in-store POS and online e-commerce sales</small>
+                    </div>
+                    <div class="d-flex align-items-center gap-3 small">
+                        <span class="d-flex align-items-center gap-1"><span style="width: 12px; height: 12px; background: #063A22; border-radius: 3px; display: inline-block;"></span> POS</span>
+                        <span class="d-flex align-items-center gap-1"><span style="width: 12px; height: 12px; background: #D4AF37; border-radius: 3px; display: inline-block;"></span> Online</span>
+                    </div>
+                </div>
+                <div style="height: 320px; position: relative;">
+                    <canvas id="revenueTrendChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Channel & Category Distribution Charts -->
+        <div class="col-12 col-lg-4">
+            <div class="card p-4 border-0 bg-white shadow-sm h-100" style="border-radius: 20px;">
+                <h5 class="fw-bold mb-1" style="color: var(--brand-green);">Category Revenue Share</h5>
+                <small class="text-muted mb-3 d-block">Revenue distribution by product category</small>
+                <div style="height: 250px; position: relative;" class="d-flex align-items-center justify-content-center">
+                    <canvas id="categoryShareChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         LEADERBOARDS: BEST-SELLING & MOST PROFITABLE
+         ========================================== -->
+    <div class="row g-4 mb-4">
+        <!-- Best-Selling Products Table -->
+        <div class="col-12 col-lg-6">
+            <div class="card border-0 bg-white shadow-sm h-100 overflow-hidden" style="border-radius: 20px;">
+                <div class="p-3 bg-light border-bottom d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="fw-bold m-0" style="color: var(--brand-green);">🏆 Best-Selling Products</h5>
+                        <small class="text-muted">Ranked by total quantity units sold</small>
+                    </div>
+                    <span class="badge bg-success bg-opacity-10 text-success fw-bold">TOP 10</span>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0" style="font-size: 0.88rem;">
+                        <thead class="table-light">
+                            <tr>
+                                <th>#</th>
+                                <th>Product</th>
+                                <th>Category</th>
+                                <th class="text-end">Units Sold</th>
+                                <th class="text-end">Revenue</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (analytics.bestSellingProducts && analytics.bestSellingProducts.length > 0) { %>
+                                <% analytics.bestSellingProducts.forEach(function(item, idx) { %>
+                                <tr>
+                                    <td class="fw-bold text-muted"><%= idx + 1 %></td>
+                                    <td>
+                                        <div class="fw-bold text-dark"><%= item.name %></div>
+                                        <small class="text-muted font-monospace"><%= item.barcode %></small>
+                                    </td>
+                                    <td><span class="badge bg-light text-dark border"><%= item.category %></span></td>
+                                    <td class="text-end fw-bold"><%= Number(item.quantitySold).toFixed(1) %></td>
+                                    <td class="text-end fw-bold text-dark">₹<%= Number(item.revenue).toFixed(2) %></td>
+                                </tr>
+                                <% }); %>
+                            <% } else { %>
+                                <tr><td colspan="5" class="text-center py-4 text-muted">No sales data recorded for current filter.</td></tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Most Profitable Products Table -->
+        <div class="col-12 col-lg-6">
+            <div class="card border-0 bg-white shadow-sm h-100 overflow-hidden" style="border-radius: 20px;">
+                <div class="p-3 bg-light border-bottom d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="fw-bold m-0" style="color: var(--brand-green);">💎 Most Profitable Products</h5>
+                        <small class="text-muted">Ranked by net gross profit generated</small>
+                    </div>
+                    <span class="badge bg-warning bg-opacity-25 text-dark fw-bold">HIGH MARGIN</span>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0" style="font-size: 0.88rem;">
+                        <thead class="table-light">
+                            <tr>
+                                <th>#</th>
+                                <th>Product</th>
+                                <th class="text-end">COGS</th>
+                                <th class="text-end">Net Profit</th>
+                                <th class="text-end">Margin %</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (analytics.mostProfitableProducts && analytics.mostProfitableProducts.length > 0) { %>
+                                <% analytics.mostProfitableProducts.forEach(function(item, idx) { %>
+                                <tr>
+                                    <td class="fw-bold text-muted"><%= idx + 1 %></td>
+                                    <td>
+                                        <div class="fw-bold text-dark"><%= item.name %></div>
+                                        <small class="text-muted"><%= item.category %></small>
+                                    </td>
+                                    <td class="text-end text-muted">₹<%= Number(item.cogs).toFixed(2) %></td>
+                                    <td class="text-end fw-bold text-success">₹<%= Number(item.profit).toFixed(2) %></td>
+                                    <td class="text-end">
+                                        <span class="badge bg-success bg-opacity-15 text-success fw-bold">
+                                            <%= item.profitMarginPercent %>%
+                                        </span>
+                                    </td>
+                                </tr>
+                                <% }); %>
+                            <% } else { %>
+                                <tr><td colspan="5" class="text-center py-4 text-muted">No profit data available for current filter.</td></tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         STOCK-OUTS & INVENTORY REPLENISHMENT TABLE
+         ========================================== -->
+    <div class="card border-0 bg-white shadow-sm mb-4 overflow-hidden" style="border-radius: 20px;">
+        <div class="p-3 bg-light border-bottom d-flex justify-content-between align-items-center">
+            <div>
+                <h5 class="fw-bold m-0 text-danger">⚠️ Stock-Outs & Critical Inventory Replenishment</h5>
+                <small class="text-muted">Products currently depleted that are preventing order conversions</small>
+            </div>
+            <span class="badge bg-danger"><%= analytics.stockOuts.count %> Items Depleted</span>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0" style="font-size: 0.88rem;">
+                <thead class="table-light">
+                    <tr>
+                        <th>Barcode</th>
+                        <th>Product Name</th>
+                        <th>Category</th>
+                        <th>Current Available Units</th>
+                        <th>Selling Price</th>
+                        <th class="text-end">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (analytics.stockOuts.items && analytics.stockOuts.items.length > 0) { %>
+                        <% analytics.stockOuts.items.forEach(function(item) { %>
+                        <tr>
+                            <td class="font-monospace text-muted"><%= item.barcode %></td>
+                            <td class="fw-bold text-dark"><%= item.name %></td>
+                            <td><span class="badge bg-light text-dark border"><%= item.category %></span></td>
+                            <td><span class="badge bg-danger">0 Units (Depleted)</span></td>
+                            <td>₹<%= Number(item.sellingPrice).toFixed(2) %></td>
+                            <td class="text-end">
+                                <a href="/stock" class="btn btn-outline-primary btn-sm py-1 px-3 fw-bold">
+                                    + Add Stock
+                                </a>
+                            </td>
+                        </tr>
+                        <% }); %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="6" class="text-center py-4 text-success fw-semibold">
+                                ✓ Excellent! No products are currently out of stock.
+                            </td>
+                        </tr>
                     <% } %>
-                <% } else { %>
-                    <li class="list-group-item text-center text-muted py-5">
-                        <span class="fs-1 d-block mb-2">📊</span>
-                        No sales leaderboard data available yet.
-                    </li>
-                <% } %>
-            </ul>
+                </tbody>
+            </table>
         </div>
     </div>
+
 </div>
 
+<!-- ==========================================
+     CLIENT SCRIPTS & CHART.JS ENGINE
+     ========================================== -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    const labels = <%- JSON.stringify(labels) %>;
-    const dataValues = <%- JSON.stringify(values) %>;
+// Filter Presets Switcher
+function setPreset(presetVal) {
+    document.getElementById('presetInput').value = presetVal;
+    // Clear custom date inputs so preset logic evaluates cleanly
+    document.getElementById('startDateInput').value = '';
+    document.getElementById('endDateInput').value = '';
+    document.getElementById('analyticsFilterForm').submit();
+}
 
-    const ctx = document.getElementById('salesChart').getContext('2d');
+// Export Analytics Data to CSV
+function exportAnalyticsCsv() {
+    const summary = <%- JSON.stringify(analytics) %>;
+    let csv = "Product Name,Category,Units Sold,Revenue,COGS,Profit,Margin Percent\n";
     
-    // Create soft beautiful gradients for the bar chart
-    const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-    gradient.addColorStop(0, '#0D5A37'); // light brand green
-    gradient.addColorStop(1, '#063A22'); // dark brand green
+    if (summary.bestSellingProducts) {
+        summary.bestSellingProducts.forEach(p => {
+            csv += `"${p.name}","${p.category}",${p.quantitySold},${p.revenue},${p.cogs},${p.profit},${p.profitMarginPercent}%\n`;
+        });
+    }
 
-    new Chart(ctx, {
-        type: 'bar', 
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Quantity Sold (Units/Kg)',
-                data: dataValues,
-                backgroundColor: gradient,
-                borderColor: '#D4AF37',     // Brand Gold borders
-                borderWidth: 1.5,
-                borderRadius: 8,
-                barPercentage: 0.55
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
-                }
-            },
-            scales: { 
-                y: { 
-                    beginAtZero: true,
-                    grid: {
-                        color: 'rgba(6, 58, 34, 0.04)',
-                        drawBorder: false
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", `sri_tirumala_analytics_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CHARTS INITIALIZATION
+// ─────────────────────────────────────────────────────────────────────────────
+document.addEventListener("DOMContentLoaded", function () {
+    const trendData = <%- JSON.stringify(analytics.revenueTrend) %>;
+    const catData = <%- JSON.stringify(analytics.categoryBreakdown) %>;
+
+    // 1. Revenue Timeline Chart
+    const trendCtx = document.getElementById('revenueTrendChart');
+    if (trendCtx && trendData && trendData.length > 0) {
+        const labels = trendData.map(d => d.date);
+        const posRevs = trendData.map(d => d.posRevenue);
+        const onlineRevs = trendData.map(d => d.onlineRevenue);
+
+        new Chart(trendCtx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'POS Revenue (₹)',
+                        data: posRevs,
+                        backgroundColor: '#063A22',
+                        borderRadius: 4,
+                        barPercentage: 0.6
                     },
-                    ticks: {
-                        font: {
-                            family: 'Plus Jakarta Sans',
-                            weight: 600
-                        },
-                        color: '#6C7A72'
+                    {
+                        label: 'Online Revenue (₹)',
+                        data: onlineRevs,
+                        backgroundColor: '#D4AF37',
+                        borderRadius: 4,
+                        barPercentage: 0.6
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        stacked: true,
+                        grid: { display: false }
+                    },
+                    y: {
+                        stacked: true,
+                        beginAtZero: true,
+                        ticks: {
+                            callback: value => '₹' + value
+                        }
                     }
                 },
-                x: {
-                    grid: {
-                        display: false
-                    },
-                    ticks: {
-                        font: {
-                            family: 'Plus Jakarta Sans',
-                            weight: 700,
-                            size: 11
-                        },
-                        color: '#1F2E26'
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: ctx => `${ctx.dataset.label}: ₹${ctx.parsed.y.toFixed(2)}`
+                        }
                     }
                 }
             }
-        }
-    });
+        });
+    }
+
+    // 2. Category Share Doughnut Chart
+    const catCtx = document.getElementById('categoryShareChart');
+    if (catCtx && catData && catData.length > 0) {
+        const catLabels = catData.map(c => c.category);
+        const catRevs = catData.map(c => c.revenue);
+        const palette = ['#063A22', '#D4AF37', '#198754', '#0dcaf0', '#fd7e14', '#6f42c1', '#20c997'];
+
+        new Chart(catCtx, {
+            type: 'doughnut',
+            data: {
+                labels: catLabels,
+                datasets: [{
+                    data: catRevs,
+                    backgroundColor: palette.slice(0, catLabels.length),
+                    borderWidth: 2,
+                    borderColor: '#ffffff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { boxWidth: 12, font: { size: 11 } }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: ctx => `${ctx.label}: ₹${ctx.parsed.toFixed(2)}`
+                        }
+                    }
+                },
+                cutout: '65%'
+            }
+        });
+    }
+});
 </script>
 
 <%- include('footer') %>

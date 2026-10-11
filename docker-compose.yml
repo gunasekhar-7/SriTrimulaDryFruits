@@ -1,0 +1,87 @@
+# ==============================================================================
+# Production-Hardened Docker Compose Configuration
+# Sri Tirumala Dry Fruits - POS & E-Commerce Platform
+# Process Management Strategy: Container-Native (Docker as PID 1 Supervisor)
+# ==============================================================================
+
+services:
+  pos-app:
+    # ─── Immutable Image Tagging ──────────────────────────────────────────────
+    # Supports deterministic SHA or semantic version tags (e.g. IMAGE_TAG=v1.2.0)
+    image: sri-tirumala-pos:${IMAGE_TAG:-latest}
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sri-tirumala-pos
+
+    # ─── Restart Strategy ─────────────────────────────────────────────────────
+    # Recovers automatically from host reboot and process crashes; honors manual stops
+    restart: unless-stopped
+
+    # ─── Non-Root Security Hardening ──────────────────────────────────────────
+    user: "1000:1000"
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=64m
+
+    # ─── Port Publishing ──────────────────────────────────────────────────────
+    ports:
+      - "${HOST_PORT:-3000}:3000"
+
+    # ─── Environment-Based Configuration ──────────────────────────────────────
+    env_file:
+      - ${ENV_FILE:-.env}
+    environment:
+      - NODE_ENV=${NODE_ENV:-production}
+      - PORT=3000
+      - TZ=Asia/Kolkata
+
+    # ─── Persistent Storage ───────────────────────────────────────────────────
+    # Named volumes isolate SQLite databases and audit logs from container lifecycle
+    volumes:
+      - pos_data:/app/data
+      - pos_logs:/app/logs
+
+    # ─── Resource Limits & Quotas ─────────────────────────────────────────────
+    # Prevents noisy neighbors or memory leaks from exhausting the host system
+    deploy:
+      resources:
+        limits:
+          cpus: '2.00'
+          memory: 1024M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+
+    # ─── Container Healthcheck ────────────────────────────────────────────────
+    # Probes the application healthcheck endpoint; marks unhealthy if failed
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:' + (process.env.PORT || 3000) + '/health').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+    # ─── Graceful Shutdown Window ─────────────────────────────────────────────
+    # Allows 15s for in-flight requests to complete, queue worker to pause, and SQLite WAL to flush
+    stop_grace_period: 15s
+
+    # ─── Log Rotation & Driver ────────────────────────────────────────────────
+    # Prevents container logs from filling the host disk
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "20m"
+        max-file: "5"
+
+# ─── Persistent Volumes Definition ────────────────────────────────────────────
+volumes:
+  pos_data:
+    name: sri_tirumala_pos_data
+    driver: local
+  pos_logs:
+    name: sri_tirumala_pos_logs
+    driver: local

@@ -1,243 +1,187 @@
 {% extends "layout.html" %}
 {% block content %}
 
-<style>
-/* =========================
-   BRAND COLORS
-========================= */
-:root {
-    --brand-green: #0B3D25;
-    --brand-gold: #D4AF37;
-    --light-bg: #f7f7f7;
-}
-
-/* =========================
-   HEADER
-========================= */
-.shop-header {
-    background: white;
-    border-bottom: 1px solid #eee;
-    padding: 15px 0;
-}
-
-.shop-title {
-    font-weight: 800;
-    color: var(--brand-green);
-}
-
-.shop-subtitle {
-    color: #777;
-    font-size: 0.9rem;
-}
-
-/* =========================
-   HERO
-========================= */
-.hero {
-    background: linear-gradient(135deg, #0B3D25, #145c3a);
-    color: white;
-    padding: 50px 20px;
-    border-radius: 12px;
-}
-
-.hero h1 {
-    font-weight: 800;
-}
-
-.hero p {
-    opacity: 0.9;
-}
-
-.category-chip {
-    background: white;
-    color: var(--brand-green);
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-weight: 600;
-    margin: 5px;
-    display: inline-block;
-    font-size: 0.9rem;
-}
-
-/* =========================
-   SECTION TITLES
-========================= */
-.section-title {
-    font-weight: 700;
-    color: var(--brand-green);
-}
-
-/* =========================
-   PRODUCT CARD
-========================= */
-.product-card {
-    border: 1px solid #eee;
-    border-radius: 10px;
-    transition: all 0.25s ease;
-    background: white;
-    cursor: pointer;
-}
-
-.product-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-}
-
-.product-img {
-    height: 140px;
-    background: #f1f1f1;
-    font-size: 2.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 10px 10px 0 0;
-}
-
-.product-name {
-    font-weight: 700;
-    color: #333;
-}
-
-.product-price {
-    color: #0B3D25;
-    font-weight: 800;
-}
-
-.product-item {
-    transition: all 0.2s ease;
-}
-
-/* =========================
-   FOOTER
-========================= */
-.site-footer {
-    background: #fafafa;
-    border-top: 1px solid #eee;
-    margin-top: 60px;
-    padding: 30px 10px;
-}
-</style>
-
-<!-- =========================
-     HEADER
-========================= -->
-<div class="shop-header mb-4">
-    <div class="container d-flex justify-content-between align-items-center">
-        <div>
-            <h4 class="shop-title mb-0">SRI TIRUMALA DRY FRUITS</h4>
-            <div class="shop-subtitle">Dry Fruits • Millets • Frozen Foods</div>
-        </div>
-        <div class="text-end small text-muted">
-            📍 Tekkali<br>
-            📞 +91 9133133931
-        </div>
+<!-- Page header -->
+<div class="page-header d-print-none mb-4 mt-2">
+  <div class="row g-2 align-items-center">
+    <div class="col">
+      <!-- Page pre-title -->
+      <div class="page-pretitle text-muted text-uppercase fw-bold tracking-wide">
+        Overview
+      </div>
+      <h2 class="page-title fw-bold" style="color: #0B3D25 !important;">
+        Admin Dashboard
+      </h2>
     </div>
+    <!-- Quick Actions -->
+    <div class="col-auto ms-auto d-print-none">
+      <div class="btn-list">
+        <a href="/sell" class="btn btn-success d-none d-sm-inline-block fw-bold border-0 shadow-sm text-white" style="background-color: #0B3D25;">
+          <i class="ti ti-receipt me-2"></i> New Sale
+        </a>
+        <a href="/add" class="btn btn-warning d-none d-sm-inline-block fw-bold text-dark border-0 shadow-sm" style="background-color: #D4AF37;">
+          <i class="ti ti-plus me-2"></i> Add Stock
+        </a>
+        <a href="/search_bill" class="btn btn-white d-none d-sm-inline-block fw-bold shadow-sm">
+          <i class="ti ti-search me-2"></i> Search Bill
+        </a>
+        <!-- Mobile friendly icons -->
+        <a href="/sell" class="btn btn-success d-sm-none btn-icon shadow-sm text-white" aria-label="New Sale" style="background-color: #0B3D25;">
+          <i class="ti ti-receipt"></i>
+        </a>
+      </div>
+    </div>
+  </div>
 </div>
 
-<div class="container">
-
-<!-- =========================
-     HERO
-========================= -->
-<div class="hero text-center mb-5">
-    <h1>Fresh • Premium • Trusted</h1>
-    <p class="mt-2">Daily essentials & premium dry fruits under one roof</p>
-
-    <div class="mt-4">
-        <span class="category-chip">🌰 Dry Fruits</span>
-        <span class="category-chip">🌾 Millets</span>
-        <span class="category-chip">❄️ Frozen Foods</span>
-        <span class="category-chip">🍫 Snacks</span>
+<!-- Store Overview Stats -->
+<div class="row row-deck row-cards mb-4">
+  <div class="col-sm-6 col-lg-3">
+    <div class="card border-0 shadow-sm border-start border-4" style="border-left-color: #0B3D25 !important;">
+      <div class="card-body">
+        <div class="d-flex align-items-center">
+          <div class="subheader text-uppercase fw-bold text-muted">Today's Sales</div>
+        </div>
+        <div class="d-flex align-items-baseline">
+          <div class="h1 mb-0 me-2 fw-bold text-dark">₹12,450</div>
+          <div class="me-auto">
+            <span class="text-green d-inline-flex align-items-center lh-1">
+              8% <i class="ti ti-trending-up ms-1"></i>
+            </span>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
+  <div class="col-sm-6 col-lg-3">
+    <div class="card border-0 shadow-sm border-start border-4" style="border-left-color: #D4AF37 !important;">
+      <div class="card-body">
+        <div class="d-flex align-items-center">
+          <div class="subheader text-uppercase fw-bold text-muted">Items Sold</div>
+        </div>
+        <div class="d-flex align-items-baseline">
+          <div class="h1 mb-0 me-2 fw-bold text-dark">142</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-lg-3">
+    <div class="card border-0 shadow-sm border-start border-4 border-danger">
+      <div class="card-body">
+        <div class="d-flex align-items-center">
+          <div class="subheader text-uppercase fw-bold text-muted">Low Stock Alerts</div>
+        </div>
+        <div class="d-flex align-items-baseline">
+          <div class="h1 mb-0 me-2 fw-bold text-dark">5</div>
+          <div class="me-auto">
+            <span class="text-danger d-inline-flex align-items-center lh-1">
+              Items <i class="ti ti-alert-circle ms-1"></i>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-lg-3">
+    <div class="card border-0 shadow-sm border-start border-4 border-info">
+      <div class="card-body">
+        <div class="d-flex align-items-center">
+          <div class="subheader text-uppercase fw-bold text-muted">Active Customers</div>
+        </div>
+        <div class="d-flex align-items-baseline">
+          <div class="h1 mb-0 me-2 fw-bold text-dark">28</div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
-<!-- =========================
-     SEARCH & FILTERS
-========================= -->
-<div class="row mb-4 align-items-center">
-    <div class="col-12 col-md-6 mb-2 mb-md-0">
-        <input type="text"
-               id="searchInput"
-               class="form-control"
-               placeholder="🔍 Search products..."
-               onkeyup="filterProducts()">
-    </div>
-
-    <div class="col-12 col-md-3 mb-2 mb-md-0">
-        <select id="categoryFilter"
-                class="form-select"
-                onchange="filterProducts()">
+<!-- Search & Filters -->
+<div class="card mb-4 border-0 shadow-sm">
+  <div class="card-body p-3">
+    <div class="row g-3 align-items-center">
+      <div class="col-12 col-md-6">
+        <div class="input-icon">
+          <span class="input-icon-addon">
+            <i class="ti ti-search"></i>
+          </span>
+          <input type="text" id="searchInput" class="form-control bg-light shadow-none border-0" placeholder="Search products..." onkeyup="filterProducts()">
+        </div>
+      </div>
+      <div class="col-12 col-md-4">
+        <div class="input-icon">
+          <span class="input-icon-addon">
+            <i class="ti ti-category"></i>
+          </span>
+          <select id="categoryFilter" class="form-select bg-light shadow-none border-0" onchange="filterProducts()">
             <option value="all">All Categories</option>
             <option value="Dry Fruits">Dry Fruits</option>
             <option value="Millets">Millets</option>
             <option value="Frozen Foods">Frozen Foods</option>
             <option value="Snacks">Snacks</option>
-        </select>
-    </div>
-
-    <div class="col-12 col-md-3">
-        <button class="btn btn-outline-success w-100"
-                onclick="clearFilters()">
-            Clear Filters
+          </select>
+        </div>
+      </div>
+      <div class="col-12 col-md-2">
+        <button class="btn btn-outline-secondary w-100 fw-bold border-0 bg-light" onclick="clearFilters()">
+          Clear
         </button>
+      </div>
     </div>
+  </div>
 </div>
 
-<!-- =========================
-     PRODUCTS
-========================= -->
-<h4 class="section-title mb-4">Popular Items</h4>
-
-<div class="row" id="productGrid">
-
-{% if products %}
-    {% for p in products %}
-    <div class="col-6 col-md-3 mb-4 product-item"
-         data-name="{{ p.name | lower }}"
-         data-category="{{ p.category }}">
-
-        <a href="/print/{{ p.id }}"
-           class="text-decoration-none"
-           aria-label="View {{ p.name }}">
-
-            <div class="product-card h-100">
-                <div class="product-img">📦</div>
-                <div class="p-3 text-center">
-                    <div class="product-name">{{ p.name }}</div>
-                    <div class="product-price mt-1">
-                        ₹{{ "%.2f"|format(p.selling_price) }}
-                    </div>
-                </div>
-            </div>
-
-        </a>
-    </div>
-    {% endfor %}
-{% else %}
-    <div class="col-12 text-center text-muted py-5">
-        <h5>No products available</h5>
-        <p>Add items from staff panel</p>
-    </div>
-{% endif %}
-
+<!-- Popular Items -->
+<div class="d-flex justify-content-between align-items-center mb-3 mt-4">
+  <h3 class="fw-bold m-0" style="color: #0B3D25;">Popular Items</h3>
 </div>
 
-<!-- No Results -->
-<div id="noResults"
-     class="text-center text-muted py-5"
-     style="display:none;">
-    <h5>No matching products</h5>
+<style>
+  .product-card-hover {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .product-card-hover:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+  }
+</style>
+
+<div class="row row-cards" id="productGrid">
+  {% if products %}
+      {% for p in products %}
+      <div class="col-6 col-sm-4 col-md-3 col-xl-2 mb-3 product-item"
+           data-name="{{ p.name | lower }}"
+           data-category="{{ p.category }}">
+
+          <div class="card card-sm border-0 shadow-sm h-100 product-card-hover overflow-hidden">
+              <div class="card-body d-flex flex-column align-items-center text-center p-3">
+                  <span class="avatar avatar-xl bg-light text-dark rounded mb-3 border" style="font-size: 2rem;">📦</span>
+                  <div class="fw-bold mb-1 text-dark" style="font-size: 0.95rem; line-height: 1.2;">{{ p.name }}</div>
+                  <div class="text-muted small mb-3">{{ p.category or 'General' }}</div>
+                  <div class="mt-auto w-100">
+                      <div class="fw-bold fs-3 mb-3" style="color: #0B3D25;">₹{{ "%.2f"|format(p.selling_price) }}</div>
+                      <a href="/print/{{ p.id }}" class="btn btn-sm w-100 fw-bold border-0" style="background-color: #f0f2f6; color: #0B3D25;">
+                          <i class="ti ti-shopping-cart-plus me-1"></i> Add
+                      </a>
+                  </div>
+              </div>
+          </div>
+      </div>
+      {% endfor %}
+  {% else %}
+      <div class="col-12 text-center text-muted py-5">
+          <i class="ti ti-package text-muted" style="font-size: 4rem; opacity: 0.3;"></i>
+          <h4 class="mt-3 text-secondary">No products available</h4>
+          <p class="small opacity-75">Add items from the admin panel to see them here.</p>
+      </div>
+  {% endif %}
 </div>
 
-</div>
-
-<!-- =========================
-     FOOTER
-========================= -->
-<div class="site-footer text-center">
-    <strong>SRI TIRUMALA DRY FRUITS</strong><br>
-    Opposite RTC Complex, Tekkali – 532201<br>
-    📞 +91 9133133931
+<!-- No Results Placeholder -->
+<div id="noResults" class="text-center text-muted py-5" style="display:none;">
+  <i class="ti ti-search text-muted" style="font-size: 4rem; opacity: 0.3;"></i>
+  <h4 class="mt-3 text-secondary">No matching products found</h4>
+  <p class="small opacity-75">Try adjusting your search or category filters.</p>
 </div>
 
 <!-- =========================
@@ -245,23 +189,19 @@
 ========================= -->
 <script>
 function filterProducts() {
-    const searchValue =
-        document.getElementById("searchInput").value.toLowerCase();
-    const categoryValue =
-        document.getElementById("categoryFilter").value;
+    const searchValue = document.getElementById("searchInput").value.toLowerCase();
+    const categoryFilterElement = document.getElementById("categoryFilter");
+    const categoryValue = categoryFilterElement ? categoryFilterElement.value : "all";
 
-    const products =
-        document.querySelectorAll(".product-item");
-
+    const products = document.querySelectorAll(".product-item");
     let visibleCount = 0;
 
     products.forEach(product => {
-        const name = product.dataset.name;
-        const category = product.dataset.category;
+        const name = (product.dataset.name || "").toLowerCase();
+        const category = product.dataset.category || "";
 
         const matchesSearch = name.includes(searchValue);
-        const matchesCategory =
-            categoryValue === "all" || category === categoryValue;
+        const matchesCategory = categoryValue === "all" || category === categoryValue;
 
         if (matchesSearch && matchesCategory) {
             product.style.display = "block";
@@ -271,13 +211,16 @@ function filterProducts() {
         }
     });
 
-    document.getElementById("noResults").style.display =
-        visibleCount === 0 ? "block" : "none";
+    const noResults = document.getElementById("noResults");
+    if(noResults) {
+        noResults.style.display = visibleCount === 0 ? "block" : "none";
+    }
 }
 
 function clearFilters() {
     document.getElementById("searchInput").value = "";
-    document.getElementById("categoryFilter").value = "all";
+    const catFilter = document.getElementById("categoryFilter");
+    if (catFilter) catFilter.value = "all";
     filterProducts();
 }
 </script>

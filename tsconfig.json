@@ -6,7 +6,15 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "outDir": "./dist",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"]
   },
-  "include": ["server.ts", "src/**/*"]
+  "include": [
+    "server.ts",
+    "src/**/*",
+    "scripts/backup_offsite.ts",
+    "scripts/run_backup.ts",
+    "scripts/restore_backup.ts"
+  ]
 }

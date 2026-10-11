@@ -1,0 +1,32 @@
+# ==============================================================================
+# Staging Docker Compose Override (docker-compose.staging.yml)
+# Sri Tirumala Dry Fruits - POS & E-Commerce Platform
+# Usage: docker compose -f docker-compose.yml -f docker-compose.staging.yml up -d
+# ==============================================================================
+
+services:
+  pos-app:
+    image: sri-tirumala-pos:${IMAGE_TAG:-staging}
+    container_name: sri-tirumala-pos-staging
+    ports:
+      - "${STAGING_PORT:-3001}:3000"
+    env_file:
+      - .env.staging
+    environment:
+      - NODE_ENV=staging
+      - PORT=3000
+
+    deploy:
+      resources:
+        limits:
+          cpus: '1.00'
+          memory: 768M
+        reservations:
+          cpus: '0.20'
+          memory: 256M
+
+volumes:
+  pos_data:
+    name: sri_tirumala_staging_data
+  pos_logs:
+    name: sri_tirumala_staging_logs

@@ -1,11 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sri Tirumala Dryfruits</title>
+    <%
+      const defaultTitle = 'Sri Tirumala Dryfruits & Millets | Premium Quality Dry Fruits in Tekkali, AP';
+      const defaultDesc = 'Shop 100% natural organic dry fruits, cashews, almonds, wholesome millets, nutritious seeds, and rich spices online at Sri Tirumala Dryfruits, Tekkali. Free local delivery available.';
+      const resolvedTitle = locals.pageTitle || (locals.title ? `${locals.title} | Sri Tirumala Dryfruits` : defaultTitle);
+      const resolvedDesc = locals.metaDescription || defaultDesc;
+      const cleanPath = locals.currentPath ? locals.currentPath.split('?')[0].split('#')[0] : '';
+      const resolvedCanonical = locals.canonicalUrl || (locals.siteUrl ? (locals.siteUrl.replace(/\/+$/, '') + (cleanPath && cleanPath !== '/' ? cleanPath : '/')) : '');
+      const resolvedOgType = locals.ogType || 'website';
+      const resolvedOgTitle = locals.ogTitle || resolvedTitle;
+      const resolvedOgDesc = locals.ogDescription || resolvedDesc;
+      const resolvedOgImg = locals.ogImage || (locals.siteUrl ? `${locals.siteUrl}/images/og-storefront.jpg` : '');
+      const isStaffOrPrivate = (locals.session && locals.session.user) || locals.noindex;
+    %>
+    <title><%= resolvedTitle %></title>
+    <meta name="description" content="<%= resolvedDesc %>">
+    <% if (resolvedCanonical) { %>
+    <link rel="canonical" href="<%= resolvedCanonical %>">
+    <% } %>
+
+    <% if (isStaffOrPrivate) { %>
+    <meta name="robots" content="noindex, nofollow">
+    <% } else { %>
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <% } %>
+
+    <!-- Open Graph Metadata -->
+    <meta property="og:site_name" content="Sri Tirumala Dryfruits">
+    <meta property="og:locale" content="en_IN">
+    <meta property="og:type" content="<%= resolvedOgType %>">
+    <meta property="og:title" content="<%= resolvedOgTitle %>">
+    <meta property="og:description" content="<%= resolvedOgDesc %>">
+    <% if (resolvedCanonical) { %>
+    <meta property="og:url" content="<%= resolvedCanonical %>">
+    <% } %>
+    <% if (resolvedOgImg) { %>
+    <meta property="og:image" content="<%= resolvedOgImg %>">
+    <% } %>
+    <% if (locals.productPrice) { %>
+    <meta property="product:price:amount" content="<%= locals.productPrice %>">
+    <meta property="product:price:currency" content="INR">
+    <meta property="product:availability" content="<%= locals.productAvailability || 'in stock' %>">
+    <% } %>
+
+    <!-- Twitter Card Metadata -->
+    <meta name="twitter:card" content="<%= resolvedOgImg ? 'summary_large_image' : 'summary' %>">
+    <meta name="twitter:title" content="<%= resolvedOgTitle %>">
+    <meta name="twitter:description" content="<%= resolvedOgDesc %>">
+    <% if (resolvedOgImg) { %>
+    <meta name="twitter:image" content="<%= resolvedOgImg %>">
+    <% } %>
+
+    <!-- JSON-LD Structured Data -->
+    <% if (locals.structuredData) { %>
+      <% if (Array.isArray(locals.structuredData)) { %>
+        <% locals.structuredData.forEach(sd => { %>
+          <script type="application/ld+json"><%- JSON.stringify(sd).replace(/</g, '\\u003c') %></script>
+        <% }); %>
+      <% } else { %>
+        <script type="application/ld+json"><%- JSON.stringify(locals.structuredData).replace(/</g, '\\u003c') %></script>
+      <% } %>
+    <% } %>
+
+    <meta name="csrf-token" content="<%= locals.csrfToken || '' %>">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,800;1,500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
 
     <style>
         /* ============================
@@ -23,12 +89,16 @@
             --text-light: #6C7A72;
             --sidebar-width: 240px;
             --sidebar-collapsed: 70px;
-            --card-shadow: 0 2px 12px rgba(6,58,34,0.07);
+            --card-shadow: 0 2px 12px rgba(6, 58, 34, 0.07);
             --transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
             --radius: 14px;
         }
 
-        *, *::before, *::after { box-sizing: border-box; }
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
 
         body {
             background-color: var(--bg-cream);
@@ -39,14 +109,19 @@
             margin: 0;
         }
 
-        h1, h2, h3, h4, h5, h6, .brand-font {
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        .brand-font {
             font-family: 'Playfair Display', serif;
         }
 
         /* ============================
            SIDEBAR LAYOUT
            ============================ */
-        <% if (session && session.user) { %>
         .app-layout {
             display: flex;
             min-height: 100vh;
@@ -60,16 +135,18 @@
             flex-direction: column;
             flex-shrink: 0;
             position: fixed;
-            top: 0; left: 0; bottom: 0;
+            top: 0;
+            left: 0;
+            bottom: 0;
             z-index: 1040;
             transition: var(--transition);
             overflow: hidden;
-            border-right: 1px solid rgba(212,175,55,0.15);
+            border-right: 1px solid rgba(212, 175, 55, 0.15);
         }
 
         .sidebar-brand {
             padding: 20px 18px 16px;
-            border-bottom: 1px solid rgba(255,255,255,0.07);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.07);
             display: flex;
             align-items: center;
             gap: 10px;
@@ -81,9 +158,11 @@
             width: 36px;
             height: 36px;
             border-radius: 10px;
-            background: rgba(212,175,55,0.15);
-            border: 1px solid rgba(212,175,55,0.3);
-            display: flex; align-items: center; justify-content: center;
+            background: rgba(212, 175, 55, 0.15);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 1.2rem;
             flex-shrink: 0;
         }
@@ -101,7 +180,7 @@
         }
 
         .sidebar-brand-text small {
-            color: rgba(255,255,255,0.45);
+            color: rgba(255, 255, 255, 0.45);
             font-size: 0.68rem;
             letter-spacing: 0.12em;
             text-transform: uppercase;
@@ -116,11 +195,17 @@
             overflow-x: hidden;
         }
 
-        .sidebar-nav::-webkit-scrollbar { width: 3px; }
-        .sidebar-nav::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+        .sidebar-nav::-webkit-scrollbar {
+            width: 3px;
+        }
+
+        .sidebar-nav::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
 
         .nav-section-label {
-            color: rgba(255,255,255,0.3);
+            color: rgba(255, 255, 255, 0.3);
             font-size: 0.65rem;
             font-weight: 700;
             letter-spacing: 0.12em;
@@ -136,7 +221,7 @@
             gap: 11px;
             padding: 10px 10px;
             border-radius: 10px;
-            color: rgba(255,255,255,0.7);
+            color: rgba(255, 255, 255, 0.7);
             text-decoration: none;
             font-size: 0.88rem;
             font-weight: 600;
@@ -147,20 +232,22 @@
         }
 
         .sidebar-link:hover {
-            background: rgba(255,255,255,0.07);
+            background: rgba(255, 255, 255, 0.07);
             color: #fff;
         }
 
         .sidebar-link.active {
-            background: rgba(212,175,55,0.12);
+            background: rgba(212, 175, 55, 0.12);
             color: var(--brand-gold);
-            border: 1px solid rgba(212,175,55,0.2);
+            border: 1px solid rgba(212, 175, 55, 0.2);
         }
 
         .sidebar-link .nav-icon {
             width: 28px;
             height: 28px;
-            display: flex; align-items: center; justify-content: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 1rem;
             flex-shrink: 0;
         }
@@ -179,7 +266,7 @@
         /* Sidebar footer */
         .sidebar-footer {
             padding: 12px 10px;
-            border-top: 1px solid rgba(255,255,255,0.07);
+            border-top: 1px solid rgba(255, 255, 255, 0.07);
         }
 
         .sidebar-user-chip {
@@ -188,16 +275,19 @@
             gap: 10px;
             padding: 10px;
             border-radius: 10px;
-            background: rgba(255,255,255,0.05);
+            background: rgba(255, 255, 255, 0.05);
             margin-bottom: 8px;
         }
 
         .user-avatar {
-            width: 32px; height: 32px;
+            width: 32px;
+            height: 32px;
             border-radius: 8px;
-            background: rgba(212,175,55,0.2);
-            border: 1px solid rgba(212,175,55,0.3);
-            display: flex; align-items: center; justify-content: center;
+            background: rgba(212, 175, 55, 0.2);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 0.9rem;
             flex-shrink: 0;
         }
@@ -218,8 +308,8 @@
 
         .btn-logout-sidebar {
             width: 100%;
-            background: rgba(220,53,69,0.1);
-            border: 1px solid rgba(220,53,69,0.3);
+            background: rgba(220, 53, 69, 0.1);
+            border: 1px solid rgba(220, 53, 69, 0.3);
             color: #ff8080;
             border-radius: 10px;
             padding: 9px;
@@ -233,7 +323,7 @@
         }
 
         .btn-logout-sidebar:hover {
-            background: rgba(220,53,69,0.2);
+            background: rgba(220, 53, 69, 0.2);
             color: #ffaaaa;
         }
 
@@ -250,7 +340,7 @@
         /* ── Top Bar (mobile + breadcrumb) ── */
         .top-bar {
             background: #fff;
-            border-bottom: 1px solid rgba(6,58,34,0.08);
+            border-bottom: 1px solid rgba(6, 58, 34, 0.08);
             padding: 0 24px;
             height: 60px;
             display: flex;
@@ -259,7 +349,7 @@
             position: sticky;
             top: 0;
             z-index: 100;
-            box-shadow: 0 1px 8px rgba(6,58,34,0.04);
+            box-shadow: 0 1px 8px rgba(6, 58, 34, 0.04);
         }
 
         .sidebar-toggle {
@@ -273,7 +363,9 @@
             border-radius: 8px;
         }
 
-        .sidebar-toggle:hover { background: var(--bg-cream); }
+        .sidebar-toggle:hover {
+            background: var(--bg-cream);
+        }
 
         .page-content {
             padding: 28px 28px 48px;
@@ -285,7 +377,7 @@
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.5);
             z-index: 1039;
         }
 
@@ -294,32 +386,39 @@
             .sidebar {
                 transform: translateX(-100%);
             }
+
             .sidebar.open {
                 transform: translateX(0);
             }
+
             .sidebar-overlay.active {
                 display: block;
             }
+
             .main-content {
                 margin-left: 0;
             }
+
             .sidebar-toggle {
                 display: block;
             }
+
             .page-content {
                 padding: 20px 16px 40px;
             }
         }
-        <% } else { %>
+
         /* ── Non-authenticated layout: top navbar ── */
         .public-navbar {
             background: var(--brand-green);
             border-bottom: 3px solid var(--brand-gold);
             padding: 12px 0;
-            box-shadow: 0 4px 20px rgba(6,58,34,0.15);
+            box-shadow: 0 4px 20px rgba(6, 58, 34, 0.15);
         }
-        .public-main { padding-bottom: 40px; }
-        <% } %>
+
+        .public-main {
+            padding-bottom: 40px;
+        }
 
         /* ============================
            SHARED UI COMPONENTS
@@ -327,7 +426,7 @@
 
         /* Cards */
         .card {
-            border: 1px solid rgba(6,58,34,0.08);
+            border: 1px solid rgba(6, 58, 34, 0.08);
             border-radius: var(--radius);
             box-shadow: var(--card-shadow);
             background: #fff;
@@ -345,7 +444,7 @@
             background: #fff;
             border-radius: var(--radius);
             padding: 20px;
-            border: 1px solid rgba(6,58,34,0.07);
+            border: 1px solid rgba(6, 58, 34, 0.07);
             box-shadow: var(--card-shadow);
             display: flex;
             align-items: center;
@@ -353,9 +452,12 @@
         }
 
         .stat-icon {
-            width: 48px; height: 48px;
+            width: 48px;
+            height: 48px;
             border-radius: 12px;
-            display: flex; align-items: center; justify-content: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 1.4rem;
             flex-shrink: 0;
         }
@@ -369,7 +471,12 @@
             border-radius: 10px;
             transition: var(--transition);
         }
-        .btn-brand:hover { background: var(--brand-green-light); border-color: var(--brand-green-light); color: #fff; }
+
+        .btn-brand:hover {
+            background: var(--brand-green-light);
+            border-color: var(--brand-green-light);
+            color: #fff;
+        }
 
         .btn-gold {
             background: var(--brand-gold);
@@ -379,18 +486,54 @@
             border-radius: 10px;
             transition: var(--transition);
         }
-        .btn-gold:hover { background: #c9a430; border-color: #c9a430; color: var(--brand-green-dark); }
+
+        .btn-gold:hover {
+            background: #c9a430;
+            border-color: #c9a430;
+            color: var(--brand-green-dark);
+        }
 
         /* Override Bootstrap primary/success to brand colors */
-        .btn-primary { background-color: var(--brand-green); border-color: var(--brand-green); font-weight: 700; border-radius: 10px; }
-        .btn-primary:hover { background-color: var(--brand-green-light); border-color: var(--brand-green-light); }
-        .btn-success { background-color: var(--brand-gold); border-color: var(--brand-gold); color: var(--brand-green-dark) !important; font-weight: 700; border-radius: 10px; }
-        .btn-success:hover { background-color: #c9a430; border-color: #c9a430; }
-        .btn-outline-success { color: var(--brand-green); border-color: var(--brand-green); border-radius: 10px; font-weight: 600; }
-        .btn-outline-success:hover { background: var(--brand-green); border-color: var(--brand-green); }
+        .btn-primary {
+            background-color: var(--brand-green);
+            border-color: var(--brand-green);
+            font-weight: 700;
+            border-radius: 10px;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--brand-green-light);
+            border-color: var(--brand-green-light);
+        }
+
+        .btn-success {
+            background-color: var(--brand-gold);
+            border-color: var(--brand-gold);
+            color: var(--brand-green-dark) !important;
+            font-weight: 700;
+            border-radius: 10px;
+        }
+
+        .btn-success:hover {
+            background-color: #c9a430;
+            border-color: #c9a430;
+        }
+
+        .btn-outline-success {
+            color: var(--brand-green);
+            border-color: var(--brand-green);
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        .btn-outline-success:hover {
+            background: var(--brand-green);
+            border-color: var(--brand-green);
+        }
 
         /* Forms */
-        .form-control, .form-select {
+        .form-control,
+        .form-select {
             border-radius: 10px;
             padding: 10px 14px;
             border: 1.5px solid #E1E6E3;
@@ -398,9 +541,11 @@
             font-weight: 500;
             transition: var(--transition);
         }
-        .form-control:focus, .form-select:focus {
+
+        .form-control:focus,
+        .form-select:focus {
             border-color: var(--brand-green-light);
-            box-shadow: 0 0 0 3px rgba(13,90,55,0.1);
+            box-shadow: 0 0 0 3px rgba(13, 90, 55, 0.1);
         }
 
         /* Tables */
@@ -410,6 +555,7 @@
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
+
         .table-brand thead th {
             background: var(--brand-green);
             color: #fff;
@@ -417,20 +563,27 @@
         }
 
         /* Badges */
-        .badge { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; }
+        .badge {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 700;
+        }
 
         /* Alerts */
-        .alert { border-radius: 12px; }
+        .alert {
+            border-radius: 12px;
+        }
 
         /* Page heading */
         .page-heading {
             margin-bottom: 24px;
         }
+
         .page-heading h2 {
             color: var(--brand-green);
             font-size: 1.75rem;
             margin: 0;
         }
+
         .page-heading .page-sub {
             font-size: 0.82rem;
             color: var(--text-light);
@@ -440,170 +593,591 @@
 
         /* Animations */
         @keyframes pulse-red {
-            0% { box-shadow: 0 0 0 0 rgba(220,53,69,0.5); }
-            70% { box-shadow: 0 0 0 5px rgba(220,53,69,0); }
-            100% { box-shadow: 0 0 0 0 rgba(220,53,69,0); }
+            0% {
+                box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.5);
+            }
+
+            70% {
+                box-shadow: 0 0 0 5px rgba(220, 53, 69, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
+            }
         }
 
         /* Print */
         @media print {
-            .no-print { display: none !important; }
-            .sidebar, .top-bar, .sidebar-overlay { display: none !important; }
-            .main-content { margin-left: 0 !important; }
-            body { background: #fff; }
-            .card { box-shadow: none; border: 1px solid #ddd; }
+            .no-print {
+                display: none !important;
+            }
+
+            .sidebar,
+            .top-bar,
+            .sidebar-overlay {
+                display: none !important;
+            }
+
+            .main-content {
+                margin-left: 0 !important;
+            }
+
+            body {
+                background: #fff;
+            }
+
+            .card {
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
         }
     </style>
+
+    <!-- Artisanal Botanical Luxury Storefront Design System -->
+    <link rel="stylesheet" href="/storefront.css?v=20261011">
+    <style>
+      /* Ensure Material Symbols render as icons and not raw text ligatures */
+      .material-symbols-outlined {
+        font-family: 'Material Symbols Outlined' !important;
+        font-weight: normal;
+        font-style: normal;
+        font-size: 20px;
+        line-height: 1;
+        letter-spacing: normal;
+        text-transform: none;
+        display: inline-block;
+        white-space: nowrap;
+        word-wrap: normal;
+        direction: ltr;
+        -webkit-font-feature-settings: 'liga';
+        -webkit-font-smoothing: antialiased;
+        vertical-align: middle;
+      }
+      /* Prevent Bootstrap .text-primary from turning headings and links blue */
+      .text-primary, .text-primary-container {
+        color: #002312 !important;
+      }
+      .text-gold {
+        color: #B89528 !important;
+      }
+      .text-gold-sheen {
+        color: #F3E5AB !important;
+      }
+      /* Ensure toast feedback drawer is invisible in normal flow */
+      #cartToast.translate-y-hidden {
+        display: none !important;
+      }
+      #cartToast.translate-y-visible {
+        display: block !important;
+      }
+    </style>
 </head>
+
 <body>
 
-<% if (session && session.user) { %>
-<!-- ==============================
+    <% if (session && session.user) { %>
+        <!-- ==============================
      AUTHENTICATED LAYOUT w/ SIDEBAR
      ============================== -->
-<div class="sidebar-overlay" id="sidebarOverlay"></div>
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-<div class="app-layout">
-    <!-- SIDEBAR -->
-    <aside class="sidebar" id="sidebar">
-        <a class="sidebar-brand" href="/">
-            <div class="sidebar-brand-icon">🥥</div>
-            <div class="sidebar-brand-text">
-                <strong>Sri Tirumala</strong>
-                <small>Dryfruits</small>
-            </div>
-        </a>
-
-        <nav class="sidebar-nav">
-            <!-- Main -->
-            <div class="nav-section-label">Main</div>
-            <a href="/" class="sidebar-link">
-                <span class="nav-icon">🏠</span>
-                <span>Storefront</span>
-            </a>
-            <a href="/sell" class="sidebar-link">
-                <span class="nav-icon">🧾</span>
-                <span>Billing / POS</span>
-            </a>
-            <a href="/search_bill" class="sidebar-link">
-                <span class="nav-icon">🔍</span>
-                <span>Search Bills</span>
-            </a>
-
-            <!-- Inventory -->
-            <div class="nav-section-label">Inventory</div>
-            <a href="/stock" class="sidebar-link">
-                <span class="nav-icon">📦</span>
-                <span>Stock</span>
-                <% if (typeof lowStockCount !== 'undefined' && lowStockCount > 0) { %>
-                    <span class="nav-badge"><%= lowStockCount %></span>
-                <% } %>
-            </a>
-
-            <% if (session.role === 'admin') { %>
-            <a href="/add" class="sidebar-link">
-                <span class="nav-icon">➕</span>
-                <span>Add Product</span>
-            </a>
-
-            <!-- Admin -->
-            <div class="nav-section-label">Admin</div>
-            <a href="/profit" class="sidebar-link">
-                <span class="nav-icon">💰</span>
-                <span>Profit Report</span>
-            </a>
-            <a href="/analytics" class="sidebar-link">
-                <span class="nav-icon">📊</span>
-                <span>Analytics</span>
-            </a>
-            <a href="/settings" class="sidebar-link">
-                <span class="nav-icon">⚙️</span>
-                <span>Settings</span>
-            </a>
-            <% } %>
-        </nav>
-
-        <div class="sidebar-footer">
-            <div class="sidebar-user-chip">
-                <div class="user-avatar">👤</div>
-                <div class="user-info">
-                    <strong><%= session.user %></strong>
-                    <small><%= session.role %></small>
-                </div>
-            </div>
-            <% if (typeof currentShift !== 'undefined' && currentShift) { %>
-            <a href="/shift/close" class="btn-gold text-center d-block w-100 py-2 mb-2 text-decoration-none" style="font-size: 0.85rem;">🔒 Close Register</a>
-            <% } %>
-            <a href="/logout" class="btn-logout-sidebar">🚪 Logout</a>
-        </div>
-    </aside>
-
-    <!-- MAIN CONTENT -->
-    <div class="main-content">
-        <!-- Top Bar -->
-        <div class="top-bar no-print">
-            <button class="sidebar-toggle" id="sidebarToggle">☰</button>
-            <div class="d-flex align-items-center gap-3 ms-auto">
-                <% if (typeof lowStockCount !== 'undefined' && lowStockCount > 0) { %>
-                <a href="/stock" class="badge bg-danger text-white text-decoration-none" style="font-size: 0.78rem; padding: 6px 10px;">
-                    ⚠️ <%= lowStockCount %> Low Stock
+        <div class="app-layout">
+            <!-- SIDEBAR -->
+            <aside class="sidebar" id="sidebar">
+                <a class="sidebar-brand" href="/">
+                    <div class="sidebar-brand-icon">🥥</div>
+                    <div class="sidebar-brand-text">
+                        <strong>Sri Tirumala</strong>
+                        <small>Dryfruits</small>
+                    </div>
                 </a>
-                <% } %>
-                <span class="text-muted small fw-semibold d-none d-md-inline">
-                    <%= new Date().toLocaleDateString('en-IN', {weekday:'short', day:'2-digit', month:'short', year:'numeric'}) %>
-                </span>
-            </div>
-        </div>
 
-        <!-- Flash Messages -->
-        <% if (messages && messages.length > 0) { %>
-        <div class="mx-4 mt-3 no-print">
-            <div class="alert alert-warning border-0 shadow-sm py-3 d-flex align-items-center gap-2" role="alert" style="border-left: 4px solid var(--brand-gold) !important;">
-                <span>🔔</span> <span><%= messages[0] %></span>
-            </div>
-        </div>
-        <% } %>
-
-        <div class="page-content">
-
-<% } else { %>
-<!-- ==============================
-     PUBLIC LAYOUT w/ TOP NAVBAR
-     ============================== -->
-<nav class="public-navbar navbar navbar-expand-lg navbar-dark no-print">
-    <div class="container">
-        <a class="navbar-brand d-flex align-items-center gap-2" href="/">
-            <span class="fs-4">🥥</span>
-            <div>
-                <strong style="font-family:'Playfair Display',serif; color: var(--brand-gold); font-size:1.2rem;">Sri Tirumala</strong>
-                <span style="display:block; font-size:0.6rem; letter-spacing:0.2em; text-transform:uppercase; color:rgba(255,255,255,0.5);">Dryfruits</span>
-            </div>
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#publicNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="publicNav">
-            <ul class="navbar-nav ms-auto align-items-center gap-2">
-                <li class="nav-item">
-                    <a class="nav-link fw-semibold" href="/" style="color:rgba(255,255,255,0.85);">🏠 Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="btn btn-sm fw-bold px-4 py-2 ms-2" href="/login"
-                       style="background: var(--brand-gold); color: var(--brand-green-dark); border-radius:20px;">
-                        🔐 Staff Login
+                <nav class="sidebar-nav">
+                    <!-- Main -->
+                    <div class="nav-section-label">Main</div>
+                    <a href="/" class="sidebar-link">
+                        <span class="nav-icon">🏠</span>
+                        <span>Storefront</span>
                     </a>
-                </li>
-            </ul>
+                    <a href="/sell" class="sidebar-link">
+                        <span class="nav-icon">🧾</span>
+                        <span>Billing / POS</span>
+                    </a>
+                    <a href="/search_bill" class="sidebar-link">
+                        <span class="nav-icon">🔍</span>
+                        <span>Search Bills</span>
+                    </a>
+
+                    <!-- Inventory -->
+                    <div class="nav-section-label">Inventory</div>
+                    <a href="/stock" class="sidebar-link">
+                        <span class="nav-icon">📦</span>
+                        <span>Stock</span>
+                        <% if (typeof lowStockCount !=='undefined' && lowStockCount> 0) { %>
+                            <span class="nav-badge">
+                                <%= lowStockCount %>
+                            </span>
+                            <% } %>
+                    </a>
+
+                    <!-- Online Commerce -->
+                    <div class="nav-section-label">Online Commerce</div>
+                    <a href="/admin/online-orders" class="sidebar-link">
+                        <span class="nav-icon">📲</span>
+                        <span>Online Orders</span>
+                        <span class="nav-badge" id="sidebarOrderBadge" style="display: <%= (typeof pendingOrdersCount !== 'undefined' && pendingOrdersCount > 0) ? 'block' : 'none' %>;">
+                            <%= (typeof pendingOrdersCount !== 'undefined' && pendingOrdersCount > 0) ? pendingOrdersCount : 0 %>
+                        </span>
+                    </a>
+
+                    <% if (session.role==='admin' ) { %>
+                        <a href="/add" class="sidebar-link">
+                            <span class="nav-icon">➕</span>
+                            <span>Add Product</span>
+                        </a>
+
+                        <!-- Admin -->
+                        <div class="nav-section-label">Admin</div>
+                        <a href="/profit" class="sidebar-link">
+                            <span class="nav-icon">💰</span>
+                            <span>Profit Report</span>
+                        </a>
+                        <a href="/analytics" class="sidebar-link">
+                            <span class="nav-icon">📊</span>
+                            <span>Analytics</span>
+                        </a>
+                        <a href="/settings" class="sidebar-link">
+                            <span class="nav-icon">⚙️</span>
+                            <span>Settings</span>
+                        </a>
+                        <a href="/admin/audit-logs" class="sidebar-link">
+                            <span class="nav-icon">🛡️</span>
+                            <span>Audit Logs</span>
+                        </a>
+                        <% } %>
+                </nav>
+
+                <div class="sidebar-footer">
+                    <div class="sidebar-user-chip">
+                        <div class="user-avatar">👤</div>
+                        <div class="user-info">
+                            <strong>
+                                <%= session.user %>
+                            </strong>
+                            <small>
+                                <%= session.role %>
+                            </small>
+                        </div>
+                    </div>
+                    <% if (typeof currentShift !=='undefined' && currentShift) { %>
+                        <a href="/shift/close" class="btn-gold text-center d-block w-100 py-2 mb-2 text-decoration-none"
+                            style="font-size: 0.85rem;">🔒 Close Register</a>
+                        <% } %>
+                            <a href="/logout" class="btn-logout-sidebar">🚪 Logout</a>
+                </div>
+            </aside>
+
+            <!-- MAIN CONTENT -->
+            <div class="main-content">
+                <!-- Top Bar -->
+                <div class="top-bar no-print">
+                    <button class="sidebar-toggle" id="sidebarToggle">☰</button>
+                    <div class="d-flex align-items-center gap-3 ms-auto">
+                        <% if (typeof lowStockCount !=='undefined' && lowStockCount> 0) { %>
+                            <a href="/stock" class="badge bg-danger text-white text-decoration-none"
+                                style="font-size: 0.78rem; padding: 6px 10px;">
+                                ⚠️ <%= lowStockCount %> Low Stock
+                            </a>
+                            <% } %>
+                                <span class="text-muted small fw-semibold d-none d-md-inline">
+                                    <%= new Date().toLocaleDateString('en-IN', {weekday:'short', day:'2-digit',
+                                        month:'short', year:'numeric'}) %>
+                                </span>
+                    </div>
+                </div>
+
+                <!-- Flash Messages -->
+                <% if (messages && messages.length> 0) { %>
+                    <div class="mx-4 mt-3 no-print">
+                        <div class="alert alert-warning border-0 shadow-sm py-3 d-flex align-items-center gap-2"
+                            role="alert" style="border-left: 4px solid var(--brand-gold) !important;">
+                            <span>🔔</span> <span>
+                                <%= messages[0] %>
+                            </span>
+                        </div>
+                    </div>
+                    <% } %>
+
+                        <script>
+                            // Background Polling for Live WhatsApp Online Orders (Every 30 seconds)
+                            (function initOrderPolling() {
+                                function pollPendingOrders() {
+                                    fetch('/api/v1/orders/pending-count')
+                                        .then(res => res.json())
+                                        .then(resData => {
+                                            const badge = document.getElementById('sidebarOrderBadge');
+                                            if (badge && resData.success) {
+                                                if (resData.data.count > 0) {
+                                                    badge.textContent = resData.data.count;
+                                                    badge.style.display = 'inline-block';
+                                                    // Add pulse animation if new orders exist
+                                                    badge.classList.add('animate-pulse');
+                                                } else {
+                                                    badge.style.display = 'none';
+                                                    badge.classList.remove('animate-pulse');
+                                                }
+                                            }
+                                        })
+                                        .catch(() => {}); // Fail silently without disrupting active cashier
+                                }
+
+                                setInterval(pollPendingOrders, 30000);
+                            })();
+                        </script>
+                    <% } else { %>
+                                <!-- ==============================
+                                     PUBLIC LAYOUT w/ ARTISANAL BOTANICAL LUXURY NAVBAR
+                                     ============================== -->
+                                <!-- Top Announcement Bar (Stitch) -->
+                                <div class="top-announcement-bar no-print">
+                                    <div class="max-w-7xl px-3 d-flex align-items-center justify-content-center gap-2 text-center">
+                                        <span class="announcement-dot"></span>
+                                        <span>Complimentary bespoke luxury gift casket &amp; refrigerated cold-chain transit on orders exceeding ₹1,499</span>
+                                        <span class="announcement-dot"></span>
+                                    </div>
+                                </div>
+
+                                <nav class="storefront-navbar navbar navbar-expand-lg no-print">
+                                    <div class="max-w-7xl px-3 w-100 d-flex align-items-center justify-content-between gap-3">
+                                        <!-- Brand Logo -->
+                                        <a class="navbar-brand d-flex align-items-center gap-2 text-decoration-none" href="/">
+                                            <img src="/images/stitch/logo_crest.png"
+                                                 alt="Sri Tirumala Dryfruits Logo" 
+                                                 class="brand-crest-logo"
+                                                 onerror="this.style.display='none'; document.getElementById('fallbackBrandEmoji').style.display='inline-block';">
+                                            <span id="fallbackBrandEmoji" style="display:none; font-size:1.8rem;">🥥</span>
+                                            <div>
+                                                <span class="brand-title d-block">Sri Tirumala</span>
+                                                <span class="brand-sub d-block">Purveyors of Fine Harvest</span>
+                                            </div>
+                                        </a>
+
+                                        <!-- Mobile Right Actions & Hamburger -->
+                                        <div class="d-flex align-items-center gap-2 d-lg-none">
+                                            <button class="nav-action-btn position-relative" 
+                                                    data-bs-toggle="offcanvas" 
+                                                    data-bs-target="#wishlistOffcanvas"
+                                                    aria-label="Open Wishlist">
+                                                <span>❤️</span>
+                                                <span class="nav-badge" id="mobileWishlistBadge" style="display: none;">0</span>
+                                            </button>
+                                            <button class="nav-action-btn position-relative" 
+                                                    data-bs-toggle="offcanvas" 
+                                                    data-bs-target="#cartOffcanvas"
+                                                    aria-label="Open Cart">
+                                                <span>🛍️</span>
+                                                <span class="nav-badge" id="mobileCartBadge" style="display: none;">0</span>
+                                            </button>
+                                            <button class="navbar-toggler border-0 shadow-none px-1 text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#publicNav" aria-label="Toggle navigation">
+                                                <span class="navbar-toggler-icon"></span>
+                                            </button>
+                                        </div>
+
+                                        <!-- Collapsible Menu -->
+                                        <div class="collapse navbar-collapse" id="publicNav">
+                                            <!-- Navbar Search Input -->
+                                            <div class="mx-lg-2 my-2 my-lg-0 flex-grow-1 d-flex justify-content-center">
+                                                <div class="nav-search-wrapper">
+                                                    <span class="nav-search-icon">🔍</span>
+                                                    <input type="search"
+                                                           id="navSearchInput"
+                                                           class="form-control nav-search-input"
+                                                           placeholder="Search harvests, dates, nuts..."
+                                                           aria-label="Search catalog">
+                                                    <div class="nav-search-chips d-none d-xxl-flex">
+                                                        <button type="button" class="nav-search-chip" onclick="searchCatalog('Almonds')">Almonds</button>
+                                                        <button type="button" class="nav-search-chip" onclick="searchCatalog('Saffron')">Saffron</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <ul class="navbar-nav ms-auto align-items-lg-center gap-2">
+                                                <li class="nav-item">
+                                                    <a class="nav-link fw-semibold px-2 text-dark small" href="/">Home</a>
+                                                </li>
+
+                                                <!-- Category Dropdown -->
+                                                <li class="nav-item dropdown">
+                                                    <a class="nav-link dropdown-toggle fw-semibold px-2 text-dark small" href="#" id="categoriesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                        Collections
+                                                    </a>
+                                                    <ul class="dropdown-menu dropdown-menu-dark shadow-lg border-0" aria-labelledby="categoriesDropdown" style="background: var(--forest-dark); border-radius: 12px;">
+                                                        <li><a class="dropdown-item py-2" href="/">🥥 All Harvests</a></li>
+                                                        <li><hr class="dropdown-divider border-secondary opacity-25"></li>
+                                                        <li><a class="dropdown-item py-2" href="/category/Dry%20Fruits">🌰 Royal Almonds &amp; Cashews</a></li>
+                                                        <li><a class="dropdown-item py-2" href="/category/Millets">🌾 Wholesome Millets</a></li>
+                                                        <li><a class="dropdown-item py-2" href="/category/Seeds">🌱 Exotic Seeds &amp; Berries</a></li>
+                                                        <li><a class="dropdown-item py-2" href="/category/Spices">🌶️ Kashmiri Saffron &amp; Spices</a></li>
+                                                        <li><a class="dropdown-item py-2" href="/category/Nuts">🥜 Imported Dates &amp; Figs</a></li>
+                                                        <li><a class="dropdown-item py-2" href="/category/Sweets">🍬 Handcrafted Gift Boxes</a></li>
+                                                    </ul>
+                                                </li>
+
+                                                <!-- Track Order Link -->
+                                                <li class="nav-item">
+                                                    <a class="nav-link fw-semibold px-2 text-dark small" href="/track">Track Order</a>
+                                                </li>
+
+                                                <!-- Wishlist Button (Desktop) -->
+                                                <li class="nav-item d-none d-lg-block">
+                                                    <button class="nav-action-btn position-relative" 
+                                                            id="wishlistNavBtn"
+                                                            data-bs-toggle="offcanvas" 
+                                                            data-bs-target="#wishlistOffcanvas"
+                                                            aria-label="Wishlist">
+                                                        <span>❤️</span>
+                                                        <span>Wishlist</span>
+                                                        <span id="wishlistCountBadge" class="nav-badge" style="display: none;">0</span>
+                                                    </button>
+                                                </li>
+
+                                                <!-- Cart / Royal Casket Button (Desktop) -->
+                                                <li class="nav-item d-none d-lg-block">
+                                                    <button class="nav-btn-casket position-relative" 
+                                                            id="cartNavBtn" 
+                                                            data-bs-toggle="offcanvas" 
+                                                            data-bs-target="#cartOffcanvas"
+                                                            aria-label="Cart">
+                                                        <span>🛍️</span>
+                                                        <span>Royal Casket</span>
+                                                        <span id="cartCountBadge" class="nav-badge" style="display: none;">0</span>
+                                                    </button>
+                                                </li>
+                                                
+                                                <!-- Customer Account Link -->
+                                                <% if (session && session.customer_id) { %>
+                                                <li class="nav-item dropdown">
+                                                    <a class="nav-btn-account dropdown-toggle" 
+                                                       href="#" 
+                                                       id="accountDropdown" 
+                                                       role="button" 
+                                                       data-bs-toggle="dropdown" 
+                                                       aria-expanded="false">
+                                                        <span>👤 My Account</span>
+                                                    </a>
+                                                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark shadow border-0" aria-labelledby="accountDropdown" style="background: var(--forest-dark); border-radius: 12px;">
+                                                        <li><a class="dropdown-item py-2" href="/account">📦 My Orders</a></li>
+                                                        <li><a class="dropdown-item py-2" href="/account/profile">📝 Profile Settings</a></li>
+                                                        <li><a class="dropdown-item py-2" href="/account/addresses">📍 Saved Addresses</a></li>
+                                                        <li><a class="dropdown-item py-2" href="/account/wishlist">❤️ Wishlist</a></li>
+                                                        <li><hr class="dropdown-divider border-secondary opacity-25"></li>
+                                                        <li>
+                                                            <form action="/customer/logout" method="POST" class="m-0">
+                                                                <input type="hidden" name="_csrf" value="<%= locals.csrfToken || '' %>">
+                                                                <button type="submit" class="dropdown-item py-2 text-danger fw-semibold">🚪 Log Out</button>
+                                                            </form>
+                                                        </li>
+                                                    </ul>
+                                                </li>
+                                                <% } else { %>
+                                                <li class="nav-item">
+                                                    <a class="nav-btn-account" href="/customer/login">
+                                                        <span>👤 Patron Login</span>
+                                                    </a>
+                                                </li>
+                                                <% } %>
+                                                
+                                                <!-- Staff Login Button -->
+                                                <li class="nav-item">
+                                                    <a class="nav-btn-staff" href="/login">
+                                                        <span>🔐 Staff Vault</span>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </nav>
+
+                                <!-- Global Toast Feedback Drawer (Stitch) -->
+                                <div class="fixed-cart-toast translate-y-hidden" id="cartToast" aria-live="polite">
+                                    <div class="d-flex align-items-start gap-3">
+                                        <div class="toast-icon-circle shrink-0">
+                                            <span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                                        </div>
+                                        <div class="flex-grow-1 min-w-0">
+                                            <div class="d-flex align-items-center justify-content-between">
+                                                <p class="toast-eyebrow">Added to Royal Casket</p>
+                                                <button class="toast-close-btn" onclick="window.dismissToast && window.dismissToast()" type="button" aria-label="Close toast">
+                                                    <span class="material-symbols-outlined text-sm">close</span>
+                                                </button>
+                                            </div>
+                                            <p class="toast-product-name font-bold truncate mt-1" id="toastProductName">Royal Mamra Almonds</p>
+                                            <p class="toast-benefit-text mt-0.5">Complies with Free Insulated Cold-Chain Transit.</p>
+                                            <div class="toast-progress-bar-bg mt-2">
+                                                <div class="toast-progress-bar-fill" id="toastProgressBar" style="width: 82%;"></div>
+                                            </div>
+                                            <div class="d-flex align-items-center justify-content-between mt-1 text-xs text-muted" style="font-size: 11px;">
+                                                <span id="toastAddedAmount">Item added</span>
+                                                <span class="text-gold font-bold" id="toastFreeShippingGap">Complimentary Cold-Chain Transit</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="<%= (locals.currentPath === '/' || locals.isHome) ? 'public-main-home' : 'container public-main pt-4 pb-5' %>">
+
+                                    <% if (messages && messages.length > 0) { %>
+                                        <div class="alert alert-warning border-0 shadow-sm py-3 d-flex align-items-center gap-2 mb-4 no-print"
+                                            role="alert">
+                                            <span>🔔</span> <span><%= messages[0] %></span>
+                                        </div>
+                                    <% } %>
+
+<!-- ==============================
+     OFFCANVAS CART DRAWER
+     ============================== -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="cartOffcanvas" aria-labelledby="cartOffcanvasLabel" style="width: 400px; max-width: 100vw;">
+    <div class="offcanvas-header border-bottom py-3" style="background: var(--sf-cream);">
+        <h5 class="offcanvas-title fw-bold brand-font m-0 d-flex align-items-center gap-2" id="cartOffcanvasLabel" style="color: var(--brand-green);">
+            <span>🛒</span> <span>Your Order</span>
+        </h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    
+    <!-- Free Delivery Progress Bar (Tekkali: ₹500 Threshold) -->
+    <div class="px-3 pt-3 pb-2 bg-light border-bottom">
+        <small id="freeDeliveryText" class="text-muted fw-bold d-block text-center mb-1" style="font-size: 0.78rem;">
+            Add ₹500.00 more for FREE delivery in Tekkali!
+        </small>
+        <div class="progress" style="height: 7px; border-radius: 10px; background-color: #E2E8F0;">
+            <div id="freeDeliveryProgress" 
+                 class="progress-bar progress-bar-striped progress-bar-animated" 
+                 role="progressbar" 
+                 style="width: 0%; background-color: var(--brand-gold);" 
+                 aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+            </div>
         </div>
     </div>
-</nav>
 
-<div class="container public-main pt-4">
-
-    <% if (messages && messages.length > 0) { %>
-    <div class="alert alert-warning border-0 shadow-sm py-3 d-flex align-items-center gap-2 mb-4 no-print" role="alert">
-        <span>🔔</span> <span><%= messages[0] %></span>
+    <!-- Scrollable Items List -->
+    <div class="offcanvas-body p-3 overflow-auto" id="cartItemsList">
+        <!-- Injected dynamically by renderCart() in storefront.js -->
+        <div class="text-center text-muted py-5">
+            <span class="fs-1 d-block mb-2">🛒</span>
+            <p class="m-0">Your cart is empty.</p>
+        </div>
     </div>
-    <% } %>
 
-<% } %>
+    <!-- Sticky Bottom Cart Summary -->
+    <div class="offcanvas-footer p-3 border-top bg-white">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="text-muted fw-semibold">Subtotal</span>
+            <span class="fs-5 fw-bold" style="color: var(--brand-green);">₹<span id="cartSubtotal">0.00</span></span>
+        </div>
+        <div class="d-flex justify-content-between align-items-center mb-3 small text-muted">
+            <span>Tekkali Delivery</span>
+            <span id="cartDeliveryEstimate" class="fw-semibold text-success">Calculated at checkout</span>
+        </div>
+        
+        <!-- WhatsApp 1-Click Order Button -->
+        <button type="button" 
+                class="btn btn-success w-100 py-2 mb-2 fw-bold d-flex align-items-center justify-content-center gap-2" 
+                id="cartWhatsAppBtn"
+                onclick="window.Storefront && window.Storefront.orderCartViaWhatsApp()"
+                style="border-radius: 12px;">
+            <span>💬 Quick Order on WhatsApp</span>
+        </button>
+
+        <!-- Standard Secure Checkout Button -->
+        <a href="/checkout" 
+           class="btn btn-gold w-100 py-2 fw-bold text-center text-decoration-none d-block" 
+           id="cartCheckoutBtn"
+           style="border-radius: 12px; letter-spacing: 0.02em;">
+            Proceed to Checkout →
+        </a>
+    </div>
+</div>
+
+<!-- ==============================
+     OFFCANVAS WISHLIST DRAWER
+     ============================== -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="wishlistOffcanvas" aria-labelledby="wishlistOffcanvasLabel" style="width: 380px; max-width: 100vw;">
+    <div class="offcanvas-header border-bottom py-3" style="background: var(--sf-cream);">
+        <h5 class="offcanvas-title fw-bold brand-font m-0 d-flex align-items-center gap-2" id="wishlistOffcanvasLabel" style="color: var(--brand-green);">
+            <span>❤️</span> <span>Saved Wishlist</span>
+        </h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+
+    <!-- Scrollable Wishlist Items List -->
+    <div class="offcanvas-body p-3 overflow-auto" id="wishlistItemsList">
+        <!-- Injected dynamically by renderWishlist() in storefront.js -->
+        <div class="text-center text-muted py-5">
+            <span class="fs-1 d-block mb-2">🤍</span>
+            <h6 class="fw-bold">Your wishlist is empty</h6>
+            <p class="small">Tap the heart icon on any product to save it for later.</p>
+        </div>
+    </div>
+
+    <div class="offcanvas-footer p-3 border-top bg-white">
+        <a href="/account/wishlist" class="btn btn-outline-success w-100 py-2 fw-bold text-center text-decoration-none" style="border-radius: 12px;">
+            View Full Wishlist Page →
+        </a>
+    </div>
+</div>
+
+<!-- ==============================
+     MOBILE STICKY BOTTOM NAVIGATION
+     ============================== -->
+<div class="mobile-bottom-nav no-print" id="mobileBottomNav">
+    <a href="/" class="mobile-nav-item active">
+        <span class="mobile-nav-icon">🏠</span>
+        <span>Home</span>
+    </a>
+    <a href="/#searchInput" class="mobile-nav-item" onclick="setTimeout(function(){ const el = document.getElementById('searchInput') || document.getElementById('navSearchInput'); if (el) el.focus(); }, 150);">
+        <span class="mobile-nav-icon">🔍</span>
+        <span>Search</span>
+    </a>
+    <button type="button" class="mobile-nav-item border-0 bg-transparent position-relative" data-bs-toggle="offcanvas" data-bs-target="#wishlistOffcanvas">
+        <span class="mobile-nav-icon">❤️</span>
+        <span>Wishlist</span>
+        <span class="mobile-nav-badge" id="mobileBottomWishlistBadge" style="display: none;">0</span>
+    </button>
+    <button type="button" class="mobile-nav-item border-0 bg-transparent position-relative" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas">
+        <span class="mobile-nav-icon">🛒</span>
+        <span>Cart</span>
+        <span class="mobile-nav-badge" id="mobileBottomCartBadge" style="display: none;">0</span>
+    </button>
+    <% if (session && session.customer_id) { %>
+    <a href="/account" class="mobile-nav-item">
+        <span class="mobile-nav-icon">👤</span>
+        <span>Account</span>
+    </a>
+    <% } else { %>
+    <a href="/customer/login" class="mobile-nav-item">
+        <span class="mobile-nav-icon">👤</span>
+        <span>Login</span>
+    </a>
+    <% } %>
+</div>
+
+<!-- Storefront Engine Script -->
+<script src="/storefront.js?v=20261011" defer></script>
+
+<script>
+    // Smooth toggle of address fields based on fulfillment choice
+    function toggleAddressFields(isDelivery) {
+        const wrapper = document.getElementById('addressSectionWrapper');
+        const addrInput = document.getElementById('checkoutAddress');
+        if (!wrapper || !addrInput) return;
+        if (isDelivery) {
+            wrapper.style.display = 'block';
+            addrInput.setAttribute('required', 'required');
+        } else {
+            wrapper.style.display = 'none';
+            addrInput.removeAttribute('required');
+        }
+    }
+</script>
+
+                                            <% } %>

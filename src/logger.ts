@@ -11,12 +11,19 @@ if (!fs.existsSync(logsDir)) {
   fs.mkdirSync(logsDir, { recursive: true });
 }
 
+const safeReplacer = (key: string, value: any) => {
+  if (['password', 'passwordHash', 'password_hash', 'token', 'secret', 'session_id', 'cookie', 'cvv', 'card_number'].includes(key.toLowerCase())) {
+    return '[REDACTED]';
+  }
+  return value;
+};
+
 const logger = winston.createLogger({
   level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
   format: winston.format.combine(
-    winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+    winston.format.timestamp(),
     winston.format.errors({ stack: true }),
-    winston.format.json()
+    winston.format.json({ replacer: safeReplacer })
   ),
   transports: [
     new winston.transports.File({ filename: path.join(logsDir, 'error.log'), level: 'error' }),
