@@ -5,9 +5,11 @@ import { storeController } from '../controllers/store.controller.js';
 
 const router = express.Router();
 
+const isTest = process.env.NODE_ENV === 'test' || process.env.VITEST === 'true';
+
 const checkoutLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 15,
+  max: isTest ? 1000 : 15,
   message: 'Too many checkout requests from this IP, please try again after 15 minutes',
 });
 

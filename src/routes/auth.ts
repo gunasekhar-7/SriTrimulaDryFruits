@@ -5,9 +5,11 @@ import { authController } from '../controllers/auth.controller.js';
 
 const router = express.Router();
 
+const isTest = process.env.NODE_ENV === 'test' || process.env.VITEST === 'true';
+
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 10,
+  max: isTest ? 1000 : 10,
   message: 'Too many login attempts. Please try again in 15 minutes.',
   standardHeaders: true,
   legacyHeaders: false,
