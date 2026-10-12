@@ -16,6 +16,7 @@
     "backup": "node dist/scripts/run_backup.js",
     "backup:offsite": "node dist/scripts/backup_offsite.js",
     "backup:restore": "node dist/scripts/restore_backup.js",
+    "db:reset": "node scripts/reset_clean_database.js",
     "test": "vitest run --fileParallelism=false",
     "test:unit": "vitest run tests/unit --fileParallelism=false",
     "test:integration": "vitest run tests/integration --fileParallelism=false",

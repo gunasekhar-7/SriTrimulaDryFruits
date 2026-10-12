@@ -25,21 +25,24 @@ function seedDefaults() {
     db.prepare('INSERT INTO users (username, password_hash, role) VALUES (?, ?, ?)').run('staff', staffHash, 'staff');
   }
 
-  const productCount = (db.prepare('SELECT COUNT(*) as c FROM product_variants').get() as { c: number }).c;
-  if (productCount === 0) {
-    const seedProducts = [
-      { name: 'Almonds Premium', barcode: '1001', cost_price: 700, selling_price: 850, mrp: 999, total_qty: 50, category: 'Dry Fruits' },
-      { name: 'Cashews W210', barcode: '1002', cost_price: 800, selling_price: 950, mrp: 1100, total_qty: 40, category: 'Dry Fruits' },
-      { name: 'Pistachios Roasted', barcode: '1003', cost_price: 950, selling_price: 1100, mrp: 1300, total_qty: 30, category: 'Dry Fruits' },
-      { name: 'Raisins Golden', barcode: '1004', cost_price: 250, selling_price: 320, mrp: 400, total_qty: 100, category: 'Dry Fruits' },
-      { name: 'Walnuts Akhrot', barcode: '1005', cost_price: 850, selling_price: 1050, mrp: 1250, total_qty: 25, category: 'Dry Fruits' },
-      { name: 'Premium Dates', barcode: '1006', cost_price: 300, selling_price: 450, mrp: 550, total_qty: 60, category: 'Dry Fruits' },
-      { name: 'Dried Figs', barcode: '1007', cost_price: 600, selling_price: 750, mrp: 900, total_qty: 35, category: 'Dry Fruits' },
-      { name: 'Dried Apricots', barcode: '1008', cost_price: 450, selling_price: 550, mrp: 650, total_qty: 45, category: 'Dry Fruits' },
-    ];
-    const insert = db.prepare('INSERT INTO product_variants (name, barcode, cost_price, selling_price, mrp, total_qty, sold_qty, category) VALUES (?, ?, ?, ?, ?, ?, 0, ?)');
-    for (const p of seedProducts) {
-      insert.run(p.name, p.barcode, p.cost_price, p.selling_price, p.mrp, p.total_qty, p.category);
+  // Mock products are only seeded if explicitly requested via SEED_MOCK_PRODUCTS=true
+  if (process.env.SEED_MOCK_PRODUCTS === 'true') {
+    const productCount = (db.prepare('SELECT COUNT(*) as c FROM product_variants').get() as { c: number }).c;
+    if (productCount === 0) {
+      const seedProducts = [
+        { name: 'Almonds Premium', barcode: '1001', cost_price: 700, selling_price: 850, mrp: 999, total_qty: 50, category: 'Dry Fruits' },
+        { name: 'Cashews W210', barcode: '1002', cost_price: 800, selling_price: 950, mrp: 1100, total_qty: 40, category: 'Dry Fruits' },
+        { name: 'Pistachios Roasted', barcode: '1003', cost_price: 950, selling_price: 1100, mrp: 1300, total_qty: 30, category: 'Dry Fruits' },
+        { name: 'Raisins Golden', barcode: '1004', cost_price: 250, selling_price: 320, mrp: 400, total_qty: 100, category: 'Dry Fruits' },
+        { name: 'Walnuts Akhrot', barcode: '1005', cost_price: 850, selling_price: 1050, mrp: 1250, total_qty: 25, category: 'Dry Fruits' },
+        { name: 'Premium Dates', barcode: '1006', cost_price: 300, selling_price: 450, mrp: 550, total_qty: 60, category: 'Dry Fruits' },
+        { name: 'Dried Figs', barcode: '1007', cost_price: 600, selling_price: 750, mrp: 900, total_qty: 35, category: 'Dry Fruits' },
+        { name: 'Dried Apricots', barcode: '1008', cost_price: 450, selling_price: 550, mrp: 650, total_qty: 45, category: 'Dry Fruits' },
+      ];
+      const insert = db.prepare('INSERT INTO product_variants (name, barcode, cost_price, selling_price, mrp, total_qty, sold_qty, category) VALUES (?, ?, ?, ?, ?, ?, 0, ?)');
+      for (const p of seedProducts) {
+        insert.run(p.name, p.barcode, p.cost_price, p.selling_price, p.mrp, p.total_qty, p.category);
+      }
     }
   }
 }
