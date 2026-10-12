@@ -4,7 +4,7 @@
 # ==============================================================================
 
 # ─── Stage 1: Build & Dependency Compilation ──────────────────────────────────
-FROM node:20-slim AS builder
+FROM node:22-slim AS builder
 
 WORKDIR /app
 
@@ -31,7 +31,7 @@ RUN npm run build
 RUN npm prune --omit=dev --legacy-peer-deps
 
 # ─── Stage 2: Hardened Production Runtime ─────────────────────────────────────
-FROM node:20-slim AS runner
+FROM node:22-slim AS runner
 
 LABEL org.opencontainers.image.title="sri-tirumala-pos" \
       org.opencontainers.image.description="Sri Tirumala Dry Fruits Production POS & Storefront" \
@@ -68,7 +68,7 @@ VOLUME ["/app/data", "/app/logs"]
 EXPOSE 3000
 
 # Native Node.js Healthcheck (no curl/wget package bloat required)
-HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
+HEALTHCHECK --interval=10s --timeout=3s --start-period=5s --retries=3 \
   CMD node -e "fetch('http://localhost:' + (process.env.PORT || 3000) + '/health').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"
 
 # Start production server

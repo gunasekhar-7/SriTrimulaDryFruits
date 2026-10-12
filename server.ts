@@ -258,29 +258,29 @@ import { initBackupCron } from './src/backup.js';
 import { queueService } from './src/queue/index.js';
 import { reservationReaperService } from './src/services/reservation-reaper.service.js';
 
-// ─── Start Server ─────────────────────────────────────────────────────────────
-initBackupCron();
-
-if (process.env.NODE_ENV === 'production') {
-  try {
-    validateProductionSiteConfig();
-  } catch (err: any) {
-    console.error(`🚨 FATAL: Invalid production canonical configuration: ${err.message}`);
-    process.exit(1);
-  }
-
-  const insecureSecrets = [
-    'change_this_to_a_long_random_secret_string_in_production',
-    'dev_fallback_secret_change_this',
-    'change_this_to_another_long_random_secret_string'
-  ];
-  if (insecureSecrets.includes(SESSION_SECRET) || insecureSecrets.includes(COOKIE_SECRET)) {
-    console.error('🚨 FATAL: Insecure default SESSION_SECRET or COOKIE_SECRET detected in production!');
-    process.exit(1);
-  }
-}
-
 if (process.env.NODE_ENV !== 'test' && process.env.VITEST !== 'true') {
+  if (process.env.NODE_ENV === 'production') {
+    try {
+      validateProductionSiteConfig();
+    } catch (err: any) {
+      console.error(`🚨 FATAL: Invalid production canonical configuration: ${err.message}`);
+      process.exit(1);
+    }
+
+    const insecureSecrets = [
+      'change_this_to_a_long_random_secret_string_in_production',
+      'dev_fallback_secret_change_this',
+      'change_this_to_another_long_random_secret_string'
+    ];
+    if (insecureSecrets.includes(SESSION_SECRET) || insecureSecrets.includes(COOKIE_SECRET)) {
+      console.error('🚨 FATAL: Insecure default SESSION_SECRET or COOKIE_SECRET detected in production!');
+      process.exit(1);
+    }
+  }
+
+  // Initialize automated database backup schedules
+  initBackupCron();
+
   // Start durable background job worker
   queueService.startWorker();
 

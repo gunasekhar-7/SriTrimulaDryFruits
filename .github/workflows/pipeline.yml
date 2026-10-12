@@ -37,7 +37,7 @@ permissions:
   actions: read
 
 env:
-  NODE_VERSION: '20.x'
+  NODE_VERSION: '22.x'
   IMAGE_NAME: 'sri-tirumala-pos'
 
 jobs:
@@ -229,7 +229,7 @@ jobs:
         continue-on-error: true
 
       - name: Run Trivy Filesystem Vulnerability Scanner
-        uses: aquasecurity/trivy-action@0.29.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           scan-type: 'fs'
           scan-ref: '.'
@@ -372,7 +372,7 @@ jobs:
         run: docker load -i /tmp/sri-tirumala-pos.tar
 
       - name: Run Trivy Container Security Scan
-        uses: aquasecurity/trivy-action@0.29.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: '${{ env.IMAGE_NAME }}:${{ github.sha }}'
           format: 'sarif'
@@ -429,16 +429,16 @@ jobs:
       - name: Staging Healthcheck & Liveness Probe
         run: |
           echo "Awaiting staging service liveness..."
-          sleep 5
-          for i in {1..12}; do
+          sleep 3
+          for i in {1..15}; do
             STATUS=$(docker inspect --format='{{json .State.Health.Status}}' sri-pos-staging || echo "unknown")
-            echo "Healthcheck status: $STATUS (Attempt $i/12)"
-            if [ "$STATUS" = "\"healthy\"" ]; then
+            echo "Healthcheck status: $STATUS (Attempt $i/15)"
+            if [ "$STATUS" = "\"healthy\"" ] || curl -sf http://127.0.0.1:3001/health > /dev/null 2>&1; then
               echo "✅ Staging service is healthy and responding."
               docker stop sri-pos-staging && docker rm sri-pos-staging
               exit 0
             fi
-            sleep 3
+            sleep 2
           done
           echo "❌ Staging healthcheck timed out! Container logs:"
           docker logs sri-pos-staging
@@ -491,16 +491,16 @@ jobs:
         id: prod_probe
         run: |
           echo "Probing candidate container /health and /ready endpoints..."
-          sleep 5
+          sleep 3
           for i in {1..15}; do
             STATUS=$(docker inspect --format='{{json .State.Health.Status}}' sri-pos-prod-candidate || echo "unknown")
             echo "Production health status: $STATUS (Attempt $i/15)"
-            if [ "$STATUS" = "\"healthy\"" ]; then
+            if [ "$STATUS" = "\"healthy\"" ] || curl -sf http://127.0.0.1:3002/health > /dev/null 2>&1; then
               echo "✅ Candidate container is healthy. Promoting to primary."
               docker stop sri-pos-prod-candidate && docker rm sri-pos-prod-candidate
               exit 0
             fi
-            sleep 3
+            sleep 2
           done
           echo "❌ Candidate failed production healthcheck probe! Triggering rollback..."
           docker logs sri-pos-prod-candidate
