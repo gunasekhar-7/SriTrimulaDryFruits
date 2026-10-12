@@ -196,6 +196,9 @@ jobs:
       - name: Run End-to-End User Journeys (Customer, Staff, Fulfillment, Security)
         run: npm run test:e2e
 
+      - name: Compile Application for Smoke Testing (TypeScript to dist/)
+        run: npm run build
+
       - name: Run Disaster Recovery & Docker Backup Smoke Test
         run: npm run test:backup
 
