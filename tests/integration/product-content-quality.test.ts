@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeAll } from 'vitest';
 import request from 'supertest';
 import { app } from '../../server.js';
 import db from '../../src/database.js';
@@ -6,6 +6,16 @@ import { getEnrichedProductContent, extractVerifiedGrade, getStorageInstructions
 import { Product } from '../../src/types/index.js';
 
 describe('Product Content Quality, Differentiation & Indexability Support Suite', () => {
+  beforeAll(() => {
+    const existing = db.prepare('SELECT * FROM product_variants WHERE id = 34').get();
+    if (!existing) {
+      db.prepare(`
+        INSERT OR IGNORE INTO product_variants (id, name, barcode, category, cost_price, selling_price, mrp, total_qty, sold_qty, active)
+        VALUES (34, 'Almonds Premium', '1034', 'Dry Fruits', 700, 850, 999, 50, 0, 1)
+      `).run();
+    }
+  });
+
   // ──────────────────────────────────────────────────────────────────────────
   // 1. DATABASE INTEGRITY CHECKS
   // ──────────────────────────────────────────────────────────────────────────

@@ -14,8 +14,8 @@ describe('Googlebot Smartphone Core URLs & Technical SEO QA Suite', () => {
     product34 = db.prepare('SELECT * FROM product_variants WHERE id = 34').get();
     if (!product34) {
       db.prepare(`
-        INSERT INTO product_variants (id, name, barcode, category, cost_price, selling_price, mrp, total_qty, sold_qty, active)
-        VALUES (34, 'Almonds Premium', '1001', 'Dry Fruits', 700, 850, 999, 50, 0, 1)
+        INSERT OR IGNORE INTO product_variants (id, name, barcode, category, cost_price, selling_price, mrp, total_qty, sold_qty, active)
+        VALUES (34, 'Almonds Premium', '1034', 'Dry Fruits', 700, 850, 999, 50, 0, 1)
       `).run();
       product34 = db.prepare('SELECT * FROM product_variants WHERE id = 34').get();
     }
