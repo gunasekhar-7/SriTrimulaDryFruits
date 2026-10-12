@@ -45,7 +45,8 @@ db.exec(`
 
   CREATE TABLE IF NOT EXISTS product_variants (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    product_id INTEGER NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+    product_id INTEGER REFERENCES products(id) ON DELETE CASCADE,
+    name TEXT NOT NULL DEFAULT '',
     sku TEXT UNIQUE,
     barcode TEXT NOT NULL UNIQUE,
     size_weight REAL NOT NULL DEFAULT 1,
@@ -348,6 +349,16 @@ try {
   const tableInfo = db.pragma('table_info(online_orders)') as Array<{ name: string }>;
   if (tableInfo.length > 0 && !tableInfo.some(col => col.name === 'traceparent')) {
     db.exec(`ALTER TABLE online_orders ADD COLUMN traceparent TEXT`);
+  }
+} catch {
+  // column already exists
+}
+
+// Add name column to product_variants if not present in existing databases
+try {
+  const variantTableInfo = db.pragma('table_info(product_variants)') as Array<{ name: string }>;
+  if (variantTableInfo.length > 0 && !variantTableInfo.some(col => col.name === 'name')) {
+    db.exec(`ALTER TABLE product_variants ADD COLUMN name TEXT NOT NULL DEFAULT ''`);
   }
 } catch {
   // column already exists
