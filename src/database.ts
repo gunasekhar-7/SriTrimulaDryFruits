@@ -109,7 +109,7 @@ db.exec(`
   CREATE TABLE IF NOT EXISTS sales (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     bill_id INTEGER NOT NULL REFERENCES bills(id),
-    product_id INTEGER NOT NULL REFERENCES products(id),
+    product_id INTEGER NOT NULL REFERENCES product_variants(id),
     qty_sold REAL NOT NULL,
     profit_made REAL NOT NULL DEFAULT 0,
     sale_date TEXT NOT NULL,
@@ -171,7 +171,7 @@ db.exec(`
   CREATE TABLE IF NOT EXISTS online_order_items (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     order_id INTEGER NOT NULL REFERENCES online_orders(id) ON DELETE CASCADE,
-    product_id INTEGER NOT NULL REFERENCES products(id),
+    product_id INTEGER NOT NULL REFERENCES product_variants(id),
     product_name TEXT NOT NULL,
     unit_price REAL NOT NULL,
     quantity REAL NOT NULL,
@@ -197,7 +197,7 @@ db.exec(`
   CREATE TABLE IF NOT EXISTS customer_cart_items (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     cart_id INTEGER NOT NULL REFERENCES customer_carts(id) ON DELETE CASCADE,
-    product_id INTEGER NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+    product_id INTEGER NOT NULL REFERENCES product_variants(id) ON DELETE CASCADE,
     quantity REAL NOT NULL,
     added_at TEXT DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(cart_id, product_id)
