@@ -1,7 +1,12 @@
 import { Request, Response } from 'express';
 import { z } from 'zod';
+import db from '../database.js';
 import { billingService } from '../services/billing.service.js';
 import { productService } from '../services/product.service.js';
+import { billRepository } from '../repositories/bill.repository.js';
+import { saleRepository } from '../repositories/sale.repository.js';
+import { onlineOrderRepository } from '../repositories/online_order.repository.js';
+import * as repo from '../repository.js';
 import logger from '../logger.js';
 import { metricsAggregator } from '../observability/index.js';
 
@@ -18,7 +23,19 @@ export class BillingController {
     const cart = req.session.cart || [];
     const grandTotal = cart.reduce((sum: number, item: any) => sum + (item.total || 0), 0);
     const held_bills = req.session.held_bills || [];
-    res.render('sell', { cart, total: grandTotal, error: null, held_bills, csrfToken: res.locals.csrfToken });
+    const customer_name = (req.session as any).posCustomerName || '';
+    const customer_phone = (req.session as any).posCustomerPhone || '';
+    const currentShift = res.locals.currentShift || (req.session?.user_id ? repo.getOpenShiftByUserId(req.session.user_id) : undefined);
+    res.render('sell', { 
+      cart, 
+      total: grandTotal, 
+      error: null, 
+      held_bills, 
+      customer_name, 
+      customer_phone, 
+      currentShift,
+      csrfToken: res.locals.csrfToken 
+    });
   }
 
   postSell(req: Request, res: Response) {
@@ -54,7 +71,7 @@ export class BillingController {
         metricsAggregator.recordStockOut(product.name, 'offline');
         return res.render('sell', {
           cart, total: grandTotal, held_bills,
-          error: `❌ Stock Limit: Only ${available_stock} available.`,
+          error: `Stock Limit: Only ${available_stock} available.`,
           csrfToken: res.locals.csrfToken
         });
       }
@@ -65,7 +82,7 @@ export class BillingController {
     } else {
       return res.render('sell', {
         cart, total: grandTotal, held_bills,
-        error: '❌ Product not found!',
+        error: 'Product not found!',
         csrfToken: res.locals.csrfToken
       });
     }
@@ -87,7 +104,7 @@ export class BillingController {
             req.session.cart = cart;
           } else {
             metricsAggregator.recordStockOut(product.name, 'offline');
-            req.flash('info', `❌ Stock Limit: Only ${available_stock} available.`);
+            req.flash('info', `Stock Limit: Only ${available_stock} available.`);
           }
         }
       }
@@ -205,6 +222,203 @@ export class BillingController {
       res.json({ success: true, id: product.id, name: product.name, mrp: product.mrp, selling_price: product.selling_price, available: product.total_qty - (product.sold_qty || 0) });
     } else {
       res.json({ success: false });
+    }
+  }
+
+  getBillById(req: Request, res: Response) {
+    const billId = parseInt(req.params.id, 10);
+    if (isNaN(billId)) {
+      return res.status(404).render('error', {
+        statusCode: 404,
+        title: 'Bill Not Found',
+        message: 'The requested bill ID is invalid.'
+      });
+    }
+
+    const bill = billRepository.getBillById(billId);
+    if (!bill) {
+      return res.status(404).render('error', {
+        statusCode: 404,
+        title: 'Bill Not Found',
+        message: `Bill #${billId} could not be found.`
+      });
+    }
+
+    const sales = saleRepository.getSalesByBillId(billId);
+    const items = sales.map(sale => {
+      const prod = productService.getProductById(sale.product_id);
+      return {
+        sale_id: sale.id,
+        product_id: sale.product_id,
+        name: prod ? prod.name : 'Unknown Product',
+        qty: sale.qty_sold,
+        price: sale.unit_price,
+        mrp: prod ? (prod.mrp || sale.unit_price) : sale.unit_price,
+        tax_rate: prod ? (prod.tax_rate || 5) : 5,
+        total: sale.qty_sold * sale.unit_price
+      };
+    });
+
+    res.render('bill', {
+      items,
+      total: bill.total_amount,
+      subtotal: bill.total_amount + (bill.discount_amount || 0),
+      discount_amount: bill.discount_amount || 0,
+      customer_name: bill.customer_name || '',
+      customer_phone: bill.customer_phone || '',
+      date: bill.bill_date,
+      time: bill.bill_time,
+      sale_id: bill.id,
+      payment_method: bill.payment_method || 'Cash',
+      allow_return: true,
+      csrfToken: res.locals.csrfToken
+    });
+  }
+
+  getPendingPickups(req: Request, res: Response) {
+    try {
+      const orders = db.prepare(`
+        SELECT o.id, o.order_number, o.customer_id, o.total_amount, o.status, o.created_at,
+               c.name as customer_name, c.phone as customer_phone
+        FROM online_orders o
+        JOIN customers c ON o.customer_id = c.id
+        WHERE (o.delivery_type = 'STORE_PICKUP' OR o.delivery_type = 'PICKUP') AND o.status NOT IN ('COMPLETED', 'CANCELLED')
+        ORDER BY o.id DESC
+      `).all() as any[];
+
+      const ordersWithItems = orders.map(ord => {
+        const items = onlineOrderRepository.getOrderItems(ord.id);
+        return {
+          ...ord,
+          itemsCount: items.length,
+          items: items.map(i => ({
+            product_id: i.product_id,
+            product_name: i.product_name,
+            quantity: i.quantity,
+            unit_price: i.unit_price,
+            total_price: i.total_price
+          }))
+        };
+      });
+
+      res.json({ success: true, orders: ordersWithItems });
+    } catch (err: any) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  }
+
+  loadOrderToCart(req: Request, res: Response) {
+    const orderId = parseInt(req.params.id, 10);
+    if (isNaN(orderId)) {
+      return res.status(400).json({ success: false, error: 'Invalid order ID' });
+    }
+
+    const order = onlineOrderRepository.getOrderById(orderId);
+    if (!order) {
+      return res.status(404).json({ success: false, error: 'Order not found' });
+    }
+
+    const orderItems = onlineOrderRepository.getOrderItems(orderId);
+    if (!req.session.cart) req.session.cart = [];
+
+    for (const item of orderItems) {
+      const p = productService.getProductById(item.product_id);
+      if (!p) continue;
+      const qty = item.quantity;
+
+      const existing = req.session.cart.find((c: any) => c.id === p.id);
+      if (existing) {
+        existing.qty += qty;
+        existing.total = existing.qty * existing.price;
+      } else {
+        req.session.cart.push({
+          id: p.id,
+          name: p.name,
+          barcode: p.barcode,
+          mrp: p.mrp || p.selling_price,
+          price: item.unit_price || p.selling_price,
+          cost: p.cost_price,
+          qty,
+          total: qty * (item.unit_price || p.selling_price),
+          tax_rate: p.tax_rate || 5
+        });
+      }
+    }
+
+    const customer = db.prepare('SELECT name, phone FROM customers WHERE id = ?').get(order.customer_id) as any;
+    (req.session as any).posCustomerName = customer ? customer.name : '';
+    (req.session as any).posCustomerPhone = customer ? customer.phone : '';
+    (req.session as any).posOrderId = order.id;
+
+    if (req.xhr || req.headers.accept?.includes('application/json')) {
+      return res.json({
+        success: true,
+        loadedItems: orderItems.length,
+        customerName: customer?.name || '',
+        customerPhone: customer?.phone || ''
+      });
+    }
+
+    res.redirect('/sell');
+  }
+
+  async completeSaleApi(req: Request, res: Response) {
+    const shift = res.locals.currentShift || (req.session?.user_id ? repo.getOpenShiftByUserId(req.session.user_id) : undefined);
+    if (!shift) {
+      return res.status(403).json({ success: false, error: { code: 'SHIFT_REQUIRED', message: 'Active shift required' } });
+    }
+
+    const items = req.body.cart || req.session.cart || [];
+    if (!items || items.length === 0) {
+      return res.status(400).json({ success: false, error: { code: 'EMPTY_CART', message: 'Cart is empty' } });
+    }
+
+    const today = new Date();
+    const dateStr = today.toISOString().split('T')[0];
+    const timeStr = today.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+
+    const customer_name = req.body.customer_name || (req.session as any)?.posCustomerName || '';
+    const customer_phone = req.body.customer_phone || (req.session as any)?.posCustomerPhone || '';
+    const payment_method = req.body.payment_method || 'Cash';
+    let discount_amount = parseFloat(req.body.discount_amount || '0');
+    if (isNaN(discount_amount) || discount_amount < 0) discount_amount = 0;
+
+    const subtotal = items.reduce((sum: number, i: any) => sum + (i.total || 0), 0);
+    const finalTotal = Math.max(0, subtotal - discount_amount);
+
+    try {
+      const newBill = billingService.createBill(
+        dateStr, timeStr, items, customer_name, customer_phone, discount_amount, payment_method, shift.id
+      );
+
+      const posOrderId = (req.session as any)?.posOrderId;
+      if (posOrderId) {
+        try {
+          const { orderService } = await import('../services/order.service.js');
+          orderService.updateOrderStatus(posOrderId, 'COMPLETED', req.session.user || 'POS Cashier', { isPosConversion: true });
+        } catch {}
+      }
+
+      req.session.cart = [];
+      delete (req.session as any).posCustomerName;
+      delete (req.session as any).posCustomerPhone;
+      delete (req.session as any).posOrderId;
+
+      res.json({
+        success: true,
+        data: {
+          bill_id: newBill.id,
+          total: finalTotal,
+          subtotal,
+          discount_amount,
+          payment_method,
+          customer_name,
+          date: dateStr,
+          time: timeStr
+        }
+      });
+    } catch (err: any) {
+      res.status(400).json({ success: false, error: { message: err.message } });
     }
   }
 }

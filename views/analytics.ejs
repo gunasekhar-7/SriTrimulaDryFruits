@@ -15,8 +15,8 @@
                     TEKKALI STORE
                 </span>
             </div>
-            <h2 class="brand-font m-0 fw-bold" style="color: var(--brand-green); font-size: 1.85rem;">
-                📈 Admin Analytics Dashboard
+            <h2 class="brand-font m-0 fw-bold d-flex align-items-center gap-2" style="color: var(--brand-green); font-size: 1.85rem;">
+                <span class="material-symbols-outlined fs-2" style="color: #D89A4E;">monitoring</span> Admin Analytics Dashboard
             </h2>
             <small class="text-muted">
                 Centralized financial calculations, multi-channel performance & customer retention
@@ -24,14 +24,14 @@
         </div>
 
         <div class="d-flex align-items-center gap-2">
-            <button type="button" class="btn btn-outline-secondary btn-sm px-3 py-2 fw-bold" onclick="window.print()" title="Print executive report">
-                🖨️ Print Report
+            <button type="button" class="btn btn-outline-secondary btn-sm px-3 py-2 fw-bold d-inline-flex align-items-center gap-1" onclick="window.print()" title="Print executive report">
+                <span class="material-symbols-outlined" style="font-size: 1.1rem;">print</span> Print Report
             </button>
-            <button type="button" class="btn btn-outline-success btn-sm px-3 py-2 fw-bold" onclick="exportAnalyticsCsv()" title="Export current metrics to CSV">
-                📥 Export CSV
+            <button type="button" class="btn btn-outline-success btn-sm px-3 py-2 fw-bold d-inline-flex align-items-center gap-1" onclick="exportAnalyticsCsv()" title="Export current metrics to CSV">
+                <span class="material-symbols-outlined" style="font-size: 1.1rem;">download</span> Export CSV
             </button>
-            <a href="/analytics?preset=30d" class="btn btn-outline-danger btn-sm px-3 py-2 fw-bold" title="Reset all filters">
-                ↺ Reset Filters
+            <a href="/analytics?preset=30d" class="btn btn-outline-danger btn-sm px-3 py-2 fw-bold d-inline-flex align-items-center gap-1" title="Reset all filters">
+                <span class="material-symbols-outlined" style="font-size: 1.1rem;">restart_alt</span> Reset Filters
             </a>
         </div>
     </div>
@@ -196,7 +196,7 @@
             <div class="card p-3 border-0 bg-white shadow-sm h-100" style="border-radius: 16px;">
                 <div class="d-flex align-items-center justify-content-between mb-2">
                     <span class="badge bg-success text-white px-2 py-1 rounded">Filtered Total</span>
-                    <span class="fs-4">💰</span>
+                    <span class="material-symbols-outlined fs-4" style="color: #D89A4E;">payments</span>
                 </div>
                 <div class="display-6 fw-bold text-dark mb-1" style="font-size: 1.85rem; font-family: 'Plus Jakarta Sans', sans-serif;">
                     ₹<%= Number(analytics.totalRevenue).toFixed(2) %>
@@ -213,7 +213,7 @@
             <div class="card p-3 border-0 bg-white shadow-sm h-100" style="border-radius: 16px;">
                 <div class="d-flex align-items-center justify-content-between mb-2">
                     <span class="badge bg-primary text-white px-2 py-1 rounded">Volume & AOV</span>
-                    <span class="fs-4">🧾</span>
+                    <span class="material-symbols-outlined fs-4 text-primary">receipt_long</span>
                 </div>
                 <div class="d-flex align-items-baseline gap-2 mb-1">
                     <span class="display-6 fw-bold text-dark" style="font-size: 1.85rem;"><%= analytics.orderCount %></span>
@@ -230,7 +230,7 @@
             <div class="card p-3 border-0 bg-white shadow-sm h-100" style="border-radius: 16px;">
                 <div class="d-flex align-items-center justify-content-between mb-2">
                     <span class="badge bg-success bg-opacity-25 text-success fw-bold px-2 py-1 rounded">Profit & Margin</span>
-                    <span class="fs-4">📊</span>
+                    <span class="material-symbols-outlined fs-4 text-success">trending_up</span>
                 </div>
                 <div class="display-6 fw-bold text-success mb-1" style="font-size: 1.85rem; font-family: 'Plus Jakarta Sans', sans-serif;">
                     ₹<%= Number(analytics.totalProfit).toFixed(2) %>
@@ -246,7 +246,7 @@
             <div class="card p-3 border-0 bg-white shadow-sm h-100" style="border-radius: 16px;">
                 <div class="d-flex align-items-center justify-content-between mb-2">
                     <span class="badge bg-warning bg-opacity-25 text-dark fw-bold px-2 py-1 rounded">Repeat Customers</span>
-                    <span class="fs-4">🔁</span>
+                    <span class="material-symbols-outlined fs-4 text-warning">sync</span>
                 </div>
                 <div class="display-6 fw-bold text-dark mb-1" style="font-size: 1.85rem;">
                     <%= analytics.repeatCustomers.repeatCustomerRatePercent %>%
@@ -262,7 +262,7 @@
             <div class="card p-3 border-0 bg-white shadow-sm h-100" style="border-radius: 16px;">
                 <div class="d-flex align-items-center justify-content-between mb-2">
                     <span class="badge bg-danger bg-opacity-10 text-danger fw-bold px-2 py-1 rounded">Cancellations</span>
-                    <span class="fs-4">🚫</span>
+                    <span class="material-symbols-outlined fs-4 text-danger">cancel</span>
                 </div>
                 <div class="display-6 fw-bold text-danger mb-1" style="font-size: 1.85rem;">
                     <%= analytics.cancellations.cancelledOrdersCount %>
@@ -278,7 +278,7 @@
             <div class="card p-3 border-0 bg-white shadow-sm h-100" style="border-radius: 16px;">
                 <div class="d-flex align-items-center justify-content-between mb-2">
                     <span class="badge bg-success bg-opacity-15 text-success fw-bold px-2 py-1 rounded">WhatsApp Conversion</span>
-                    <span class="fs-4">💬</span>
+                    <span class="material-symbols-outlined fs-4 text-success">chat</span>
                 </div>
                 <div class="display-6 fw-bold text-success mb-1" style="font-size: 1.85rem;">
                     <%= analytics.whatsappConversion.conversionRatePercent %>%
@@ -294,7 +294,7 @@
             <div class="card p-3 border-0 bg-white shadow-sm h-100" style="border-radius: 16px; border-left: 4px solid <%= analytics.stockOuts.count > 0 ? '#dc3545' : '#198754' %> !important;">
                 <div class="d-flex align-items-center justify-content-between mb-2">
                     <span class="badge <%= analytics.stockOuts.count > 0 ? 'bg-danger' : 'bg-success' %> text-white px-2 py-1 rounded">Inventory Status</span>
-                    <span class="fs-4">📦</span>
+                    <span class="material-symbols-outlined fs-4 <%= analytics.stockOuts.count > 0 ? 'text-danger' : 'text-success' %>">inventory_2</span>
                 </div>
                 <div class="display-6 fw-bold <%= analytics.stockOuts.count > 0 ? 'text-danger' : 'text-success' %> mb-1" style="font-size: 1.85rem;">
                     <%= analytics.stockOuts.count %> Stock-outs
@@ -310,7 +310,7 @@
             <div class="card p-3 border-0 bg-white shadow-sm h-100" style="border-radius: 16px;">
                 <div class="d-flex align-items-center justify-content-between mb-2">
                     <span class="badge bg-secondary text-white px-2 py-1 rounded">Channel Split</span>
-                    <span class="fs-4">🛒</span>
+                    <span class="material-symbols-outlined fs-4 text-secondary">pie_chart</span>
                 </div>
                 <div class="d-flex align-items-center gap-2 mb-2">
                     <div class="progress flex-grow-1" style="height: 12px; border-radius: 8px;">
@@ -319,8 +319,8 @@
                     </div>
                 </div>
                 <div class="d-flex justify-content-between small text-muted">
-                    <span>🏬 POS: <%= analytics.channelBreakdown.pos.sharePercent %>%</span>
-                    <span>📲 Online: <%= analytics.channelBreakdown.online.sharePercent %>%</span>
+                    <span class="d-inline-flex align-items-center gap-1"><span class="material-symbols-outlined" style="font-size: 1rem;">storefront</span> POS: <%= analytics.channelBreakdown.pos.sharePercent %>%</span>
+                    <span class="d-inline-flex align-items-center gap-1"><span class="material-symbols-outlined" style="font-size: 1rem;">smartphone</span> Online: <%= analytics.channelBreakdown.online.sharePercent %>%</span>
                 </div>
             </div>
         </div>
@@ -370,7 +370,9 @@
             <div class="card border-0 bg-white shadow-sm h-100 overflow-hidden" style="border-radius: 20px;">
                 <div class="p-3 bg-light border-bottom d-flex justify-content-between align-items-center">
                     <div>
-                        <h5 class="fw-bold m-0" style="color: var(--brand-green);">🏆 Best-Selling Products</h5>
+                        <h5 class="fw-bold m-0 d-flex align-items-center gap-2" style="color: var(--brand-green);">
+                            <span class="material-symbols-outlined" style="color: #D89A4E;">workspace_premium</span> Best-Selling Products
+                        </h5>
                         <small class="text-muted">Ranked by total quantity units sold</small>
                     </div>
                     <span class="badge bg-success bg-opacity-10 text-success fw-bold">TOP 10</span>
@@ -414,7 +416,9 @@
             <div class="card border-0 bg-white shadow-sm h-100 overflow-hidden" style="border-radius: 20px;">
                 <div class="p-3 bg-light border-bottom d-flex justify-content-between align-items-center">
                     <div>
-                        <h5 class="fw-bold m-0" style="color: var(--brand-green);">💎 Most Profitable Products</h5>
+                        <h5 class="fw-bold m-0 d-flex align-items-center gap-2" style="color: var(--brand-green);">
+                            <span class="material-symbols-outlined" style="color: #D89A4E;">diamond</span> Most Profitable Products
+                        </h5>
                         <small class="text-muted">Ranked by net gross profit generated</small>
                     </div>
                     <span class="badge bg-warning bg-opacity-25 text-dark fw-bold">HIGH MARGIN</span>
@@ -443,7 +447,7 @@
                                     <td class="text-end fw-bold text-success">₹<%= Number(item.profit).toFixed(2) %></td>
                                     <td class="text-end">
                                         <span class="badge bg-success bg-opacity-15 text-success fw-bold">
-                                            <%= item.profitMarginPercent %>%
+                                             <%= item.profitMarginPercent %>%
                                         </span>
                                     </td>
                                 </tr>
@@ -464,7 +468,9 @@
     <div class="card border-0 bg-white shadow-sm mb-4 overflow-hidden" style="border-radius: 20px;">
         <div class="p-3 bg-light border-bottom d-flex justify-content-between align-items-center">
             <div>
-                <h5 class="fw-bold m-0 text-danger">⚠️ Stock-Outs & Critical Inventory Replenishment</h5>
+                <h5 class="fw-bold m-0 text-danger d-flex align-items-center gap-2">
+                    <span class="material-symbols-outlined text-danger">warning</span> Stock-Outs & Critical Inventory Replenishment
+                </h5>
                 <small class="text-muted">Products currently depleted that are preventing order conversions</small>
             </div>
             <span class="badge bg-danger"><%= analytics.stockOuts.count %> Items Depleted</span>
@@ -500,7 +506,7 @@
                     <% } else { %>
                         <tr>
                             <td colspan="6" class="text-center py-4 text-success fw-semibold">
-                                ✓ Excellent! No products are currently out of stock.
+                                <span class="material-symbols-outlined align-middle me-1">check_circle</span> Excellent! No products are currently out of stock.
                             </td>
                         </tr>
                     <% } %>

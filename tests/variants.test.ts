@@ -1,12 +1,16 @@
-import { describe, it, expect, beforeAll } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { productRepository } from '../src/repositories/product.repository.js';
 import db from '../src/database.js';
 
 describe('Product Variants & Inventory Integrity', () => {
-  beforeAll(() => {
+  const cleanup = () => {
     db.prepare("DELETE FROM product_variants WHERE name LIKE 'Organic Cashews%'").run();
     db.prepare("DELETE FROM products WHERE name = 'Organic Cashews'").run();
     db.prepare("DELETE FROM categories WHERE name = 'Test Category'").run();
+  };
+
+  beforeAll(() => {
+    cleanup();
 
     // Setup Category
     db.prepare("INSERT INTO categories (name) VALUES ('Test Category')").run();
@@ -85,5 +89,9 @@ describe('Product Variants & Inventory Integrity', () => {
     expect(margin2).toBe(180);
     expect(v1!.mrp).toBe(450);
     expect(v2!.mrp).toBe(850);
+  });
+
+  afterAll(() => {
+    cleanup();
   });
 });

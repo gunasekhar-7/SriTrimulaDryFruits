@@ -10,15 +10,21 @@ describe('Googlebot Smartphone Core URLs & Technical SEO QA Suite', () => {
   let product34: any;
 
   beforeAll(() => {
-    // Ensure product 34 exists in database
+    // Ensure product 34 exists in database with expected test values
     product34 = db.prepare('SELECT * FROM product_variants WHERE id = 34').get();
     if (!product34) {
       db.prepare(`
         INSERT OR IGNORE INTO product_variants (id, name, barcode, category, cost_price, selling_price, mrp, total_qty, sold_qty, active)
         VALUES (34, 'Almonds Premium', '1034', 'Dry Fruits', 700, 850, 999, 50, 0, 1)
       `).run();
-      product34 = db.prepare('SELECT * FROM product_variants WHERE id = 34').get();
+    } else {
+      db.prepare(`
+        UPDATE product_variants
+        SET name = 'Almonds Premium', category = 'Dry Fruits', cost_price = 700, selling_price = 850, mrp = 999, total_qty = 50, sold_qty = 0, active = 1
+        WHERE id = 34
+      `).run();
     }
+    product34 = db.prepare('SELECT * FROM product_variants WHERE id = 34').get();
   });
 
   // ──────────────────────────────────────────────────────────────────────────

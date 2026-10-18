@@ -1,23 +1,23 @@
-        </div><!-- end .page-content or .container / .public-main-home -->
-    </div><!-- end .main-content or public wrapper -->
-</div><!-- end .app-layout or public container -->
-
 <% if (session && session.user) { %>
-</div><!-- close public container if not auth -->
+        </div><!-- end .page-content -->
+    </div><!-- end .main-content -->
+</div><!-- end .app-layout -->
+<% } else { %>
+</div><!-- end public container (.public-main-home or .container.public-main) -->
 <% } %>
 
 <footer class="luxury-site-footer no-print">
     <div class="max-w-7xl px-3 mx-auto">
         <% if (!session || !session.user) { %>
-        <!-- Seasonal Harvest Gazette Newsletter Card (Stitch) -->
+        <!-- Newsletter & Offers Card -->
         <div class="newsletter-subscribe-card d-flex flex-col flex-md-row align-items-center justify-content-between gap-4">
             <div class="max-w-lg">
-                <span class="font-label-caps text-secondary uppercase tracking-widest d-block mb-1">Private Reserve Dispatch</span>
-                <h3 class="font-headline-md text-primary mb-1">Receive the Seasonal Harvest Gazette</h3>
-                <p class="font-body-sm text-muted mb-0">Exclusive invitations to limited seasonal orchards, artisanal pairing notes, and curated holiday gift suites.</p>
+                <span class="font-label-caps text-secondary uppercase tracking-widest d-block mb-1">Special Updates &amp; Offers</span>
+                <h3 class="font-headline-md text-primary mb-1">Get Fresh Offers &amp; Seasonal Updates</h3>
+                <p class="font-body-sm text-muted mb-0">Get news on fresh seasonal arrivals, healthy snack ideas, and special festive discounts.</p>
             </div>
-            <form class="d-flex flex-column flex-sm-row gap-2 w-100 w-md-auto" onsubmit="event.preventDefault(); alert('Thank you for subscribing to the Seasonal Harvest Gazette.');">
-                <input class="form-control nav-search-input" style="border-radius: 8px; min-width: 280px; height: 48px;" placeholder="Enter your correspondence email" type="email" required>
+            <form class="d-flex flex-column flex-sm-row gap-2 w-100 w-md-auto" onsubmit="event.preventDefault(); alert('Thank you for subscribing to our fresh updates.');">
+                <input class="form-control nav-search-input" style="border-radius: 8px; min-width: 280px; height: 48px;" placeholder="Enter your email address" type="email" required>
                 <button class="btn btn-brand px-4 fw-bold" style="border-radius: 8px; height: 48px; background: var(--primary-container); color: var(--surface);" type="submit">Subscribe</button>
             </form>
         </div>
@@ -34,19 +34,19 @@
                     <strong class="font-headline-sm text-primary fs-5">Sri Tirumala</strong>
                 </div>
                 <p class="font-body-sm text-muted mb-3 leading-relaxed" style="max-width: 380px;">
-                    Cultivating heirloom provenance since 1984. Purveyors of hand-graded California almonds, Kashmir gold saffron, and artisanal Middle Eastern dates selected for the discerning palate.
+                    Serving quality dry fruits since 1984. Bringing you hand-selected California almonds, pure Kashmir saffron, and natural Middle Eastern dates for your everyday health.
                 </p>
                 <div class="d-flex align-items-center gap-2 pt-1">
-                    <span class="badge bg-light text-dark border px-2 py-1 rounded-pill font-label-caps" style="font-size: 10px;">
-                        🛡️ FSSAI Certified
+                    <span class="badge bg-light text-dark border px-2 py-1 rounded-pill font-label-caps d-inline-flex align-items-center gap-1" style="font-size: 10px;">
+                        <span class="material-symbols-outlined" style="font-size: 13px; color: #B89528;">verified</span> FSSAI Certified
                     </span>
-                    <span class="badge bg-light text-dark border px-2 py-1 rounded-pill font-label-caps" style="font-size: 10px;">
-                        🌱 100% Organic Origin
+                    <span class="badge bg-light text-dark border px-2 py-1 rounded-pill font-label-caps d-inline-flex align-items-center gap-1" style="font-size: 10px;">
+                        <span class="material-symbols-outlined" style="font-size: 13px; color: #2D5A27;">eco</span> 100% Organic Origin
                     </span>
                 </div>
             </div>
 
-            <!-- Curated Collections -->
+            <!-- Collections -->
             <div class="col-6 col-lg-2">
                 <h6 class="footer-nav-heading">Collections</h6>
                 <ul class="footer-link-list">
@@ -68,23 +68,22 @@
                 </ul>
             </div>
 
-            <!-- Bespoke Services -->
+            <!-- Customer Services -->
             <div class="col-6 col-lg-2">
-                <h6 class="footer-nav-heading">Bespoke Services</h6>
+                <h6 class="footer-nav-heading">Customer Services</h6>
                 <ul class="footer-link-list">
-                    <li><a href="#festive-spotlight">Imperial Gift Hampers</a></li>
-                    <li><a href="https://wa.me/919133133931?text=Hello%20Sri%20Tirumala,%20I%20would%20like%20to%20enquire%20about%20Corporate%20Gifting." target="_blank">Corporate Gifting Concierge</a></li>
-                    <li><a href="/track">Cold-Chain Tracking</a></li>
+                    <li><a href="#festive-spotlight">Festive Gift Hampers</a></li>
+                    <li><a href="https://wa.me/918945244184?text=Hello%20Sri%20Tirumala,%20I%20would%20like%20to%20enquire%20about%20Corporate%20Gifting." target="_blank">Corporate &amp; Bulk Gifting</a></li>
+                    <li><a href="/track">Track Order</a></li>
                     <li><a href="/sitemap.xml" target="_blank">XML Sitemap</a></li>
                 </ul>
             </div>
 
-            <!-- Sanctuary & Contact -->
+            <!-- Store Location & Contact -->
             <div class="col-12 col-lg-3">
-                <h6 class="footer-nav-heading">Sanctuary &amp; Contact</h6>
+                <h6 class="footer-nav-heading">Store Location &amp; Contact</h6>
                 <div class="font-body-sm text-muted d-flex flex-column gap-1">
                     <p class="mb-1">Opposite RTC Complex, Tekkali, Srikakulam Dist, Andhra Pradesh – 532201</p>
-                    <p class="mb-1">Flagship: Heritage Enclave, Hyderabad, India</p>
                     <p class="mb-1"><a href="tel:+919133133931" class="text-decoration-none text-dark fw-bold">+91 91331 33931</a></p>
                     <small class="text-muted">Mon - Sat: 09:30 AM – 09:00 PM IST</small>
                 </div>
@@ -96,15 +95,24 @@
         <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2 font-label-md text-muted">
             <div>© 2026 Sri Tirumala Dryfruits &amp; Nuts. All Rights Reserved.</div>
             <div class="d-flex align-items-center gap-3">
-                <span>Terms of Heritage</span>
-                <span>Privacy Protocol</span>
-                <span>Shipping &amp; Cold-Transit</span>
+                <span>Terms of Service</span>
+                <span>Privacy Policy</span>
+                <span>Shipping &amp; Delivery Policy</span>
             </div>
         </div>
     </div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<% if (!session || !session.user) { %>
+<!-- GSAP & Lenis Smooth Scrollytelling Engine -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
+<script src="/cinematic-story.js?v=20261018-minimal"></script>
+<script src="/msflow-realms.js?v=20261018"></script>
+<% } %>
 
 <!-- Sidebar toggle script -->
 <% if (session && session.user) { %>

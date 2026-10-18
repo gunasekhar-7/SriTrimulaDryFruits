@@ -1,7 +1,7 @@
 <nav class="navbar navbar-expand-lg navbar-dark mb-4" style="background: linear-gradient(135deg, #063A22, #031c10); border-bottom: 2px solid #D4AF37;">
   <div class="container">
     <a class="navbar-brand d-flex align-items-center gap-2 text-decoration-none" href="/">
-      <span class="fs-4">🥥</span>
+      <span class="material-symbols-outlined" style="color: #D4AF37; font-size: 1.6rem;">spa</span>
       <div>
         <strong style="font-family: 'Playfair Display', serif; color: #D4AF37; font-size: 1.15rem; display: block; line-height: 1.2;">Sri Tirumala</strong>
         <span style="font-size: 0.62rem; letter-spacing: 0.15em; color: rgba(255,255,255,0.6); display: block;">Dryfruits & Millets</span>
@@ -13,18 +13,18 @@
     <div class="collapse navbar-collapse" id="accountNavbar">
       <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center gap-2">
         <li class="nav-item">
-          <a class="nav-link text-white fw-semibold" href="/">🏪 Store Home</a>
+          <a class="nav-link text-white fw-semibold d-flex align-items-center gap-1" href="/"><span class="material-symbols-outlined text-sm" style="font-size: 1rem; color: #D4AF37;">storefront</span> Store Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-white fw-semibold" href="/account">📦 My Account</a>
+          <a class="nav-link text-white fw-semibold d-flex align-items-center gap-1" href="/account"><span class="material-symbols-outlined text-sm" style="font-size: 1rem; color: #D4AF37;">person</span> My Account</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-white fw-semibold" href="/account/wishlist">❤️ Wishlist</a>
+          <a class="nav-link text-white fw-semibold d-flex align-items-center gap-1" href="/account/wishlist"><span class="material-symbols-outlined text-sm" style="font-size: 1rem; color: #D4AF37;">favorite</span> Wishlist</a>
         </li>
         <li class="nav-item">
           <form action="/customer/logout" method="POST" class="d-inline ms-lg-2">
             <input type="hidden" name="_csrf" value="<%= typeof csrfToken !== 'undefined' ? csrfToken : '' %>">
-            <button class="btn btn-sm btn-outline-warning" style="border-radius: 20px;">🚪 Logout</button>
+            <button class="btn btn-sm btn-outline-warning d-flex align-items-center gap-1" style="border-radius: 20px;"><span class="material-symbols-outlined text-sm" style="font-size: 1rem;">logout</span> Logout</button>
           </form>
         </li>
       </ul>

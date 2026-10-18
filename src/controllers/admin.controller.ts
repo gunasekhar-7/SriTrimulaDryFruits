@@ -39,7 +39,7 @@ export class AdminController {
           csrfToken: res.locals.csrfToken
         });
       } else {
-        return res.render('search', { error: '❌ Bill Number Not Found', csrfToken: res.locals.csrfToken });
+        return res.render('search', { error: 'Bill Number Not Found', csrfToken: res.locals.csrfToken });
       }
     }
     res.render('search', { error: null, csrfToken: res.locals.csrfToken });
@@ -63,9 +63,9 @@ export class AdminController {
 
       if (success && product) {
         logger.info(`Return: ${return_qty} x ${product.name} for Bill #${bill_id} by ${req.session.user}`);
-        req.flash('info', `✅ Returned ${return_qty} x ${product.name}`);
+        req.flash('info', `Returned ${return_qty} x ${product.name}`);
       } else {
-        req.flash('info', '❌ Invalid Return Quantity!');
+        req.flash('info', 'Invalid Return Quantity!');
       }
       res.redirect(`/search_bill?bill_id=${bill_id}`);
     } catch (e: any) {
@@ -129,7 +129,7 @@ export class AdminController {
     const new_profit = parseFloat(req.body.new_profit);
     if (!isNaN(bill_id) && !isNaN(new_profit)) {
       const success = billingService.updateProfitForBill(bill_id, new_profit);
-      if (success) req.flash('info', `✅ Profit updated for Bill #${bill_id}`);
+      if (success) req.flash('info', `Profit updated for Bill #${bill_id}`);
     }
     res.redirect('/profit');
   }
@@ -186,7 +186,7 @@ export class AdminController {
     const user_id = parseInt(req.body.user_id);
     const { username, password, role } = req.body;
     if (!username) {
-      req.flash('info', '❌ Username is required.');
+      req.flash('info', 'Username is required.');
       return res.redirect('/settings');
     }
     try {
@@ -194,9 +194,9 @@ export class AdminController {
       const source = auditService.extractSource(req, 'ADMIN_SETTINGS');
       userService.updateUser(user_id, username, password, role, actor, source);
       logger.info(`User updated: id=${user_id} by ${req.session.user}`);
-      req.flash('info', `✅ Details updated for user: ${username}`);
+      req.flash('info', `Details updated for user: ${username}`);
     } catch (e: any) {
-      req.flash('info', `❌ Error: ${e.message}`);
+      req.flash('info', `Error: ${e.message}`);
     }
     res.redirect('/settings');
   }

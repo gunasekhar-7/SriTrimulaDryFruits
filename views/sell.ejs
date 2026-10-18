@@ -1,451 +1,909 @@
 <%- include('header') %>
 
-<style>
-    /* =========================
-       POS BILLING DESK STYLING
-       ========================= */
-    .pos-billing-card {
-        border-radius: 20px;
-        background: #ffffff;
-        border: 1px solid #E1E6E3;
-        box-shadow: var(--card-shadow);
-        overflow: hidden;
-    }
+<div class="pos-terminal-wrapper">
+    <!-- ==============================================================================
+         1. TOP CASHIER HEADER & SHIFT STATUS BANNER (Stitch)
+         ============================================================================== -->
+    <div class="pos-shift-banner d-flex flex-wrap justify-content-between align-items-center gap-3">
+        <div class="d-flex flex-wrap align-items-center gap-2">
+            <!-- Shift Status Banner -->
+            <span class="pos-shift-status-pill">
+                <span class="status-indicator-dot" style="width: 8px; height: 8px; border-radius: 50%; background: #10B981; display: inline-block;"></span>
+                <span>Shift #<%= (locals.currentShift && currentShift.id) ? currentShift.id : '101' %> Open</span>
+                <span class="mx-1 opacity-50">•</span>
+                <span>Float: ₹<%= (locals.currentShift && currentShift.opening_cash) ? Number(currentShift.opening_cash).toLocaleString('en-IN') : '5,000' %></span>
+            </span>
 
-    .pos-header-accent {
-        border-bottom: 2px solid rgba(6, 58, 34, 0.05);
-        background-color: #FAF9F5;
-        padding: 16px 24px;
-    }
+            <!-- Active Cashier User Badge -->
+            <span class="pos-cashier-badge">
+                <span class="d-inline-flex align-items-center gap-1"><span class="material-symbols-outlined" style="font-size: 1.05rem;">person</span> Cashier: <strong><%= session.user %></strong></span>
+                <span class="badge bg-light text-dark border ms-1" style="font-size: 10px;"><%= session.role ? session.role.toUpperCase() : 'STAFF' %></span>
+            </span>
 
-    /* Autocomplete Dropdown styling */
-    .autocomplete-wrapper {
-        position: relative;
-    }
-    .autocomplete-results {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background: white;
-        border: 1px solid #ced4da;
-        border-top: none;
-        border-radius: 0 0 12px 12px;
-        box-shadow: 0 12px 28px rgba(6, 58, 34, 0.15);
-        max-height: 280px;
-        overflow-y: auto;
-        z-index: 1050;
-        display: none;
-    }
-    .autocomplete-item {
-        padding: 12px 18px;
-        cursor: pointer;
-        border-bottom: 1px solid #FAF9F5;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        transition: var(--transition);
-    }
-    .autocomplete-item:last-child {
-        border-bottom: none;
-        border-radius: 0 0 12px 12px;
-    }
-    .autocomplete-item:hover, .autocomplete-item.active {
-        background-color: var(--brand-green) !important;
-        color: white !important;
-    }
-    .autocomplete-item:hover .text-muted, .autocomplete-item.active .text-muted {
-        color: rgba(255,255,255,0.7) !important;
-    }
-    .autocomplete-item:hover strong, .autocomplete-item.active strong {
-        color: #ffffff !important;
-    }
-    .autocomplete-item:hover .text-success, .autocomplete-item.active .text-success {
-        color: var(--brand-gold) !important;
-    }
+            <!-- Station ID -->
+            <span class="d-none d-md-inline-flex align-items-center gap-1 text-muted small" style="font-size: 0.78rem;">
+                <span class="d-inline-flex align-items-center gap-1"><span class="material-symbols-outlined" style="font-size: 1rem;">desktop_windows</span> Counter Desk #1 (Tekkali Main)</span>
+            </span>
+        </div>
 
-    /* Table row tweaks */
-    .cart-table th {
-        background-color: var(--brand-green) !important;
-        color: white !important;
-        font-weight: 700;
-        font-size: 0.82rem;
-        letter-spacing: 0.05em;
-        text-transform: uppercase;
-        border: none;
-    }
+        <!-- Quick Header Operations -->
+        <div class="d-flex align-items-center gap-2">
+            <!-- Convert Online Order to POS Button -->
+            <button type="button" 
+                    class="btn btn-outline-success btn-sm fw-bold d-flex align-items-center gap-1 px-3 py-2 shadow-sm"
+                    style="border-radius: 8px; font-size: 0.8rem; background: #FFFFFF;"
+                    onclick="openPickupOrdersModal()"
+                    id="btnConvertOnlinePickup">
+                <span class="d-inline-flex align-items-center gap-1"><span class="material-symbols-outlined" style="font-size: 1.05rem;">inventory_2</span> Convert Online Order to POS</span>
+                <span class="badge bg-success rounded-pill ms-1" id="pickupBadge" style="display: none;">0</span>
+            </button>
 
-    .cart-table tbody tr {
-        transition: var(--transition);
-    }
+            <!-- Drawer Reconciliation Modal Trigger -->
+            <button type="button" 
+                    class="btn btn-outline-secondary btn-sm fw-bold d-flex align-items-center gap-1 px-3 py-2 shadow-sm"
+                    style="border-radius: 8px; font-size: 0.8rem; background: #FFFFFF;"
+                    onclick="openDrawerReconciliationModal()">
+                <span class="d-inline-flex align-items-center gap-1"><span class="material-symbols-outlined" style="font-size: 1.05rem;">point_of_sale</span> Drawer Reconcile</span>
+            </button>
 
-    .cart-table tbody tr:hover {
-        background-color: rgba(6, 58, 34, 0.02) !important;
-    }
+            <!-- Hotkeys Quick Guide Button -->
+            <button type="button" 
+                    class="btn btn-light btn-sm fw-bold border px-3 py-2 text-dark shadow-sm d-flex align-items-center gap-1"
+                    style="border-radius: 8px; font-size: 0.8rem;"
+                    onclick="openHotkeysModal()">
+                <span class="d-inline-flex align-items-center gap-1"><span class="material-symbols-outlined" style="font-size: 1.05rem;">keyboard</span> Hotkeys</span> <span class="shortcut-badge text-dark bg-secondary bg-opacity-25 ms-1">F1</span>
+            </button>
+        </div>
+    </div>
 
-    /* Checkout control panel sidebar */
-    .checkout-sidebar-card {
-        background: linear-gradient(135deg, var(--brand-green-dark), #01140a);
-        color: white;
-        border-radius: 20px;
-        padding: 30px 24px;
-        box-shadow: 0 15px 35px rgba(3, 33, 19, 0.25);
-        border: 1px solid rgba(212, 175, 55, 0.2);
-        position: sticky;
-        top: 24px;
-    }
+    <!-- Error Alert Display -->
+    <% if (typeof error !== 'undefined' && error) { %>
+    <div class="alert alert-danger shadow-sm border-0 d-flex align-items-center gap-2 mb-3" style="border-radius: 10px;">
+        <span class="material-symbols-outlined text-danger fs-5">warning</span>
+        <span class="fw-bold"><%= error %></span>
+    </div>
+    <% } %>
 
-    .checkout-sidebar-card::before {
-        content: '';
-        position: absolute;
-        top: 0; left: 0; right: 0;
-        height: 4px;
-        background: var(--brand-gold);
-        border-radius: 20px 20px 0 0;
-    }
-
-    .checkout-subtotal-header {
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        font-weight: 700;
-        font-size: 0.8rem;
-        color: rgba(255, 255, 255, 0.5);
-    }
-
-    .checkout-input-group {
-        background: rgba(255, 255, 255, 0.05);
-        border-radius: 12px;
-        padding: 16px;
-        border: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
-    .checkout-field {
-        background: rgba(255, 255, 255, 0.07) !important;
-        border: 1.5px solid rgba(255, 255, 255, 0.12) !important;
-        color: #ffffff !important;
-        font-weight: 600;
-    }
-
-    .checkout-field:focus {
-        border-color: var(--brand-gold) !important;
-        box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.15) !important;
-        background: rgba(255, 255, 255, 0.1) !important;
-    }
-
-    .checkout-field::placeholder {
-        color: rgba(255, 255, 255, 0.3);
-    }
-
-    /* Hotkey badge */
-    .shortcut-badge {
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 0.72rem;
-        background: rgba(255, 255, 255, 0.12);
-        color: rgba(255, 255, 255, 0.85);
-        padding: 2px 6px;
-        border-radius: 4px;
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        font-weight: 600;
-    }
-</style>
-
-<div class="row g-4">
-    
-    <!-- LEFT PANEL: SCANNING & CART LIST -->
-    <div class="col-lg-8">
+    <!-- ==============================================================================
+         2. MAIN WORKSTATION LAYOUT (Dual Column POS Terminal)
+         ============================================================================== -->
+    <div class="row g-3">
         
-        <div class="pos-billing-card mb-4">
-            <div class="pos-header-accent d-flex flex-wrap justify-content-between align-items-center gap-2">
-                <div class="d-flex align-items-center gap-2">
-                    <span class="fs-4">🛒</span>
-                    <h5 class="brand-font m-0 text-success" style="font-size: 1.25rem;">Billing & Sales Terminal</h5>
-                </div>
-                <span class="badge bg-success bg-opacity-10 text-success py-2 px-3 rounded-pill fw-bold" style="font-size: 0.82rem;">
-                    🟢 Active Cashier: <%= session.user %>
-                </span>
-            </div>
+        <!-- LEFT COLUMN: SCANNING DOCK, QUICK TILES & CART TABLE -->
+        <div class="col-lg-8 col-xl-8">
             
-            <div class="p-4">
-            <form method="post" action="/sell" id="billingForm">
-                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                    <div class="row g-3">
+            <!-- A. BARCODE SCANNING & SEARCH DOCK -->
+            <div class="pos-workstation-card">
+                <div class="pos-card-header">
+                    <h5 class="pos-card-title">
+                        <span class="d-inline-flex align-items-center gap-1"><span class="material-symbols-outlined" style="font-size: 1.15rem; color: #D89A4E;">barcode_scanner</span> Fast Scanner &amp; Product Lookup</span>
+                    </h5>
+                    <span class="text-muted small">Scanner Mode: <strong>Active Buffer</strong></span>
+                </div>
+                
+                <div class="pos-scanner-box">
+                    <form method="post" action="/sell" id="billingForm">
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                         
-                        <div class="col-md-3">
-                            <label class="form-label small fw-bold text-muted">Barcode (Scan)</label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-white border-end-0 border-success text-muted">🏷️</span>
-                                <input type="text" name="barcode" id="barcodeInput" class="form-control fw-bold border-success border-start-0" 
-                                       placeholder="Scan Barcode..." autofocus autocomplete="off" style="font-family: 'JetBrains Mono', monospace;">
+                        <div class="row g-2 align-items-end">
+                            <!-- 1. Barcode Field -->
+                            <div class="col-md-3">
+                                <label class="pos-input-group-label" for="barcodeInput">Barcode (Scanner Auto-Buffer)</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white border-end-0 border-success text-success fw-bold">|||</span>
+                                    <input type="text" 
+                                           name="barcode" 
+                                           id="barcodeInput" 
+                                           class="form-control pos-input-field pos-barcode-field border-start-0" 
+                                           placeholder="Scan barcode..." 
+                                           autofocus 
+                                           autocomplete="off">
+                                </div>
+                            </div>
+
+                            <!-- 2. Item Name & Autocomplete -->
+                            <div class="col-md-5 autocomplete-wrapper position-relative">
+                                <label class="pos-input-group-label" for="nameDisplay">Item Name / Auto-Search</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white border-end-0 text-muted">
+                                        <span class="material-symbols-outlined" style="font-size: 1.1rem;">search</span>
+                                    </span>
+                                    <input type="text" 
+                                           name="name" 
+                                           id="nameDisplay" 
+                                           class="form-control pos-input-field border-start-0" 
+                                           placeholder="Type item or SKU to search..." 
+                                           autocomplete="off">
+                                </div>
+                                <div id="autocompleteResults" class="autocomplete-results"></div>
+                            </div>
+
+                            <!-- 3. MRP Display -->
+                            <div class="col-6 col-md-2">
+                                <label class="pos-input-group-label">MRP (₹)</label>
+                                <input type="number" 
+                                       step="0.01" 
+                                       name="mrp" 
+                                       id="mrpDisplay" 
+                                       class="form-control pos-input-field bg-light text-muted" 
+                                       readonly 
+                                       tabindex="-1">
+                            </div>
+
+                            <!-- 4. Selling Rate -->
+                            <div class="col-6 col-md-2">
+                                <label class="pos-input-group-label text-success">Rate (₹)</label>
+                                <input type="number" 
+                                       step="0.01" 
+                                       name="price" 
+                                       id="priceDisplay" 
+                                       class="form-control pos-input-field text-success fw-bold" 
+                                       placeholder="0.00">
                             </div>
                         </div>
 
-                        <div class="col-md-5 autocomplete-wrapper">
-                            <label class="form-label small fw-bold text-muted">Item Name (Search)</label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-white border-end-0 border-success text-muted">🔍</span>
-                                <input type="text" name="name" id="nameDisplay" class="form-control fw-bold border-success border-start-0" 
-                                       placeholder="Type to auto-search items..." autocomplete="off">
+                        <!-- Secondary Row: Stock, Quantity Stepper, and Add Action -->
+                        <div class="row g-2 align-items-end mt-2">
+                            <!-- Stock Status -->
+                            <div class="col-4 col-md-3">
+                                <label class="pos-input-group-label">Available Stock</label>
+                                <input type="text" 
+                                       id="stockDisplay" 
+                                       class="form-control pos-input-field bg-light text-secondary small" 
+                                       readonly 
+                                       tabindex="-1"
+                                       placeholder="0.000">
                             </div>
-                            <div id="autocompleteResults" class="autocomplete-results"></div>
-                        </div>
 
-                        <div class="col-md-2">
-                            <label class="form-label small text-muted">MRP (₹)</label>
-                            <input type="number" step="0.01" name="mrp" id="mrpDisplay" class="form-control bg-light text-muted fw-bold" readonly tabindex="-1">
-                        </div>
+                            <!-- Quantity Stepper with Quick Presets -->
+                            <div class="col-8 col-md-4">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <label class="pos-input-group-label m-0" for="qtyInput">Quantity / Weight</label>
+                                    <div class="d-flex gap-1">
+                                        <span class="pos-preset-chip" onclick="setQtyPreset(0.250)">250g</span>
+                                        <span class="pos-preset-chip" onclick="setQtyPreset(0.500)">500g</span>
+                                        <span class="pos-preset-chip" onclick="setQtyPreset(1.000)">1kg</span>
+                                    </div>
+                                </div>
+                                <div class="input-group">
+                                    <button type="button" class="pos-stepper-btn" onclick="stepQuantity(-1)">−</button>
+                                    <input type="number" 
+                                           step="0.001" 
+                                           name="qty" 
+                                           id="qtyInput" 
+                                           class="form-control pos-input-field text-center fw-bold" 
+                                           value="1" 
+                                           min="0.001">
+                                    <button type="button" class="pos-stepper-btn" onclick="stepQuantity(1)">+</button>
+                                </div>
+                            </div>
 
-                        <div class="col-md-2">
-                            <label class="form-label small text-muted fw-bold text-success">Rate (₹)</label>
-                            <input type="number" step="0.01" name="price" id="priceDisplay" class="form-control bg-white fw-bold text-success">
+                            <!-- Add Button -->
+                            <div class="col-12 col-md-5">
+                                <button type="submit" 
+                                        class="btn btn-success w-100 fw-bold py-2 shadow-sm text-uppercase d-flex align-items-center justify-content-center gap-2" 
+                                        id="btnAddItem"
+                                        style="border-radius: 8px; height: 42px; background: #052E16; color: #FAF8F5; border-color: #052E16;">
+                                    <span>⬇️ Add Item to Bill</span>
+                                    <span class="shortcut-badge text-light bg-black bg-opacity-25">Enter</span>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- B. QUICK-TAP PRODUCT TILES (High Velocity Store Favorites) -->
+                <div class="pos-card-header" style="background: #F8FAFC; border-top: 1px solid #E2E8F0;">
+                    <div class="d-flex align-items-center justify-content-between w-100">
+                        <span class="pos-input-group-label m-0 text-dark d-inline-flex align-items-center gap-1">
+                            <span class="material-symbols-outlined text-warning" style="font-size: 1.1rem;">bolt</span> Quick-Tap Counter Tiles (One-Click Select)
+                        </span>
+                        <small class="text-muted" style="font-size: 0.72rem;">Click tile to populate buffer</small>
+                    </div>
+                </div>
+                <div class="pos-quick-tiles-grid" id="quickTilesContainer">
+                    <!-- Tile 1: California Almonds -->
+                    <div class="pos-quick-tile" onclick="quickSelectTile('Almonds Premium', '1001', 850, 999, 45)">
+                        <div class="pos-tile-name">Almonds Premium</div>
+                        <div class="d-flex justify-content-between align-items-baseline">
+                            <span class="pos-tile-price">₹850</span>
+                            <span class="pos-tile-stock">Stock: 45</span>
                         </div>
                     </div>
 
-                    <div class="row g-3 mt-1">
-                        <div class="col-md-3">
-                            <label class="form-label small text-muted">Available Stock</label>
-                            <input type="text" id="stockDisplay" class="form-control bg-light text-secondary fw-bold" readonly tabindex="-1">
+                    <!-- Tile 2: Cashews W210 -->
+                    <div class="pos-quick-tile" onclick="quickSelectTile('Cashews W210', '1002', 950, 1100, 38)">
+                        <div class="pos-tile-name">Cashews W210</div>
+                        <div class="d-flex justify-content-between align-items-baseline">
+                            <span class="pos-tile-price">₹950</span>
+                            <span class="pos-tile-stock">Stock: 38</span>
+                        </div>
+                    </div>
+
+                    <!-- Tile 3: Royal Mamra Almonds -->
+                    <div class="pos-quick-tile" onclick="quickSelectTile('Royal Mamra Almonds', '1034', 1450, 1700, 24)">
+                        <div class="pos-tile-name">Mamra Almonds</div>
+                        <div class="d-flex justify-content-between align-items-baseline">
+                            <span class="pos-tile-price">₹1,450</span>
+                            <span class="pos-tile-stock">Stock: 24</span>
+                        </div>
+                    </div>
+
+                    <!-- Tile 4: Kashmiri Mongra Saffron -->
+                    <div class="pos-quick-tile" onclick="quickSelectTile('Pure Kashmiri Mongra Saffron', '1010', 1199, 1350, 18)">
+                        <div class="pos-tile-name">Mongra Saffron</div>
+                        <div class="d-flex justify-content-between align-items-baseline">
+                            <span class="pos-tile-price">₹1,199</span>
+                            <span class="pos-tile-stock">Stock: 18</span>
+                        </div>
+                    </div>
+
+                    <!-- Tile 5: Medjool Royal Dates -->
+                    <div class="pos-quick-tile" onclick="quickSelectTile('Original Medjool Dates', '1006', 1650, 1890, 30)">
+                        <div class="pos-tile-name">Medjool Dates</div>
+                        <div class="d-flex justify-content-between align-items-baseline">
+                            <span class="pos-tile-price">₹1,650</span>
+                            <span class="pos-tile-stock">Stock: 30</span>
+                        </div>
+                    </div>
+
+                    <!-- Tile 6: Akhrot Walnuts -->
+                    <div class="pos-quick-tile" onclick="quickSelectTile('Walnuts Akhrot', '1005', 1050, 1250, 22)">
+                        <div class="pos-tile-name">Walnuts Akhrot</div>
+                        <div class="d-flex justify-content-between align-items-baseline">
+                            <span class="pos-tile-price">₹1,050</span>
+                            <span class="pos-tile-stock">Stock: 22</span>
+                        </div>
+                    </div>
+
+                    <!-- Tile 7: Roasted Pistachios -->
+                    <div class="pos-quick-tile" onclick="quickSelectTile('Pistachios Roasted', '1003', 1100, 1300, 28)">
+                        <div class="pos-tile-name">Salted Pistachios</div>
+                        <div class="d-flex justify-content-between align-items-baseline">
+                            <span class="pos-tile-price">₹1,100</span>
+                            <span class="pos-tile-stock">Stock: 28</span>
+                        </div>
+                    </div>
+
+                    <!-- Tile 8: Wholesome Millets -->
+                    <div class="pos-quick-tile" onclick="quickSelectTile('Organic Foxtail Millet', '1012', 180, 220, 50)">
+                        <div class="pos-tile-name">Foxtail Millet</div>
+                        <div class="d-flex justify-content-between align-items-baseline">
+                            <span class="pos-tile-price">₹180</span>
+                            <span class="pos-tile-stock">Stock: 50</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- C. ACTIVE POS REGISTER CART TABLE -->
+            <div class="pos-workstation-card">
+                <div class="pos-card-header d-flex justify-content-between align-items-center">
+                    <h5 class="pos-card-title">
+                        <span class="d-inline-flex align-items-center gap-1"><span class="material-symbols-outlined" style="font-size: 1.15rem; color: #D89A4E;">receipt_long</span> Active Bill Items (<%= cart ? cart.length : 0 %>)</span>
+                    </h5>
+                    <span class="badge bg-light text-dark border px-2 py-1" style="font-size: 0.75rem;">
+                        Subtotal: ₹<%= Number(total).toFixed(2) %>
+                    </span>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="pos-cart-table table align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th class="text-center" style="width: 45px;">#</th>
+                                <th>Item Description</th>
+                                <th style="width: 100px;">MRP</th>
+                                <th style="width: 110px;">Rate</th>
+                                <th class="text-center" style="width: 140px;">Quantity</th>
+                                <th class="text-end" style="width: 130px;">Line Total</th>
+                                <th class="text-center" style="width: 50px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (cart && cart.length > 0) { %>
+                                <% cart.forEach(function(item, index) { %>
+                                <tr>
+                                    <td class="text-center text-muted fw-bold"><%= index + 1 %></td>
+                                    <td>
+                                        <span class="fw-bold text-dark d-block" style="font-size: 0.95rem;"><%= item.name %></span>
+                                        <small class="text-muted font-monospace" style="font-size: 0.72rem;">Code: <%= item.barcode %></small>
+                                    </td>
+                                    <td class="text-muted">
+                                        <small><s>₹<%= Number(item.mrp || item.price || 0).toFixed(2) %></s></small>
+                                    </td>
+                                    <td class="fw-bold text-dark">₹<%= Number(item.price || 0).toFixed(2) %></td>
+                                    <td class="text-center">
+                                        <form action="/update_cart/<%= index %>" method="POST" class="d-inline-flex align-items-center justify-content-center gap-1">
+                                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                            <input type="number" 
+                                                   name="qty" 
+                                                   value="<%= item.qty %>" 
+                                                   step="0.001"
+                                                   class="form-control pos-input-field text-center p-1 fw-bold" 
+                                                   style="width: 80px; height: 34px; font-size: 0.88rem;"
+                                                   onchange="this.form.submit()">
+                                        </form>
+                                    </td>
+                                    <td class="text-end fw-bold text-success fs-6">
+                                        ₹<%= Number(item.total || 0).toFixed(2) %>
+                                    </td>
+                                    <td class="text-center">
+                                        <form action="/delete_item/<%= index %>" method="POST" style="display:inline;">
+                                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                            <button type="submit" 
+                                                    class="btn btn-sm btn-outline-danger border-0 rounded-circle py-1 px-2 d-inline-flex align-items-center justify-content-center" 
+                                                    title="Remove item" 
+                                                    onclick="return confirm('Remove <%= item.name %> from current bill?')">
+                                                <span class="material-symbols-outlined" style="font-size: 1.1rem; line-height: 1;">close</span>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                <% }); %>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+
+                <% if (!cart || cart.length === 0) { %>
+                    <div class="text-center py-5 px-3 bg-white">
+                        <span class="material-symbols-outlined fs-1 d-block mb-2 text-muted">shopping_cart</span>
+                        <h6 class="fw-bold text-dark mb-1">POS Register Cart is Empty</h6>
+                        <p class="text-muted small mb-0">Scan barcode, type an item name above, or tap any quick product tile to begin.</p>
+                    </div>
+                <% } %>
+            </div>
+
+            <!-- D. HELD / SUSPENDED BILLS SECTION -->
+            <% if (typeof held_bills !== 'undefined' && held_bills && held_bills.length > 0) { %>
+            <div class="pos-workstation-card">
+                <div class="pos-card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+                    <span class="fw-bold d-flex align-items-center gap-2">
+                        <span class="material-symbols-outlined" style="font-size: 1.15rem;">pause_circle</span>
+                        <span>Suspended Receipts On Hold</span>
+                    </span>
+                    <span class="badge bg-white text-dark rounded-pill px-2 py-1"><%= held_bills.length %></span>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <% held_bills.forEach(function(bill, index) { %>
+                    <li class="list-group-item d-flex justify-content-between align-items-center py-2 px-3">
+                        <div>
+                            <strong class="d-block text-dark">₹<%= Number(bill.total || 0).toFixed(2) %></strong>
+                            <small class="text-muted font-monospace d-flex align-items-center gap-1" style="font-size: 0.72rem;">
+                                <span class="material-symbols-outlined" style="font-size: 0.9rem;">schedule</span> Suspended at: <%= bill.time %>
+                            </small>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <form action="/resume_bill/<%= index %>" method="POST" style="display:inline;">
+                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                <button type="submit" class="btn btn-sm btn-primary py-1 px-3 fw-bold" style="border-radius: 6px; font-size: 0.78rem;">Resume</button>
+                            </form>
+                            <form action="/discard_held/<%= index %>" method="POST" style="display:inline;">
+                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                <button type="submit" class="btn btn-sm btn-outline-danger border-0 rounded-circle d-inline-flex align-items-center justify-content-center" onclick="return confirm('Discard this suspended receipt?')" title="Discard">
+                                    <span class="material-symbols-outlined" style="font-size: 1.1rem; line-height: 1;">close</span>
+                                </button>
+                            </form>
+                        </div>
+                    </li>
+                    <% }); %>
+                </ul>
+            </div>
+            <% } %>
+        </div>
+
+        <!-- RIGHT COLUMN: ERGONOMIC CHECKOUT DOCK -->
+        <div class="col-lg-4 col-xl-4">
+            <form method="POST" action="/finalize_bill" id="checkoutForm">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <input type="hidden" name="payment_method" id="selectedPaymentMethod" value="Cash">
+
+                <div class="pos-checkout-dock">
+                    <!-- 1. Gross Bill Amount Header -->
+                    <div class="pos-bill-gross-hero">
+                        <span class="pos-bill-gross-label">Gross Subtotal Amount</span>
+                        <h2 class="pos-bill-gross-amount" id="grossTotalDisplay">
+                            ₹<%= Number(total).toFixed(2) %>
+                        </h2>
+                    </div>
+
+                    <!-- 2. Customer Details Card -->
+                    <div class="checkout-input-group mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="fw-bold text-white small d-flex align-items-center gap-1" style="letter-spacing: 0.05em;">
+                                <span class="material-symbols-outlined" style="font-size: 1rem;">badge</span> CUSTOMER DETAILS
+                            </span>
+                            <small class="text-white-50" style="font-size: 0.72rem;">Optional for Walk-in</small>
                         </div>
 
-                        <div class="col-md-3">
-                            <label class="form-label small fw-bold text-muted">Quantity</label>
-                            <input type="number" step="0.001" name="qty" id="qtyInput" 
-                                   class="form-control fw-bold border-success" value="1">
+                        <div class="mb-2">
+                            <label class="form-label text-white-50 small m-0 mb-1" style="font-size: 0.72rem;">Customer Name</label>
+                            <input type="text" 
+                                   name="customer_name" 
+                                   id="customerNameInput" 
+                                   class="form-control form-control-sm checkout-field" 
+                                   placeholder="e.g. Ramesh Kumar"
+                                   value="<%= typeof customer_name !== 'undefined' ? customer_name : '' %>">
                         </div>
 
-                        <div class="col-md-6 d-flex align-items-end">
-                            <button type="submit" class="btn btn-success w-100 fw-bold py-3 text-uppercase" style="letter-spacing: 0.05em; border-radius: 12px;">
-                                ⬇️ Add Item to Bill (Enter)
+                        <div class="mb-2">
+                            <label class="form-label text-white-50 small m-0 mb-1" style="font-size: 0.72rem;">Phone Number (Digital Receipt &amp; Loyalty)</label>
+                            <input type="tel" 
+                                   name="customer_phone" 
+                                   id="customerPhoneInput" 
+                                   class="form-control form-control-sm checkout-field" 
+                                   placeholder="e.g. 9876543210" 
+                                   style="font-family: 'JetBrains Mono', monospace;"
+                                   value="<%= typeof customer_phone !== 'undefined' ? customer_phone : '' %>">
+                        </div>
+
+                        <div class="mb-0">
+                            <label class="form-label text-white-50 small m-0 mb-1" style="font-size: 0.72rem;">Manual Bill Discount (₹)</label>
+                            <input type="number" 
+                                   step="1" 
+                                   name="discount_amount" 
+                                   id="checkoutDiscount" 
+                                   class="form-control form-control-sm checkout-field text-warning fw-bold fs-6" 
+                                   placeholder="0" 
+                                   value="0" 
+                                   oninput="calculateNetTotal()">
+                        </div>
+                    </div>
+
+                    <!-- 3. Payment Mode Selector (Cash, Dynamic UPI QR, Card) -->
+                    <div class="mb-3">
+                        <label class="form-label text-white-50 small m-0 mb-1" style="font-size: 0.72rem; letter-spacing: 0.05em; text-transform: uppercase;">
+                            Select Payment Method
+                        </label>
+                        <div class="pos-payment-mode-grid">
+                            <div class="pos-payment-btn active" id="payModeCash" onclick="setPaymentMode('Cash')">
+                                <span class="material-symbols-outlined fs-5">payments</span>
+                                <span>Cash</span>
+                            </div>
+                            <div class="pos-payment-btn" id="payModeUPI" onclick="setPaymentMode('UPI')">
+                                <span class="material-symbols-outlined fs-5">qr_code_2</span>
+                                <span>UPI QR</span>
+                            </div>
+                            <div class="pos-payment-btn" id="payModeCard" onclick="setPaymentMode('Card')">
+                                <span class="material-symbols-outlined fs-5">credit_card</span>
+                                <span>Card</span>
+                            </div>
+                        </div>
+
+                        <!-- Dynamic UPI QR Display Box (Shows when UPI is active) -->
+                        <div id="dynamicUpiBox" style="display: none; background: #FFFFFF; color: #052E16; border-radius: 10px; padding: 12px; text-align: center; margin-bottom: 12px;">
+                            <span class="fw-bold d-block small mb-1">Scan &amp; Pay via PhonePe / GPay / Paytm</span>
+                            <div id="upiQrTarget" class="d-flex justify-content-center py-1">
+                                <img id="upiQrImage" src="" alt="Dynamic UPI QR" style="width: 140px; height: 140px; border: 1px solid #E2E8F0; border-radius: 6px;">
+                            </div>
+                            <small class="text-muted font-monospace d-block mt-1" style="font-size: 10px;">VPA: 9133133931@ybl • Sri Tirumala</small>
+                        </div>
+                    </div>
+
+                    <!-- 4. 5% GST Tax Breakdown Box -->
+                    <div class="pos-gst-box">
+                        <div class="pos-gst-row">
+                            <span>Taxable Base Value:</span>
+                            <span id="taxableBaseDisplay">₹0.00</span>
+                        </div>
+                        <div class="pos-gst-row">
+                            <span>CGST (2.5%):</span>
+                            <span id="cgstDisplay">₹0.00</span>
+                        </div>
+                        <div class="pos-gst-row">
+                            <span>SGST (2.5%):</span>
+                            <span id="sgstDisplay">₹0.00</span>
+                        </div>
+                        <div class="pos-gst-row strong border-top border-white border-opacity-10 pt-1 mt-1">
+                            <span>Total GST Included (5%):</span>
+                            <span id="totalGstDisplay">₹0.00</span>
+                        </div>
+                    </div>
+
+                    <!-- 5. Net Payable Display -->
+                    <div class="d-flex justify-content-between align-items-baseline mb-2 border-top border-secondary border-opacity-50 pt-2">
+                        <span class="text-white fw-bold fs-6">Net Payable:</span>
+                        <span class="text-warning display-6 fw-extrabold" id="netPayDisplay" style="font-weight: 800;">
+                            ₹<%= Number(total).toFixed(2) %>
+                        </span>
+                    </div>
+
+                    <!-- 6. English Currency in Words Callout -->
+                    <div class="pos-words-readout" id="posWordsReadout">
+                        RUPEES IN WORDS: ZERO RUPEES ONLY
+                    </div>
+
+                    <!-- 7. POS Action Buttons -->
+                    <div class="d-grid gap-2">
+                        <button type="submit" 
+                                id="btnCheckout" 
+                                class="btn btn-warning btn-lg fw-bold text-dark py-3 shadow-lg d-flex align-items-center justify-content-center gap-2" 
+                                style="border-radius: 10px; font-size: 1.05rem; letter-spacing: 0.04em;"
+                                <%= (!cart || cart.length === 0) ? 'disabled' : '' %>>
+                            <span class="d-inline-flex align-items-center gap-1"><span class="material-symbols-outlined" style="font-size: 1.25rem;">print</span> SETTLE &amp; PRINT RECEIPT</span>
+                            <span class="shortcut-badge text-dark bg-white bg-opacity-25">F2</span>
+                        </button>
+                        
+                        <div class="d-flex gap-2">
+                            <button type="submit" 
+                                    id="btnHold" 
+                                    formaction="/hold_bill" 
+                                    class="btn btn-secondary flex-grow-1 py-2 fw-semibold d-flex align-items-center justify-content-center gap-1" 
+                                    style="border-radius: 8px; font-size: 0.85rem;"
+                                    <%= (!cart || cart.length === 0) ? 'disabled' : '' %>>
+                                <span class="d-inline-flex align-items-center gap-1"><span class="material-symbols-outlined" style="font-size: 1rem;">pause_circle</span> Hold Bill</span>
+                                <span class="shortcut-badge">F3</span>
+                            </button>
+
+                            <button type="submit" 
+                                    id="btnClear" 
+                                    formaction="/clear_cart" 
+                                    class="btn btn-outline-danger flex-grow-1 py-2 fw-semibold d-flex align-items-center justify-content-center gap-1" 
+                                    onclick="return confirm('Clear entire active register bill?')" 
+                                    style="border-radius: 8px; font-size: 0.85rem;"
+                                    <%= (!cart || cart.length === 0) ? 'disabled' : '' %>>
+                                <span class="d-inline-flex align-items-center gap-1"><span class="material-symbols-outlined" style="font-size: 1rem;">delete_sweep</span> Clear</span>
+                                <span class="shortcut-badge text-white" style="background: rgba(220,53,69,0.3);">F4</span>
                             </button>
                         </div>
                     </div>
-                </form>
-            </div>
+
+                    <!-- 8. Keyboard Hotkeys Legend in Sidebar -->
+                    <div class="mt-3 pt-2 border-top border-white border-opacity-10 text-white-50" style="font-size: 0.75rem;">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>F1: Hotkeys &amp; Help</span>
+                            <span class="shortcut-badge">F1</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>F2: Finalize &amp; Print</span>
+                            <span class="shortcut-badge">F2</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>F3: Hold / Suspend Receipt</span>
+                            <span class="shortcut-badge">F3</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span>F4: Clear Register / Search</span>
+                            <span class="shortcut-badge">F4</span>
+                        </div>
+                    </div>
+                </div>
+            </form>
         </div>
-
-        <!-- CART TABLE -->
-        <div class="card p-0 shadow-sm border-0 overflow-hidden" style="border-radius: 20px;">
-            <div class="table-responsive">
-                <table class="table cart-table align-middle mb-0">
-                    <thead>
-                        <tr>
-                            <th class="ps-4 py-3 text-center" style="width: 60px;">#</th>
-                            <th class="py-3">Item Description</th>
-                            <th class="py-3">MRP</th>
-                            <th class="py-3">Rate</th>
-                            <th class="py-3 text-center" style="width: 120px;">Qty</th>
-                            <th class="py-3 text-end pe-4" style="width: 150px;">Total</th>
-                            <th class="py-3 text-center" style="width: 60px;"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% if (cart && cart.length > 0) { %>
-                            <% cart.forEach(function(item, index) { %>
-                            <tr>
-                                <td class="text-center text-muted fw-bold"><%= index + 1 %></td>
-                                <td>
-                                    <span class="fw-bold text-dark d-block" style="font-size: 1.05rem;"><%= item.name %></span>
-                                    <span class="text-muted small font-monospace">Product Code: <%= item.barcode %></span>
-                                </td>
-                                <td class="text-muted"><small><s>₹<%= Number(item.mrp || 0).toFixed(2) %></s></small></td>
-                                <td class="fw-bold text-dark">₹<%= Number(item.price || 0).toFixed(2) %></td>
-                                <td class="text-center">
-                                    <form action="/update_cart/<%= index %>" method="POST" style="display:inline-block; width: 100%;">
-                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                        <input type="number" name="qty" value="<%= item.qty %>" step="0.001"
-                                               class="form-control text-center p-2 border-success fw-bold mx-auto" 
-                                               style="max-width: 90px; border-radius: 8px;"
-                                               onchange="this.form.submit()">
-                                    </form>
-                                </td>
-                                <td class="text-end pe-4 fw-bold text-success fs-5">₹<%= Number(item.total || 0).toFixed(2) %></td>
-                                <td class="text-center">
-                                    <form action="/delete_item/<%= index %>" method="POST" style="display:inline;">
-                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                        <button type="submit" class="btn btn-sm btn-outline-danger border-0 rounded-circle py-1 px-2" title="Remove" onclick="return confirm('Remove this item?')">✕</button>
-                                    </form>
-                                </td>
-                            </tr>
-                            <% }); %>
-                        <% } %>
-                    </tbody>
-                </table>
-            </div>
-            <% if (!cart || cart.length === 0) { %>
-                <div class="text-center p-5 text-muted bg-white">
-                    <span class="fs-1 d-block mb-3">🧺</span>
-                    <h5 class="fw-bold text-dark">Cart is Empty</h5>
-                    <p class="mb-0 small text-muted">Scan a barcode or type an item name above to build this receipt.</p>
-                </div>
-            <% } %>
-        </div>
-    </div>
-
-    <!-- RIGHT PANEL: CHECKOUT SIDEBAR -->
-    <div class="col-lg-4">
-        <form method="POST" action="/finalize_bill" id="checkoutForm">
-            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-            <div class="checkout-sidebar-card">
-                <div class="text-center mb-4 border-bottom border-secondary border-opacity-25 pb-3">
-                    <span class="checkout-subtotal-header">Gross Bill Amount</span>
-                    <h2 class="display-5 fw-extrabold text-warning m-0 mt-1" style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800;">
-                        ₹<%= Number(total).toFixed(2) %>
-                    </h2>
-                </div>
-
-                <div class="checkout-input-group mb-4">
-                    <h6 class="text-warning fw-bold mb-3 d-flex align-items-center gap-2" style="font-size: 0.9rem;">
-                        <span>📋</span> Customer & Invoice details
-                    </h6>
-                    
-                    <div class="mb-3">
-                        <label class="form-label small text-white-50 m-0 mb-1" style="font-size: 0.75rem;">Customer Name</label>
-                        <input type="text" name="customer_name" class="form-control form-control-sm checkout-field" placeholder="e.g. Ramesh Kumar">
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label small text-white-50 m-0 mb-1" style="font-size: 0.75rem;">Phone Number</label>
-                        <input type="text" name="customer_phone" class="form-control form-control-sm checkout-field" placeholder="e.g. 9876543210" style="font-family: 'JetBrains Mono', monospace;">
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label small text-white-50 m-0 mb-1" style="font-size: 0.75rem;">Manual Discount (₹)</label>
-                        <input type="number" step="1" name="discount_amount" id="checkoutDiscount" class="form-control form-control-sm checkout-field text-warning fw-bold fs-6" placeholder="0" value="0" oninput="calculateNetTotal()">
-                    </div>
-
-                    <div class="mb-0">
-                        <label class="form-label small text-white-50 m-0 mb-1" style="font-size: 0.75rem;">Payment Method</label>
-                        <select name="payment_method" class="form-select form-select-sm checkout-field fw-bold">
-                            <option value="Cash">Cash</option>
-                            <option value="UPI">UPI</option>
-                            <option value="Card">Card</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="mb-4">
-                    <div class="d-flex justify-content-between align-items-center mb-1 text-white-50 small">
-                        <span>Distinct Items Count:</span>
-                        <span class="fw-bold text-white"><%= cart ? cart.length : 0 %> rows</span>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center fw-bold fs-4 border-top border-secondary border-opacity-50 pt-3 mt-2">
-                        <span class="text-white">Net Payable:</span>
-                        <span class="text-warning fs-3" id="netPayDisplay">₹<%= Number(total).toFixed(2) %></span>
-                    </div>
-                </div>
-                
-                <div class="d-grid gap-3">
-                    <% if (!cart || cart.length === 0) { %>
-                    <button type="submit" id="btnCheckout" class="btn btn-warning btn-lg fw-bold text-dark py-3 shadow-lg" disabled style="border-radius: 12px; letter-spacing: 0.05rem; font-size: 1.1rem;">
-                        ✅ PRINT INVOICE <span class="shortcut-badge text-dark bg-white bg-opacity-25 ms-1">F1</span>
-                    </button>
-                    <% } else { %>
-                    <button type="submit" id="btnCheckout" class="btn btn-warning btn-lg fw-bold text-dark py-3 shadow-lg" style="border-radius: 12px; letter-spacing: 0.05rem; font-size: 1.1rem;">
-                        ✅ PRINT INVOICE <span class="shortcut-badge text-dark bg-white bg-opacity-25 ms-1">F1</span>
-                    </button>
-                    <% } %>
-                    
-                    <div class="d-flex gap-2">
-                        <button type="submit" id="btnHold" formaction="/hold_bill" class="btn btn-secondary flex-grow-1 border-secondary border-opacity-50 py-2 fw-semibold" style="border-radius: 10px; font-size: 0.88rem;">
-                            ⏸️ Suspend <span class="shortcut-badge ms-1">F2</span>
-                        </button>
-                        <button type="submit" id="btnClear" formaction="/clear_cart" class="btn btn-outline-danger flex-grow-1 py-2 fw-semibold" onclick="return confirm('Clear entire list?')" style="border-radius: 10px; font-size: 0.88rem;">
-                            🗑️ Clear <span class="shortcut-badge text-white ms-1" style="background: rgba(220,53,69,0.2);">F4</span>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Short keys legend inside sidebar -->
-                <div class="mt-4 pt-3 border-top border-secondary border-opacity-25 text-start text-white-50" style="font-size: 0.82rem;">
-                    <div class="fw-bold text-warning mb-2" style="font-size: 0.75rem; letter-spacing: 0.05em; text-transform: uppercase;">⚡ SYSTEM HOTKEYS</div>
-                    <div class="d-flex justify-content-between align-items-center mb-1">
-                        <span>Finalize & Print Invoice</span>
-                        <span class="shortcut-badge">F1</span>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center mb-1">
-                        <span>Suspend / Hold Receipt</span>
-                        <span class="shortcut-badge">F2</span>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center mb-1">
-                        <span>Focus Item Search Input</span>
-                        <span class="shortcut-badge">F3</span>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <span>Clear Current Receipt</span>
-                        <span class="shortcut-badge">F4</span>
-                    </div>
-                </div>
-            </div>
-        </form>
-        
-        <% if (typeof error !== 'undefined' && error) { %>
-        <div class="alert alert-danger mt-3 shadow-sm fw-bold border-0" style="border-radius: 12px;">
-            ⚠️ <%= error %>
-        </div>
-        <% } %>
-
-        <!-- HELD INVOICES CONTAINER -->
-        <% if (typeof held_bills !== 'undefined' && held_bills && held_bills.length > 0) { %>
-        <div class="card mt-4 border-0 shadow-sm overflow-hidden" style="border-radius: 16px;">
-            <div class="card-header bg-secondary text-white fw-bold d-flex justify-content-between align-items-center py-3">
-                <span class="m-0">⏸️ Suspended Receipts</span>
-                <span class="badge bg-white text-dark rounded-pill px-3"><%= held_bills.length %></span>
-            </div>
-            <ul class="list-group list-group-flush">
-                <% held_bills.forEach(function(bill, index) { %>
-                <li class="list-group-item d-flex justify-content-between align-items-center py-3 px-3">
-                    <div>
-                        <span class="fw-bold d-block text-dark fs-6">₹<%= Number(bill.total || 0).toFixed(2) %></span>
-                        <small class="text-muted font-monospace d-block" style="font-size: 0.75rem;">🕒 Time: <%= bill.time %></small>
-                    </div>
-                    <div class="d-flex gap-1">
-                        <form action="/resume_bill/<%= index %>" method="POST" style="display:inline;">
-                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                            <button type="submit" class="btn btn-sm btn-primary py-1 px-3" style="border-radius: 8px; font-size: 0.8rem;">Resume</button>
-                        </form>
-                        <form action="/discard_held/<%= index %>" method="POST" style="display:inline;">
-                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                            <button type="submit" class="btn btn-sm btn-outline-danger border-0 rounded-circle" onclick="return confirm('Discard this bill?')" title="Discard">✕</button>
-                        </form>
-                    </div>
-                </li>
-                <% }); %>
-            </ul>
-        </div>
-        <% } %>
     </div>
 </div>
 
+<!-- ==============================================================================
+     3. CONVERT ONLINE ORDER TO POS MODAL
+     ============================================================================== -->
+<div class="modal fade" id="pickupOrdersModal" tabindex="-1" aria-labelledby="pickupModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
+            <div class="modal-header bg-success text-white py-3">
+                <h5 class="modal-title fw-bold d-flex align-items-center gap-2" id="pickupModalLabel">
+                    <span class="d-inline-flex align-items-center gap-1"><span class="material-symbols-outlined" style="font-size: 1.25rem;">inventory_2</span> Convert Online Pickup Order to POS Bill</span>
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4" style="background: #F8FAFC;">
+                <p class="text-muted small mb-3">
+                    Select any pending online pickup order to load all reserved items and customer details directly into the active cashier checkout dock.
+                </p>
+                <div id="pickupOrdersList" class="d-flex flex-column gap-2">
+                    <div class="text-center py-4 text-muted">
+                        <span class="spinner-border spinner-border-sm me-2"></span> Loading pending pickup orders...
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer bg-white border-top">
+                <button type="button" class="btn btn-secondary px-4 fw-bold" data-bs-dismiss="modal" style="border-radius: 8px;">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==============================================================================
+     4. SHIFT DRAWER RECONCILIATION MODAL
+     ============================================================================== -->
+<div class="modal fade" id="drawerReconciliationModal" tabindex="-1" aria-labelledby="drawerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
+            <div class="modal-header bg-dark text-white py-3">
+                <h5 class="modal-title fw-bold d-flex align-items-center gap-2" id="drawerModalLabel">
+                    <span class="d-inline-flex align-items-center gap-1"><span class="material-symbols-outlined" style="font-size: 1.25rem;">point_of_sale</span> Shift Drawer Reconciliation</span>
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="mb-3 p-3 bg-light rounded border">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Opening Float:</span>
+                        <strong class="text-dark">₹<%= (locals.currentShift && currentShift.opening_cash) ? Number(currentShift.opening_cash).toLocaleString('en-IN') : '5,000' %></strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Cash Register Sales:</span>
+                        <strong class="text-success" id="reconCashSalesDisplay">₹0.00</strong>
+                    </div>
+                    <div class="d-flex justify-content-between border-top pt-2">
+                        <span class="fw-bold text-dark">Expected In-Drawer Cash:</span>
+                        <strong class="fw-bold text-primary fs-5" id="reconExpectedCashDisplay">
+                            ₹<%= (locals.currentShift && currentShift.opening_cash) ? Number(currentShift.opening_cash).toLocaleString('en-IN') : '5,000' %>
+                        </strong>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label small fw-bold text-muted">Counted Physical Cash in Drawer (₹)</label>
+                    <input type="number" 
+                           step="1" 
+                           id="reconActualCashInput" 
+                           class="form-control form-control-lg fw-bold border-success text-center" 
+                           placeholder="Enter counted cash..." 
+                           oninput="computeReconciliationVariance()">
+                </div>
+
+                <div id="reconVarianceBox" class="alert alert-info py-2 small mb-0 text-center" style="display: none;">
+                    Variance: <strong id="reconVarianceText">₹0.00</strong>
+                </div>
+            </div>
+            <div class="modal-footer bg-light border-top">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <a href="/shift/close" class="btn btn-danger fw-bold px-4" id="btnProceedCloseShift">
+                    Proceed to Formal Register Close &rarr;
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==============================================================================
+     5. HOTKEYS CHEAT SHEET MODAL (F1)
+     ============================================================================== -->
+<div class="modal fade" id="hotkeysModal" tabindex="-1" aria-labelledby="hotkeysModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
+            <div class="modal-header bg-primary text-white py-3" style="background: #052E16 !important;">
+                <h5 class="modal-title fw-bold d-flex align-items-center gap-2" id="hotkeysModalLabel">
+                    <span class="d-inline-flex align-items-center gap-1"><span class="material-symbols-outlined" style="font-size: 1.25rem;">keyboard</span> POS Keyboard Shortcuts (8-Hour Ergonomics)</span>
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <table class="table table-bordered align-middle mb-0" style="font-size: 0.88rem;">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 120px;">Shortcut</th>
+                            <th>Functionality</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="badge bg-dark font-monospace px-2 py-1">F1</span></td>
+                            <td>Show this Hotkeys &amp; Help Cheat Sheet</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge bg-dark font-monospace px-2 py-1">F2</span></td>
+                            <td>Finalize &amp; Settle Current Bill (Print Receipt)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge bg-dark font-monospace px-2 py-1">F3</span></td>
+                            <td>Hold / Suspend Active Bill</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge bg-dark font-monospace px-2 py-1">F4</span></td>
+                            <td>Search Invoices / Clear Cart</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge bg-dark font-monospace px-2 py-1">Enter</span></td>
+                            <td>Scan barcode, select item, or add to active receipt</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge bg-dark font-monospace px-2 py-1">Esc</span></td>
+                            <td>Dismiss autocomplete, close modals</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer bg-light border-top">
+                <button type="button" class="btn btn-secondary px-4 fw-bold" data-bs-dismiss="modal" style="border-radius: 8px;">Got It</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==============================================================================
+     6. CLIENT-SIDE POS CONTROLLER ENGINE
+     ============================================================================== -->
 <script>
     const subtotalValue = Number("<%= total %>") || 0;
+    let productsList = [];
+    let activeIndex = -1;
+    const nameInput = document.getElementById('nameDisplay');
+    const resultsContainer = document.getElementById('autocompleteResults');
 
+    // 1. Convert Number to English Words
+    function numToWords(n) {
+        const a = ['','One ','Two ','Three ','Four ', 'Five ','Six ','Seven ','Eight ','Nine ','Ten ','Eleven ','Twelve ','Thirteen ','Fourteen ','Fifteen ','Sixteen ','Seventeen ','Eighteen ','Nineteen '];
+        const b = ['', '', 'Twenty','Thirty','Forty','Fifty', 'Sixty','Seventy','Eighty','Ninety'];
+        if ((n = n.toString()).length > 9) return 'overflow';
+        const match = ('000000000' + n).slice(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
+        if (!match) return ''; 
+        let str = '';
+        str += (match[1] !== '00') ? (a[Number(match[1])] || b[match[1][0]] + ' ' + a[match[1][1]]) + 'Crore ' : '';
+        str += (match[2] !== '00') ? (a[Number(match[2])] || b[match[2][0]] + ' ' + a[match[2][1]]) + 'Lakh ' : '';
+        str += (match[3] !== '00') ? (a[Number(match[3])] || b[match[3][0]] + ' ' + a[match[3][1]]) + 'Thousand ' : '';
+        str += (match[4] !== '0') ? (a[Number(match[4])] || b[match[4][0]] + ' ' + a[match[4][1]]) + 'Hundred ' : '';
+        str += (match[5] !== '00') ? ((str !== '') ? 'and ' : '') + (a[Number(match[5])] || b[match[5][0]] + ' ' + a[match[5][1]]) + 'Only' : '';
+        return str.trim();
+    }
+
+    // 2. Real-time Net Payable, 5% GST Breakdown & Currency Words Calculation
     function calculateNetTotal() {
         const discountInput = document.getElementById('checkoutDiscount');
         const netPayDisplay = document.getElementById('netPayDisplay');
+        const posWordsReadout = document.getElementById('posWordsReadout');
+
         let discount = parseFloat(discountInput.value) || 0;
         if (discount < 0) {
             discount = 0;
             discountInput.value = 0;
         }
+
         const netTotal = Math.max(0, subtotalValue - discount);
-        netPayDisplay.innerText = '₹' + netTotal.toFixed(2);
+        if (netPayDisplay) netPayDisplay.innerText = '₹' + netTotal.toFixed(2);
+
+        // 5% GST Breakdown: Inclusive (Net = Base * 1.05)
+        const taxableBase = netTotal / 1.05;
+        const totalGst = netTotal - taxableBase;
+        const halfGst = totalGst / 2;
+
+        const baseEl = document.getElementById('taxableBaseDisplay');
+        const cgstEl = document.getElementById('cgstDisplay');
+        const sgstEl = document.getElementById('sgstDisplay');
+        const totalGstEl = document.getElementById('totalGstDisplay');
+
+        if (baseEl) baseEl.innerText = '₹' + taxableBase.toFixed(2);
+        if (cgstEl) cgstEl.innerText = '₹' + halfGst.toFixed(2);
+        if (sgstEl) sgstEl.innerText = '₹' + halfGst.toFixed(2);
+        if (totalGstEl) totalGstEl.innerText = '₹' + totalGst.toFixed(2);
+
+        // Words readout
+        if (posWordsReadout) {
+            const intVal = Math.floor(netTotal);
+            posWordsReadout.innerText = 'RUPEES IN WORDS: ' + (intVal > 0 ? (numToWords(intVal) + ' RUPEES ONLY') : 'ZERO RUPEES ONLY');
+        }
+
+        // Update Dynamic UPI QR code if visible
+        updateDynamicUpiQr(netTotal);
     }
 
-    // --- autocomplete search engine ---
-    let productsList = [];
-    const nameInput = document.getElementById('nameDisplay');
-    const resultsContainer = document.getElementById('autocompleteResults');
-    let activeIndex = -1;
+    // 3. Payment Mode Switcher (Cash, Dynamic UPI QR, Card)
+    window.setPaymentMode = function(mode) {
+        document.getElementById('selectedPaymentMethod').value = mode;
+        ['Cash', 'UPI', 'Card'].forEach(m => {
+            const btn = document.getElementById('payMode' + m);
+            if (btn) {
+                if (m === mode) btn.classList.add('active');
+                else btn.classList.remove('active');
+            }
+        });
 
-    // Load products list on startup
+        const upiBox = document.getElementById('dynamicUpiBox');
+        if (upiBox) {
+            if (mode === 'UPI') {
+                upiBox.style.display = 'block';
+                const discount = parseFloat(document.getElementById('checkoutDiscount').value) || 0;
+                const netTotal = Math.max(0, subtotalValue - discount);
+                updateDynamicUpiQr(netTotal);
+            } else {
+                upiBox.style.display = 'none';
+            }
+        }
+    };
+
+    function updateDynamicUpiQr(amount) {
+        const qrImg = document.getElementById('upiQrImage');
+        if (!qrImg) return;
+        const vpa = '9133133931@ybl';
+        const name = encodeURIComponent('Sri Tirumala Dry Fruits');
+        const upiUrl = `upi://pay?pa=${vpa}&pn=${name}&am=${amount.toFixed(2)}&cu=INR`;
+        qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${encodeURIComponent(upiUrl)}`;
+    }
+
+    // 4. Quantity Stepper & Presets
+    window.stepQuantity = function(delta) {
+        const qtyField = document.getElementById('qtyInput');
+        if (!qtyField) return;
+        let current = parseFloat(qtyField.value) || 1;
+        current = Math.max(0.001, current + delta);
+        qtyField.value = current;
+    };
+
+    window.setQtyPreset = function(preset) {
+        const qtyField = document.getElementById('qtyInput');
+        if (qtyField) qtyField.value = preset;
+    };
+
+    // 5. Quick-Tap Tile Handler
+    window.quickSelectTile = function(name, barcode, price, mrp, stock) {
+        document.getElementById('barcodeInput').value = barcode;
+        document.getElementById('nameDisplay').value = name;
+        document.getElementById('priceDisplay').value = Number(price).toFixed(2);
+        document.getElementById('mrpDisplay').value = Number(mrp).toFixed(2);
+        document.getElementById('stockDisplay').value = Number(stock).toFixed(3);
+
+        const qtyField = document.getElementById('qtyInput');
+        if (qtyField) {
+            qtyField.value = "1";
+            qtyField.focus();
+            qtyField.select();
+        }
+    };
+
+    // 6. Sub-millisecond Local In-Memory Cache Product Lookup
     fetch('/api/v1/products')
         .then(res => res.json())
         .then(resData => {
-            productsList = resData.data.products;
+            if (resData.success && resData.data && resData.data.products) {
+                productsList = resData.data.products;
+            } else if (Array.isArray(resData)) {
+                productsList = resData;
+            }
         })
-        .catch(err => console.error('Failed to load products list:', err));
+        .catch(err => console.warn('Local cache product preload:', err));
 
+    function selectProduct(p) {
+        document.getElementById('barcodeInput').value = p.barcode;
+        nameInput.value = p.name;
+        document.getElementById('mrpDisplay').value = (p.mrp || p.selling_price || 0).toFixed(2);
+        document.getElementById('priceDisplay').value = (p.selling_price || 0).toFixed(2);
+        document.getElementById('stockDisplay').value = (p.available || 0).toFixed(3);
+        if (resultsContainer) resultsContainer.style.display = 'none';
+
+        const qtyField = document.getElementById('qtyInput');
+        qtyField.value = "1";
+        qtyField.focus();
+        qtyField.select();
+    }
+
+    function fetchProductData() {
+        const barcode = (document.getElementById('barcodeInput').value || '').trim();
+        if (!barcode) return;
+
+        // 1. Sub-millisecond local in-memory cache lookup
+        const cached = productsList.find(p => p.barcode === barcode);
+        if (cached) {
+            selectProduct(cached);
+            return;
+        }
+
+        // 2. Fallback to API
+        fetch(`/api/v1/products/${barcode}`)
+            .then(res => res.json())
+            .then(resData => {
+                if (resData.success && resData.data && resData.data.product) {
+                    selectProduct(resData.data.product);
+                } else {
+                    alert('Product Barcode not found: ' + barcode);
+                    document.getElementById('barcodeInput').value = '';
+                }
+            })
+            .catch(err => console.error('Product lookup error:', err));
+    }
+
+    // Barcode Scanner Enter Key Listener
+    document.getElementById('barcodeInput').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            fetchProductData();
+        }
+    });
+
+    // 7. Autocomplete Item Search
     nameInput.addEventListener('input', function() {
-        const query = this.value.toUpperCase();
+        const query = this.value.toUpperCase().trim();
+        if (!resultsContainer) return;
         resultsContainer.innerHTML = '';
         activeIndex = -1;
 
@@ -455,7 +913,7 @@
         }
 
         const matches = productsList.filter(p => 
-            p.name.toUpperCase().includes(query) || p.barcode.includes(query)
+            p.name.toUpperCase().includes(query) || (p.barcode && p.barcode.includes(query))
         );
 
         if (matches.length === 0) {
@@ -463,23 +921,21 @@
             return;
         }
 
-        matches.forEach((p, idx) => {
+        matches.slice(0, 10).forEach((p, idx) => {
             const item = document.createElement('div');
             item.className = 'autocomplete-item';
             item.dataset.index = idx;
             item.innerHTML = `
                 <div>
                     <strong class="d-block text-dark">${p.name}</strong>
-                    <span class="text-muted small font-monospace">${p.barcode} | Stock: ${p.available.toFixed(3)}</span>
+                    <span class="text-muted small font-monospace">${p.barcode} | Stock: ${(p.available || 0).toFixed(3)}</span>
                 </div>
                 <div class="text-end">
-                    <strong class="text-success d-block">₹${p.selling_price.toFixed(2)}</strong>
-                    <span class="text-muted text-decoration-line-through small">₹${p.mrp.toFixed(2)}</span>
+                    <strong class="text-success d-block">₹${(p.selling_price || 0).toFixed(2)}</strong>
+                    <span class="text-muted text-decoration-line-through small">₹${(p.mrp || 0).toFixed(2)}</span>
                 </div>
             `;
-            item.addEventListener('click', () => {
-                selectProduct(p);
-            });
+            item.addEventListener('click', () => selectProduct(p));
             resultsContainer.appendChild(item);
         });
 
@@ -492,13 +948,11 @@
 
         if (e.key === 'ArrowDown') {
             e.preventDefault();
-            activeIndex++;
-            if (activeIndex >= items.length) activeIndex = 0;
+            activeIndex = (activeIndex + 1) % items.length;
             updateSelection(items);
         } else if (e.key === 'ArrowUp') {
             e.preventDefault();
-            activeIndex--;
-            if (activeIndex < 0) activeIndex = items.length - 1;
+            activeIndex = (activeIndex - 1 + items.length) % items.length;
             updateSelection(items);
         } else if (e.key === 'Enter') {
             if (activeIndex > -1) {
@@ -510,142 +964,201 @@
         }
     });
 
-    // Close autocomplete when clicking outside
-    document.addEventListener('click', function(e) {
-        if (!e.target.closest('.autocomplete-wrapper')) {
-            resultsContainer.style.display = 'none';
-        }
-    });
-
     function updateSelection(items) {
-        for (let i = 0; i < items.length; i++) {
-            items[i].classList.remove('active');
-        }
+        for (let i = 0; i < items.length; i++) items[i].classList.remove('active');
         if (activeIndex > -1) {
             items[activeIndex].classList.add('active');
             items[activeIndex].scrollIntoView({ block: 'nearest' });
         }
     }
 
-    function selectProduct(p) {
-        document.getElementById('barcodeInput').value = p.barcode;
-        nameInput.value = p.name;
-        document.getElementById('mrpDisplay').value = p.mrp.toFixed(2);
-        document.getElementById('priceDisplay').value = p.selling_price.toFixed(2);
-        document.getElementById('stockDisplay').value = p.available.toFixed(3);
-        resultsContainer.style.display = 'none';
-        
-        // Focus quantity input
-        const qtyField = document.getElementById('qtyInput');
-        qtyField.value = "1";
-        qtyField.focus();
-        qtyField.select();
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.autocomplete-wrapper')) {
+            if (resultsContainer) resultsContainer.style.display = 'none';
+        }
+    });
+
+    // 8. Modals: Convert Online Order to POS
+    window.openPickupOrdersModal = function() {
+        const modal = new bootstrap.Modal(document.getElementById('pickupOrdersModal'));
+        modal.show();
+        loadPendingPickupOrders();
+    };
+
+    function loadPendingPickupOrders() {
+        const listEl = document.getElementById('pickupOrdersList');
+        fetch('/api/v1/pos/pending-pickups')
+            .then(res => res.json())
+            .then(data => {
+                if (data.success && data.orders && data.orders.length > 0) {
+                    listEl.innerHTML = '';
+                    // Update badge
+                    const badge = document.getElementById('pickupBadge');
+                    if (badge) {
+                        badge.innerText = data.orders.length;
+                        badge.style.display = 'inline-block';
+                    }
+
+                    data.orders.forEach(order => {
+                        const itemCard = document.createElement('div');
+                        itemCard.className = 'card p-3 border shadow-sm bg-white';
+                        itemCard.style.borderRadius = '10px';
+                        itemCard.innerHTML = `
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div>
+                                    <strong class="d-block text-dark fs-6">${order.order_number}</strong>
+                                    <span class="text-muted small">Customer: <strong>${order.customer_name || 'Walkin'}</strong> (${order.customer_phone || 'No phone'})</span>
+                                </div>
+                                <div class="text-end">
+                                    <span class="badge bg-warning text-dark mb-1 d-block">${order.status}</span>
+                                    <strong class="text-success fs-5">₹${Number(order.total_amount).toFixed(2)}</strong>
+                                </div>
+                            </div>
+                            <div class="text-muted small mb-3">
+                                Items: ${order.items ? order.items.map(i => i.product_name + ' × ' + i.quantity).join(', ') : (order.itemsCount + ' items')}
+                            </div>
+                            <form action="/pos/load-order/${order.id}" method="POST">
+                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                <button type="submit" class="btn btn-success btn-sm w-100 fw-bold py-2 d-inline-flex align-items-center justify-content-center gap-1" style="border-radius: 8px;">
+                                    <span class="material-symbols-outlined" style="font-size: 1.05rem;">download</span> Load into POS Cart &amp; Convert
+                                </button>
+                            </form>
+                        `;
+                        listEl.appendChild(itemCard);
+                    });
+                } else {
+                    listEl.innerHTML = `
+                        <div class="text-center py-4 text-muted bg-white rounded border">
+                            <span class="material-symbols-outlined fs-2 d-block mb-1 text-success">check_circle</span>
+                            <strong>No Pending Pickup Orders</strong>
+                            <p class="small mb-0 mt-1">All online store pickup requests have been processed.</p>
+                        </div>
+                    `;
+                }
+            })
+            .catch(err => {
+                listEl.innerHTML = `<div class="alert alert-danger mb-0">Failed to load pickup orders: ${err.message}</div>`;
+            });
     }
 
-    // --- 1. KEYBOARD SHORTCUTS ---
-    document.addEventListener('keydown', function(event) {
-        
-        // F1: SUBMIT CHECKOUT FORM
-        if (event.key === "F1") {
-            event.preventDefault();
+    // Check pickup orders count on load
+    fetch('/api/v1/pos/pending-pickups')
+        .then(res => res.json())
+        .then(data => {
+            if (data.success && data.orders && data.orders.length > 0) {
+                const badge = document.getElementById('pickupBadge');
+                if (badge) {
+                    badge.innerText = data.orders.length;
+                    badge.style.display = 'inline-block';
+                }
+            }
+        })
+        .catch(() => {});
+
+    // 9. Modals: Drawer Reconciliation
+    window.openDrawerReconciliationModal = function() {
+        const modal = new bootstrap.Modal(document.getElementById('drawerReconciliationModal'));
+        modal.show();
+    };
+
+    window.computeReconciliationVariance = function() {
+        const input = document.getElementById('reconActualCashInput');
+        const box = document.getElementById('reconVarianceBox');
+        const text = document.getElementById('reconVarianceText');
+        const expected = <%= (locals.currentShift && currentShift.opening_cash) ? Number(currentShift.opening_cash) : 5000 %>;
+
+        const actual = parseFloat(input.value);
+        if (isNaN(actual)) {
+            box.style.display = 'none';
+            return;
+        }
+
+        const variance = actual - expected;
+        box.style.display = 'block';
+        if (variance === 0) {
+            box.className = 'alert alert-success py-2 small mb-0 text-center fw-bold';
+            text.innerText = '₹0.00 (Balanced)';
+        } else if (variance > 0) {
+            box.className = 'alert alert-warning py-2 small mb-0 text-center fw-bold';
+            text.innerText = '+₹' + variance.toFixed(2) + ' (Cash Overage)';
+        } else {
+            box.className = 'alert alert-danger py-2 small mb-0 text-center fw-bold';
+            text.innerText = '-₹' + Math.abs(variance).toFixed(2) + ' (Cash Shortage)';
+        }
+    };
+
+    // 10. Modals: Hotkeys Guide (F1)
+    window.openHotkeysModal = function() {
+        const modal = new bootstrap.Modal(document.getElementById('hotkeysModal'));
+        modal.show();
+    };
+
+    // 11. Rapid Keyboard Shortcuts Engine
+    document.addEventListener('keydown', function(e) {
+        // F1: Help / Hotkeys Cheat Sheet
+        if (e.key === 'F1') {
+            e.preventDefault();
+            openHotkeysModal();
+            return;
+        }
+
+        // F2: Settle Bill & Finalize
+        if (e.key === 'F2') {
+            e.preventDefault();
             const btn = document.getElementById('btnCheckout');
             if (btn && !btn.disabled) {
                 document.getElementById('checkoutForm').submit();
             }
-        }
-
-        // F2: HOLD BILL
-        if (event.key === "F2") {
-            event.preventDefault();
-            const btn = document.getElementById('btnHold');
-            if (btn) btn.click();
-        }
-
-        // F3: FOCUS AUTOCOMPLETE SEARCH INPUT
-        if (event.key === "F3") {
-            event.preventDefault();
-            nameInput.focus();
-            nameInput.select();
-        }
-
-        // F4: CLEAR CART
-        if (event.key === "F4") {
-            event.preventDefault();
-            const btn = document.getElementById('btnClear');
-            if (btn) btn.click();
-        }
-    });
-
-    // --- 2. BARCODE SCAN LOGIC (Existing) ---
-    document.getElementById('barcodeInput').addEventListener('keydown', function(event) {
-        if (event.key === "Enter") {
-            event.preventDefault(); 
-            fetchProductData();
-        }
-    });
-
-    function fetchProductData() {
-        const barcode = document.getElementById('barcodeInput').value;
-        if (!barcode) return;
-
-        // Try searching in local cache first for sub-millisecond response
-        const cached = productsList.find(p => p.barcode === barcode);
-        if (cached) {
-            selectProduct(cached);
             return;
         }
 
-        // Fallback to server fetch
-        fetch(`/api/v1/products/${barcode}`)
-            .then(response => response.json())
-            .then(resData => {
-                if (resData.success && resData.data.product) {
-                    const data = resData.data.product;
-                    document.getElementById('nameDisplay').value = data.name || '';
-                    document.getElementById('mrpDisplay').value = (data.mrp || 0).toFixed(2);
-                    document.getElementById('priceDisplay').value = (data.selling_price || 0).toFixed(2);
-                    document.getElementById('stockDisplay').value = (data.available || 0).toFixed(3);
-                    
-                    document.getElementById('qtyInput').value = "1";
-                    
-                    const qtyField = document.getElementById('qtyInput');
-                    qtyField.focus();
-                    qtyField.select(); 
-                } else {
-                    alert("❌ Product Not Found!");
-                    document.getElementById('barcodeInput').value = "";
-                    document.getElementById('nameDisplay').value = "";
-                    document.getElementById('mrpDisplay').value = "";
-                    document.getElementById('priceDisplay').value = "";
-                    document.getElementById('stockDisplay').value = "";
-                }
-            })
-            .catch(err => console.error("Error:", err));
-    }
+        // F3: Hold / Suspend Active Bill
+        if (e.key === 'F3') {
+            e.preventDefault();
+            const btn = document.getElementById('btnHold');
+            if (btn && !btn.disabled) btn.click();
+            return;
+        }
 
-    // --- 3. DOUBLE-SUBMISSION / DEBOUNCE GUARD ---
+        // F4: Search Invoices or Clear Cart
+        if (e.key === 'F4') {
+            e.preventDefault();
+            if (e.shiftKey) {
+                window.location.href = '/search_bill';
+            } else {
+                const btn = document.getElementById('btnClear');
+                if (btn && !btn.disabled) btn.click();
+                else window.location.href = '/search_bill';
+            }
+            return;
+        }
+
+        // Escape: Dismiss active autocomplete or blur
+        if (e.key === 'Escape') {
+            if (resultsContainer) resultsContainer.style.display = 'none';
+        }
+    });
+
+    // Double Submission Guard
     document.querySelectorAll('form').forEach(form => {
-        form.addEventListener('submit', function (e) {
-            const submitBtn = this.querySelector('button[type="submit"], input[type="submit"]');
+        form.addEventListener('submit', function(e) {
+            const submitBtn = this.querySelector('button[type="submit"]');
             if (submitBtn) {
-                // Prevent rapid double-clicks
                 if (submitBtn.dataset.submitting === 'true') {
                     e.preventDefault();
                     return false;
                 }
                 submitBtn.dataset.submitting = 'true';
                 submitBtn.classList.add('disabled');
-                const originalText = submitBtn.innerHTML;
-                submitBtn.innerHTML = '⏳ Processing...';
-                
-                // Re-enable after 5s safety timeout in case of client validation failure
-                setTimeout(() => {
-                    submitBtn.dataset.submitting = 'false';
-                    submitBtn.classList.remove('disabled');
-                    submitBtn.innerHTML = originalText;
-                }, 5000);
             }
         });
+    });
+
+    // Initial calculation on page load
+    window.addEventListener('DOMContentLoaded', () => {
+        calculateNetTotal();
+        const barcodeEl = document.getElementById('barcodeInput');
+        if (barcodeEl) barcodeEl.focus();
     });
 </script>
 

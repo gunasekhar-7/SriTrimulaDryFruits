@@ -7,7 +7,9 @@
             <a href="/stock" class="btn btn-sm btn-outline-secondary border-0 rounded-circle py-1" title="Back to stock list">
                 &larr;
             </a>
-            <h2 style="color: var(--brand-green);" class="brand-font m-0">✏️ Edit Product Details</h2>
+            <h2 style="color: var(--brand-green);" class="brand-font m-0 d-flex align-items-center gap-2">
+                <span class="material-symbols-outlined" style="font-size: 1.8rem;">edit</span> Edit Product Details
+            </h2>
         </div>
 
         <div class="card p-5 shadow-sm border-0 bg-white" style="border-radius: 20px;">
@@ -31,7 +33,9 @@
                         <label class="form-label fw-bold text-dark mb-2">Barcode Identifier</label>
                         <div class="input-group">
                             <input type="text" id="barcodeInput" name="barcode" class="form-control" value="<%= product.barcode %>" required placeholder="Barcode">
-                            <button type="button" class="btn btn-success" id="autoBarcodeBtn">Auto 🎲</button>
+                            <button type="button" class="btn btn-success d-inline-flex align-items-center gap-1" id="autoBarcodeBtn">
+                                <span class="material-symbols-outlined" style="font-size: 1.1rem;">casino</span> Auto
+                            </button>
                         </div>
                     </div>
                     <div class="col-md-3">

@@ -1,0 +1,850 @@
+/* ==============================================================================
+   SRI TIRUMALA DRY FRUITS — CINEMATIC SCROLL STORYTELLING
+   Art Direction: Warm Amber, Dark Walnut, Deep Chocolate & Soft Ivory Palette
+   ============================================================================== */
+
+:root {
+  --cinema-chocolate: #24140D;
+  --cinema-walnut: #3A2116;
+  --cinema-amber: #B86A28;
+  --cinema-caramel: #D89A4E;
+  --cinema-cream: #F5EBDD;
+  --cinema-ivory: #FFF9F0;
+  --cinema-dark-overlay: rgba(36, 20, 13, 0.85);
+  --cinema-glow: rgba(216, 154, 78, 0.25);
+  --cinema-transition: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ─── Global Cinematic Navigation Tweaks ───────────────────────────────────── */
+.storefront-navbar.cinematic-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1040;
+  background: linear-gradient(180deg, rgba(36, 20, 13, 0.82) 0%, rgba(36, 20, 13, 0.45) 60%, transparent 100%);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(216, 154, 78, 0.15);
+  transition: background 0.45s ease, border-color 0.45s ease, box-shadow 0.45s ease;
+}
+
+.storefront-navbar.cinematic-nav.scrolled-past-cinematic {
+  background: rgba(36, 20, 13, 0.96) !important;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-bottom: 1px solid rgba(216, 154, 78, 0.3);
+  box-shadow: 0 12px 32px rgba(20, 10, 6, 0.45);
+}
+
+.storefront-navbar.cinematic-nav .brand-title {
+  color: var(--cinema-ivory) !important;
+}
+
+.storefront-navbar.cinematic-nav .brand-sub {
+  color: var(--cinema-caramel) !important;
+}
+
+.storefront-navbar.cinematic-nav .nav-link {
+  color: var(--cinema-cream) !important;
+  transition: color 0.25s ease;
+}
+
+.storefront-navbar.cinematic-nav .nav-link:hover {
+  color: var(--cinema-caramel) !important;
+}
+
+.storefront-navbar.cinematic-nav .nav-search-input {
+  background: rgba(58, 33, 22, 0.65);
+  border: 1px solid rgba(216, 154, 78, 0.35);
+  color: var(--cinema-ivory) !important;
+}
+
+.storefront-navbar.cinematic-nav .nav-search-input::placeholder {
+  color: rgba(245, 235, 221, 0.6);
+}
+
+.storefront-navbar.cinematic-nav .nav-search-input:focus {
+  background: rgba(58, 33, 22, 0.9);
+  border-color: var(--cinema-caramel);
+  box-shadow: 0 0 0 3px rgba(216, 154, 78, 0.25);
+}
+
+.storefront-navbar.cinematic-nav .nav-search-icon {
+  color: var(--cinema-caramel);
+}
+
+.storefront-navbar.cinematic-nav .nav-action-btn,
+.storefront-navbar.cinematic-nav .nav-btn-account,
+.storefront-navbar.cinematic-nav .nav-btn-staff {
+  color: var(--cinema-cream) !important;
+  border-color: rgba(216, 154, 78, 0.25) !important;
+  background: rgba(58, 33, 22, 0.5) !important;
+}
+
+.storefront-navbar.cinematic-nav .nav-action-btn:hover,
+.storefront-navbar.cinematic-nav .nav-btn-account:hover {
+  background: rgba(216, 154, 78, 0.2) !important;
+  border-color: var(--cinema-caramel) !important;
+  color: var(--cinema-ivory) !important;
+}
+
+.storefront-navbar.cinematic-nav .nav-btn-casket {
+  background: linear-gradient(135deg, var(--cinema-caramel) 0%, var(--cinema-amber) 100%) !important;
+  color: var(--cinema-chocolate) !important;
+  border: none !important;
+  font-weight: 700;
+  box-shadow: 0 4px 16px rgba(184, 106, 40, 0.35);
+}
+
+.storefront-navbar.cinematic-nav .nav-btn-casket:hover {
+  filter: brightness(1.1);
+  box-shadow: 0 6px 22px rgba(216, 154, 78, 0.5);
+}
+
+/* ─── Pinned Cinematic Scroll Section ──────────────────────────────────────── */
+.cinematic-scroll-track {
+  position: relative;
+  width: 100%;
+  height: 360vh; /* Pinned duration spanning all 3 chapters */
+  background: var(--cinema-chocolate);
+  margin-top: 0;
+  padding: 0;
+  will-change: transform;
+}
+
+.cinematic-sticky-stage {
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  min-height: 560px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  background: var(--cinema-chocolate);
+}
+
+/* Video Stage Layer */
+.cinematic-video-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+  background: var(--cinema-chocolate);
+}
+
+.cinematic-video-canvas video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 38%;
+  display: block;
+  filter: brightness(0.96) contrast(1.04) saturate(1.05);
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* Fallback Image Layer (When Video Fails or Reduced-Motion) */
+.cinematic-fallback-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center 38%;
+  background-repeat: no-repeat;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.cinematic-fallback-bg.active {
+  opacity: 1;
+}
+
+/* Cinematic Atmospheric Gradients & Watermark Protection */
+.cinematic-lighting-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background: 
+    linear-gradient(180deg, rgba(36, 20, 13, 0.75) 0%, rgba(36, 20, 13, 0.2) 30%, transparent 60%),
+    linear-gradient(0deg, rgba(36, 20, 13, 0.94) 0%, rgba(36, 20, 13, 0.4) 35%, transparent 75%),
+    radial-gradient(ellipse at 50% 45%, rgba(216, 154, 78, 0.08) 0%, rgba(36, 20, 13, 0.3) 70%, rgba(36, 20, 13, 0.75) 100%);
+}
+
+/* Delicate Ambient Particle/Light Bloom */
+.cinematic-ambient-bloom {
+  position: absolute;
+  width: clamp(300px, 45vw, 650px);
+  height: clamp(300px, 45vw, 650px);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(216, 154, 78, 0.18) 0%, rgba(184, 106, 40, 0.06) 50%, transparent 70%);
+  filter: blur(60px);
+  pointer-events: none;
+  z-index: 4;
+  top: 15%;
+  left: 10%;
+  animation: cinemaPulse 12s ease-in-out infinite alternate;
+}
+
+@keyframes cinemaPulse {
+  0% { transform: scale(1) translate(0, 0); opacity: 0.6; }
+  100% { transform: scale(1.15) translate(30px, 20px); opacity: 0.9; }
+}
+
+/* ─── Chapter Overlays ─────────────────────────────────────────────────────── */
+.cinematic-content-container {
+  position: relative;
+  width: 100%;
+  max-width: 1380px;
+  height: 100%;
+  margin: 0 auto;
+  padding: 0 clamp(20px, 5vw, 64px);
+  z-index: 10;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+}
+
+.cinematic-chapter {
+  position: absolute;
+  left: clamp(20px, 5vw, 64px);
+  right: clamp(20px, 5vw, 64px);
+  max-width: 680px;
+  opacity: 0;
+  transform: translateY(32px);
+  pointer-events: none;
+  transition: opacity 0.65s var(--cinema-transition), transform 0.7s var(--cinema-transition);
+  will-change: opacity, transform;
+}
+
+.cinematic-chapter.active {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.cinematic-chapter.exit-up {
+  opacity: 0;
+  transform: translateY(-40px);
+  pointer-events: none;
+}
+
+.cinematic-chapter.exit-down {
+  opacity: 0;
+  transform: translateY(40px);
+  pointer-events: none;
+}
+
+/* Chapter Specific Alignments for Negative Space Composition */
+#cinematic-chapter-1 {
+  top: 24%;
+}
+
+#cinematic-chapter-2 {
+  top: 26%;
+  max-width: 620px;
+}
+
+#cinematic-chapter-3 {
+  top: 24%;
+  max-width: 660px;
+}
+
+/* Eyebrow badge */
+.cinematic-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: clamp(10px, 0.9vw, 12px);
+  font-weight: 800;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--cinema-caramel);
+  margin-bottom: 14px;
+}
+
+.cinematic-eyebrow::before {
+  content: "";
+  display: inline-block;
+  width: 28px;
+  height: 1.5px;
+  background: linear-gradient(90deg, var(--cinema-caramel), rgba(216, 154, 78, 0.2));
+}
+
+.cinematic-eyebrow-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 14px;
+  border-radius: 50px;
+  background: rgba(58, 33, 22, 0.65);
+  border: 1px solid rgba(216, 154, 78, 0.35);
+  backdrop-filter: blur(12px);
+  color: var(--cinema-caramel);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.cinematic-eyebrow-pill .pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--cinema-caramel);
+  box-shadow: 0 0 10px var(--cinema-caramel);
+  animation: amberPulse 2s infinite;
+}
+
+@keyframes amberPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.8); }
+}
+
+/* Editorial Headline with Masked Reveal */
+.cinematic-headline {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(34px, 4.6vw, 68px);
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--cinema-ivory);
+  margin: 0 0 18px 0;
+  letter-spacing: -0.015em;
+  text-shadow: 0 4px 20px rgba(20, 10, 6, 0.7);
+}
+
+.cinematic-headline .italic-serif {
+  font-style: italic;
+  font-weight: 400;
+  color: var(--cinema-caramel);
+}
+
+.reveal-line-wrap {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 4px;
+}
+
+.reveal-line {
+  display: block;
+  transform: translateY(110%);
+  opacity: 0;
+  filter: blur(6px);
+  transition: transform 0.8s var(--cinema-transition), opacity 0.7s ease, filter 0.8s ease;
+  will-change: transform, opacity, filter;
+}
+
+.cinematic-chapter.active .reveal-line {
+  transform: translateY(0);
+  opacity: 1;
+  filter: blur(0);
+}
+
+/* Stagger headline lines */
+.cinematic-chapter.active .reveal-line-wrap:nth-child(1) .reveal-line {
+  transition-delay: 0.08s;
+}
+.cinematic-chapter.active .reveal-line-wrap:nth-child(2) .reveal-line {
+  transition-delay: 0.18s;
+}
+.cinematic-chapter.active .reveal-line-wrap:nth-child(3) .reveal-line {
+  transition-delay: 0.28s;
+}
+
+/* Supporting text */
+.cinematic-description {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: clamp(14px, 1.25vw, 18px);
+  line-height: 1.65;
+  color: var(--cinema-cream);
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.75s ease 0.3s, transform 0.75s var(--cinema-transition) 0.3s;
+  max-width: 530px;
+  margin-bottom: 28px;
+  text-shadow: 0 2px 10px rgba(20, 10, 6, 0.6);
+}
+
+.cinematic-chapter.active .cinematic-description {
+  opacity: 0.95;
+  transform: translateY(0);
+}
+
+/* Micro Highlights / Feature Badges for Chapter 2 */
+.cinematic-feature-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 26px;
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.7s ease 0.35s, transform 0.7s var(--cinema-transition) 0.35s;
+}
+
+.cinematic-chapter.active .cinematic-feature-chips {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.cinematic-chip {
+  padding: 6px 14px;
+  background: rgba(58, 33, 22, 0.75);
+  border: 1px solid rgba(216, 154, 78, 0.35);
+  border-radius: 50px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--cinema-ivory);
+  backdrop-filter: blur(10px);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cinematic-chip .chip-symbol {
+  color: var(--cinema-caramel);
+}
+
+/* Action CTAs */
+.cinematic-cta-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.75s ease 0.4s, transform 0.75s var(--cinema-transition) 0.4s;
+}
+
+.cinematic-chapter.active .cinematic-cta-group {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.btn-cinema-gold {
+  background: linear-gradient(135deg, var(--cinema-caramel) 0%, var(--cinema-amber) 100%);
+  color: var(--cinema-chocolate);
+  font-weight: 700;
+  font-size: 14px;
+  padding: 13px 32px;
+  border-radius: 50px;
+  border: 1px solid rgba(255, 249, 240, 0.3);
+  text-decoration: none;
+  box-shadow: 0 10px 28px rgba(184, 106, 40, 0.4);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.28s var(--cinema-transition);
+}
+
+.btn-cinema-gold:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 36px rgba(216, 154, 78, 0.55);
+  filter: brightness(1.08);
+  color: var(--cinema-chocolate);
+}
+
+.btn-cinema-secondary {
+  background: rgba(255, 249, 240, 0.08);
+  color: var(--cinema-ivory);
+  font-weight: 600;
+  font-size: 14px;
+  padding: 12px 28px;
+  border-radius: 50px;
+  border: 1.5px solid rgba(216, 154, 78, 0.45);
+  backdrop-filter: blur(12px);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.28s var(--cinema-transition);
+}
+
+.btn-cinema-secondary:hover {
+  background: rgba(255, 249, 240, 0.16);
+  border-color: var(--cinema-caramel);
+  color: var(--cinema-ivory);
+  transform: translateY(-2px);
+}
+
+.btn-cinema-whatsapp {
+  background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+  color: #FFFFFF !important;
+  font-weight: 700;
+  font-size: 14px;
+  padding: 13px 30px;
+  border-radius: 50px;
+  border: none;
+  text-decoration: none;
+  box-shadow: 0 10px 28px rgba(37, 211, 102, 0.35);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.28s var(--cinema-transition);
+}
+
+.btn-cinema-whatsapp:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 34px rgba(37, 211, 102, 0.45);
+  filter: brightness(1.08);
+}
+
+/* ─── Cinematic Story HUD & Chapter Scrubber ───────────────────────────────── */
+.cinematic-hud {
+  position: absolute;
+  right: clamp(20px, 4vw, 48px);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 25;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 20px;
+  pointer-events: auto;
+}
+
+/* Chapter Step Dots */
+.hud-chapter-dots {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: rgba(36, 20, 13, 0.65);
+  border: 1px solid rgba(216, 154, 78, 0.25);
+  border-radius: 30px;
+  padding: 14px 12px;
+  backdrop-filter: blur(14px);
+}
+
+.hud-dot-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  outline: none;
+}
+
+.hud-dot-indicator {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(216, 154, 78, 0.5);
+  background: transparent;
+  transition: all 0.3s ease;
+}
+
+.hud-dot-label {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(245, 235, 221, 0.5);
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.hud-dot-btn:hover .hud-dot-indicator {
+  border-color: var(--cinema-caramel);
+  background: rgba(216, 154, 78, 0.3);
+}
+
+.hud-dot-btn:hover .hud-dot-label {
+  color: var(--cinema-ivory);
+}
+
+.hud-dot-btn.active .hud-dot-indicator {
+  background: var(--cinema-caramel);
+  border-color: var(--cinema-caramel);
+  box-shadow: 0 0 10px var(--cinema-caramel);
+  transform: scale(1.3);
+}
+
+.hud-dot-btn.active .hud-dot-label {
+  color: var(--cinema-caramel);
+  font-weight: 800;
+}
+
+/* ─── Mobile and Responsive Adaptations ────────────────────────────────────── */
+@media (max-width: 991px) {
+  .cinematic-scroll-track {
+    height: 320vh;
+  }
+  .cinematic-sticky-stage {
+    min-height: 500px;
+  }
+  .cinematic-content-container {
+    padding: 0 24px;
+  }
+  .cinematic-chapter {
+    left: 24px;
+    right: 24px;
+    max-width: 100%;
+    top: 22% !important;
+  }
+  .cinematic-headline {
+    font-size: clamp(28px, 6.5vw, 42px);
+  }
+  .cinematic-description {
+    font-size: 14px;
+    max-width: 100%;
+    margin-bottom: 20px;
+  }
+  .cinematic-hud {
+    right: 14px;
+    top: auto;
+    bottom: 24px;
+    transform: none;
+    flex-direction: row;
+    align-items: center;
+  }
+  .hud-chapter-dots {
+    flex-direction: row;
+    padding: 8px 12px;
+  }
+  .hud-dot-label {
+    display: none;
+  }
+  .hud-progress-meter {
+    display: none;
+  }
+  .cinematic-scroll-cue {
+    left: 24px;
+    bottom: 24px;
+    transform: none;
+    align-items: flex-start;
+  }
+  .cinematic-scroll-cue .cue-label {
+    display: none;
+  }
+}
+
+@media (max-width: 576px) {
+  .cinematic-video-canvas video {
+    object-position: center 30%;
+  }
+  .cinematic-cta-group {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+  .btn-cinema-gold,
+  .btn-cinema-secondary,
+  .btn-cinema-whatsapp {
+    width: 100%;
+    justify-content: center;
+    padding: 12px 20px;
+  }
+}
+
+/* ─── Reduced Motion Fallback ─────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .cinematic-scroll-track {
+    height: auto;
+  }
+  .cinematic-sticky-stage {
+    position: relative;
+    height: auto;
+    padding: 60px 0;
+  }
+  .cinematic-video-canvas {
+    display: none;
+  }
+  .cinematic-fallback-bg {
+    opacity: 1;
+    position: relative;
+    height: 480px;
+  }
+  .cinematic-chapter {
+    position: relative;
+    top: 0 !important;
+    left: 0;
+    right: 0;
+    opacity: 1 !important;
+    transform: none !important;
+    margin-bottom: 40px;
+  }
+  .reveal-line {
+    transform: none !important;
+    opacity: 1 !important;
+    filter: none !important;
+  }
+  .cinematic-description,
+  .cinematic-cta-group,
+  .cinematic-feature-chips {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* ─── Editorial Product Categories Discovery Grid ─────────────────────────── */
+.categories-editorial-section {
+  background: var(--surface);
+  padding: 85px 0 50px;
+  position: relative;
+}
+
+.category-editorial-card {
+  position: relative;
+  border-radius: 18px;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  box-shadow: 0 10px 28px rgba(36, 20, 13, 0.08);
+  border: 1.5px solid rgba(216, 154, 78, 0.22);
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  display: block;
+  text-decoration: none;
+  background: var(--cinema-walnut);
+}
+
+.category-editorial-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 45px rgba(36, 20, 13, 0.18);
+  border-color: var(--cinema-caramel);
+}
+
+.category-editorial-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+  display: block;
+}
+
+.category-editorial-card:hover img {
+  transform: scale(1.07);
+}
+
+.category-card-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(36, 20, 13, 0.05) 0%, rgba(36, 20, 13, 0.35) 45%, rgba(36, 20, 13, 0.94) 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 22px;
+}
+
+.category-card-tag {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--cinema-caramel);
+  margin-bottom: 4px;
+}
+
+.category-card-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--cinema-ivory);
+  margin: 0;
+}
+
+.category-card-action {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--cinema-cream);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 8px;
+  opacity: 0.9;
+  transition: gap 0.25s ease, opacity 0.25s ease, color 0.25s ease;
+}
+
+.category-editorial-card:hover .category-card-action {
+  gap: 8px;
+  opacity: 1;
+  color: var(--cinema-caramel);
+}
+
+/* ─── Editorial Brand Story Section ───────────────────────────────────────── */
+.brand-story-section {
+  background: linear-gradient(180deg, var(--surface) 0%, rgba(245, 235, 221, 0.45) 50%, var(--surface) 100%);
+  padding: 90px 0;
+  border-top: 1px solid rgba(216, 154, 78, 0.18);
+  border-bottom: 1px solid rgba(216, 154, 78, 0.18);
+}
+
+.brand-story-quote {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(24px, 2.6vw, 36px);
+  font-style: italic;
+  line-height: 1.4;
+  color: var(--cinema-chocolate);
+  position: relative;
+  padding-left: 28px;
+  border-left: 3px solid var(--cinema-caramel);
+  margin-bottom: 24px;
+}
+
+.brand-story-body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 16px;
+  line-height: 1.8;
+  color: #5C4535;
+  margin-bottom: 28px;
+}
+
+.brand-story-badge-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.brand-story-badge {
+  background: #FFFFFF;
+  border: 1px solid rgba(222, 154, 75, 0.25);
+  border-radius: 14px;
+  padding: 18px 20px;
+  box-shadow: 0 4px 14px rgba(36, 20, 13, 0.05);
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.brand-story-badge:hover {
+  transform: translateY(-3px);
+  border-color: var(--cinema-caramel);
+  box-shadow: 0 8px 24px rgba(222, 154, 75, 0.15);
+}
+
+.brand-story-badge .badge-icon {
+  font-size: 24px;
+  color: var(--cinema-caramel);
+  margin-bottom: 8px;
+  display: block;
+}
+
+.brand-story-badge .badge-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--cinema-chocolate);
+  margin-bottom: 4px;
+}
+
+.brand-story-badge .badge-desc {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #6A5342;
+  margin: 0;
+}
+

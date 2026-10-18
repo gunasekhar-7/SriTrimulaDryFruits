@@ -78,18 +78,18 @@
            CSS VARIABLES & RESET
            ============================ */
         :root {
-            --brand-green: #063A22;
-            --brand-green-light: #0D5A37;
-            --brand-green-dark: #032113;
-            --brand-gold: #D4AF37;
-            --brand-gold-pale: #F8EFA2;
-            --bg-cream: #FAF9F5;
-            --bg-sidebar: #032113;
-            --text-dark: #1F2E26;
-            --text-light: #6C7A72;
+            --brand-green: #24140D;
+            --brand-green-light: #382114;
+            --brand-green-dark: #140A05;
+            --brand-gold: #DE9A4B;
+            --brand-gold-pale: #F9E7BA;
+            --bg-cream: #FAF5ED;
+            --bg-sidebar: #190E08;
+            --text-dark: #1E1109;
+            --text-light: #6A5342;
             --sidebar-width: 240px;
             --sidebar-collapsed: 70px;
-            --card-shadow: 0 2px 12px rgba(6, 58, 34, 0.07);
+            --card-shadow: 0 2px 14px rgba(36, 20, 13, 0.08);
             --transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
             --radius: 14px;
         }
@@ -340,7 +340,7 @@
         /* ── Top Bar (mobile + breadcrumb) ── */
         .top-bar {
             background: #fff;
-            border-bottom: 1px solid rgba(6, 58, 34, 0.08);
+            border-bottom: 1px solid rgba(36, 20, 13, 0.08);
             padding: 0 24px;
             height: 60px;
             display: flex;
@@ -349,7 +349,7 @@
             position: sticky;
             top: 0;
             z-index: 100;
-            box-shadow: 0 1px 8px rgba(6, 58, 34, 0.04);
+            box-shadow: 0 1px 8px rgba(36, 20, 13, 0.04);
         }
 
         .sidebar-toggle {
@@ -413,7 +413,7 @@
             background: var(--brand-green);
             border-bottom: 3px solid var(--brand-gold);
             padding: 12px 0;
-            box-shadow: 0 4px 20px rgba(6, 58, 34, 0.15);
+            box-shadow: 0 4px 20px rgba(36, 20, 13, 0.25);
         }
 
         .public-main {
@@ -426,7 +426,7 @@
 
         /* Cards */
         .card {
-            border: 1px solid rgba(6, 58, 34, 0.08);
+            border: 1px solid rgba(222, 154, 75, 0.15);
             border-radius: var(--radius);
             box-shadow: var(--card-shadow);
             background: #fff;
@@ -444,7 +444,7 @@
             background: #fff;
             border-radius: var(--radius);
             padding: 20px;
-            border: 1px solid rgba(6, 58, 34, 0.07);
+            border: 1px solid rgba(222, 154, 75, 0.15);
             box-shadow: var(--card-shadow);
             display: flex;
             align-items: center;
@@ -464,33 +464,38 @@
 
         /* Buttons */
         .btn-brand {
-            background: var(--brand-green);
-            border-color: var(--brand-green);
-            color: #fff;
+            background: linear-gradient(135deg, #DE9A4B 0%, #B86A28 100%);
+            border: 1px solid rgba(222, 154, 75, 0.4);
+            color: #170C06 !important;
             font-weight: 700;
             border-radius: 10px;
             transition: var(--transition);
+            box-shadow: 0 4px 14px rgba(184, 106, 40, 0.28);
         }
 
         .btn-brand:hover {
-            background: var(--brand-green-light);
-            border-color: var(--brand-green-light);
-            color: #fff;
+            background: linear-gradient(135deg, #ECC078 0%, #C9792F 100%);
+            border-color: #DE9A4B;
+            color: #120904 !important;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 22px rgba(184, 106, 40, 0.38);
         }
 
         .btn-gold {
-            background: var(--brand-gold);
-            border-color: var(--brand-gold);
-            color: var(--brand-green-dark);
+            background: linear-gradient(135deg, #DE9A4B 0%, #B86A28 100%);
+            border: 1px solid rgba(222, 154, 75, 0.4);
+            color: #170C06 !important;
             font-weight: 700;
             border-radius: 10px;
             transition: var(--transition);
+            box-shadow: 0 4px 14px rgba(184, 106, 40, 0.28);
         }
 
         .btn-gold:hover {
-            background: #c9a430;
-            border-color: #c9a430;
-            color: var(--brand-green-dark);
+            background: linear-gradient(135deg, #ECC078 0%, #C9792F 100%);
+            border-color: #DE9A4B;
+            color: #120904 !important;
+            transform: translateY(-2px);
         }
 
         /* Override Bootstrap primary/success to brand colors */
@@ -507,28 +512,36 @@
         }
 
         .btn-success {
-            background-color: var(--brand-gold);
-            border-color: var(--brand-gold);
-            color: var(--brand-green-dark) !important;
+            background: linear-gradient(135deg, #DE9A4B 0%, #B86A28 100%);
+            border: 1px solid rgba(222, 154, 75, 0.4);
+            color: #170C06 !important;
             font-weight: 700;
             border-radius: 10px;
+            box-shadow: 0 4px 14px rgba(184, 106, 40, 0.25);
         }
 
         .btn-success:hover {
-            background-color: #c9a430;
-            border-color: #c9a430;
+            background: linear-gradient(135deg, #ECC078 0%, #C9792F 100%);
+            border-color: #DE9A4B;
+            color: #120904 !important;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(184, 106, 40, 0.35);
         }
 
         .btn-outline-success {
-            color: var(--brand-green);
-            border-color: var(--brand-green);
+            color: #B86A28;
+            border: 1.5px solid #DE9A4B;
             border-radius: 10px;
-            font-weight: 600;
+            font-weight: 700;
+            background: transparent;
+            transition: var(--transition);
         }
 
         .btn-outline-success:hover {
-            background: var(--brand-green);
-            border-color: var(--brand-green);
+            background: linear-gradient(135deg, #DE9A4B 0%, #B86A28 100%);
+            border-color: #DE9A4B;
+            color: #170C06 !important;
+            transform: translateY(-1px);
         }
 
         /* Forms */
@@ -544,8 +557,9 @@
 
         .form-control:focus,
         .form-select:focus {
-            border-color: var(--brand-green-light);
-            box-shadow: 0 0 0 3px rgba(13, 90, 55, 0.1);
+            border-color: var(--brand-gold);
+            box-shadow: 0 0 0 3px rgba(222, 154, 75, 0.2);
+            outline: none;
         }
 
         /* Tables */
@@ -579,7 +593,7 @@
         }
 
         .page-heading h2 {
-            color: var(--brand-green);
+            color: var(--text-dark);
             font-size: 1.75rem;
             margin: 0;
         }
@@ -635,6 +649,8 @@
 
     <!-- Artisanal Botanical Luxury Storefront Design System -->
     <link rel="stylesheet" href="/storefront.css?v=20261011">
+    <link rel="stylesheet" href="/cinematic-story.css?v=20261017">
+    <link rel="stylesheet" href="/msflow-realms.css?v=20261018">
     <style>
       /* Ensure Material Symbols render as icons and not raw text ligatures */
       .material-symbols-outlined {
@@ -655,13 +671,13 @@
       }
       /* Prevent Bootstrap .text-primary from turning headings and links blue */
       .text-primary, .text-primary-container {
-        color: #002312 !important;
+        color: #1E1109 !important;
       }
       .text-gold {
-        color: #B89528 !important;
+        color: #DE9A4B !important;
       }
       .text-gold-sheen {
-        color: #F3E5AB !important;
+        color: #F9E7BA !important;
       }
       /* Ensure toast feedback drawer is invisible in normal flow */
       #cartToast.translate-y-hidden {
@@ -685,7 +701,7 @@
             <!-- SIDEBAR -->
             <aside class="sidebar" id="sidebar">
                 <a class="sidebar-brand" href="/">
-                    <div class="sidebar-brand-icon">🥥</div>
+                    <div class="sidebar-brand-icon"><span class="material-symbols-outlined" style="color: var(--brand-gold); font-size: 1.5rem;">spa</span></div>
                     <div class="sidebar-brand-text">
                         <strong>Sri Tirumala</strong>
                         <small>Dryfruits</small>
@@ -696,22 +712,22 @@
                     <!-- Main -->
                     <div class="nav-section-label">Main</div>
                     <a href="/" class="sidebar-link">
-                        <span class="nav-icon">🏠</span>
+                        <span class="nav-icon material-symbols-outlined">storefront</span>
                         <span>Storefront</span>
                     </a>
                     <a href="/sell" class="sidebar-link">
-                        <span class="nav-icon">🧾</span>
+                        <span class="nav-icon material-symbols-outlined">point_of_sale</span>
                         <span>Billing / POS</span>
                     </a>
                     <a href="/search_bill" class="sidebar-link">
-                        <span class="nav-icon">🔍</span>
+                        <span class="nav-icon material-symbols-outlined">receipt_long</span>
                         <span>Search Bills</span>
                     </a>
 
                     <!-- Inventory -->
                     <div class="nav-section-label">Inventory</div>
                     <a href="/stock" class="sidebar-link">
-                        <span class="nav-icon">📦</span>
+                        <span class="nav-icon material-symbols-outlined">inventory_2</span>
                         <span>Stock</span>
                         <% if (typeof lowStockCount !=='undefined' && lowStockCount> 0) { %>
                             <span class="nav-badge">
@@ -723,7 +739,7 @@
                     <!-- Online Commerce -->
                     <div class="nav-section-label">Online Commerce</div>
                     <a href="/admin/online-orders" class="sidebar-link">
-                        <span class="nav-icon">📲</span>
+                        <span class="nav-icon material-symbols-outlined">local_shipping</span>
                         <span>Online Orders</span>
                         <span class="nav-badge" id="sidebarOrderBadge" style="display: <%= (typeof pendingOrdersCount !== 'undefined' && pendingOrdersCount > 0) ? 'block' : 'none' %>;">
                             <%= (typeof pendingOrdersCount !== 'undefined' && pendingOrdersCount > 0) ? pendingOrdersCount : 0 %>
@@ -732,26 +748,26 @@
 
                     <% if (session.role==='admin' ) { %>
                         <a href="/add" class="sidebar-link">
-                            <span class="nav-icon">➕</span>
+                            <span class="nav-icon material-symbols-outlined">add_circle</span>
                             <span>Add Product</span>
                         </a>
 
                         <!-- Admin -->
                         <div class="nav-section-label">Admin</div>
                         <a href="/profit" class="sidebar-link">
-                            <span class="nav-icon">💰</span>
+                            <span class="nav-icon material-symbols-outlined">payments</span>
                             <span>Profit Report</span>
                         </a>
                         <a href="/analytics" class="sidebar-link">
-                            <span class="nav-icon">📊</span>
+                            <span class="nav-icon material-symbols-outlined">analytics</span>
                             <span>Analytics</span>
                         </a>
                         <a href="/settings" class="sidebar-link">
-                            <span class="nav-icon">⚙️</span>
+                            <span class="nav-icon material-symbols-outlined">settings</span>
                             <span>Settings</span>
                         </a>
                         <a href="/admin/audit-logs" class="sidebar-link">
-                            <span class="nav-icon">🛡️</span>
+                            <span class="nav-icon material-symbols-outlined">security</span>
                             <span>Audit Logs</span>
                         </a>
                         <% } %>
@@ -759,7 +775,7 @@
 
                 <div class="sidebar-footer">
                     <div class="sidebar-user-chip">
-                        <div class="user-avatar">👤</div>
+                        <div class="user-avatar"><span class="material-symbols-outlined" style="font-size: 1.1rem; color: #fff;">person</span></div>
                         <div class="user-info">
                             <strong>
                                 <%= session.user %>
@@ -770,10 +786,10 @@
                         </div>
                     </div>
                     <% if (typeof currentShift !=='undefined' && currentShift) { %>
-                        <a href="/shift/close" class="btn-gold text-center d-block w-100 py-2 mb-2 text-decoration-none"
-                            style="font-size: 0.85rem;">🔒 Close Register</a>
+                        <a href="/shift/close" class="btn-gold text-center d-block w-100 py-2 mb-2 text-decoration-none d-flex align-items-center justify-content-center gap-1"
+                            style="font-size: 0.85rem;"><span class="material-symbols-outlined text-sm">lock</span> Close Register</a>
                         <% } %>
-                            <a href="/logout" class="btn-logout-sidebar">🚪 Logout</a>
+                            <a href="/logout" class="btn-logout-sidebar d-flex align-items-center justify-content-center gap-1"><span class="material-symbols-outlined text-sm">logout</span> Logout</a>
                 </div>
             </aside>
 
@@ -781,12 +797,12 @@
             <div class="main-content">
                 <!-- Top Bar -->
                 <div class="top-bar no-print">
-                    <button class="sidebar-toggle" id="sidebarToggle">☰</button>
+                    <button class="sidebar-toggle" id="sidebarToggle"><span class="material-symbols-outlined">menu</span></button>
                     <div class="d-flex align-items-center gap-3 ms-auto">
                         <% if (typeof lowStockCount !=='undefined' && lowStockCount> 0) { %>
-                            <a href="/stock" class="badge bg-danger text-white text-decoration-none"
+                            <a href="/stock" class="badge bg-danger text-white text-decoration-none d-inline-flex align-items-center gap-1"
                                 style="font-size: 0.78rem; padding: 6px 10px;">
-                                ⚠️ <%= lowStockCount %> Low Stock
+                                <span class="material-symbols-outlined" style="font-size: 1rem;">warning</span> <%= lowStockCount %> Low Stock
                             </a>
                             <% } %>
                                 <span class="text-muted small fw-semibold d-none d-md-inline">
@@ -801,7 +817,7 @@
                     <div class="mx-4 mt-3 no-print">
                         <div class="alert alert-warning border-0 shadow-sm py-3 d-flex align-items-center gap-2"
                             role="alert" style="border-left: 4px solid var(--brand-gold) !important;">
-                            <span>🔔</span> <span>
+                            <span class="material-symbols-outlined text-warning" style="font-size: 1.2rem;">notifications</span> <span>
                                 <%= messages[0] %>
                             </span>
                         </div>
@@ -838,14 +854,16 @@
                                 <!-- ==============================
                                      PUBLIC LAYOUT w/ ARTISANAL BOTANICAL LUXURY NAVBAR
                                      ============================== -->
+                                <% if (locals.currentPath && locals.currentPath !== '/') { %>
                                 <!-- Top Announcement Bar (Stitch) -->
                                 <div class="top-announcement-bar no-print">
                                     <div class="max-w-7xl px-3 d-flex align-items-center justify-content-center gap-2 text-center">
                                         <span class="announcement-dot"></span>
-                                        <span>Complimentary bespoke luxury gift casket &amp; refrigerated cold-chain transit on orders exceeding ₹1,499</span>
+                                        <span>Free luxury gift box &amp; temperature-controlled fresh delivery on orders above ₹1,499</span>
                                         <span class="announcement-dot"></span>
                                     </div>
                                 </div>
+                                <% } %>
 
                                 <nav class="storefront-navbar navbar navbar-expand-lg no-print">
                                     <div class="max-w-7xl px-3 w-100 d-flex align-items-center justify-content-between gap-3">
@@ -854,11 +872,11 @@
                                             <img src="/images/stitch/logo_crest.png"
                                                  alt="Sri Tirumala Dryfruits Logo" 
                                                  class="brand-crest-logo"
-                                                 onerror="this.style.display='none'; document.getElementById('fallbackBrandEmoji').style.display='inline-block';">
-                                            <span id="fallbackBrandEmoji" style="display:none; font-size:1.8rem;">🥥</span>
+                                                 onerror="this.style.display='none'; document.getElementById('fallbackBrandEmoji').style.display='inline-flex';">
+                                            <span id="fallbackBrandEmoji" style="display:none; color: var(--brand-gold);"><span class="material-symbols-outlined" style="font-size: 1.8rem;">spa</span></span>
                                             <div>
                                                 <span class="brand-title d-block">Sri Tirumala</span>
-                                                <span class="brand-sub d-block">Purveyors of Fine Harvest</span>
+                                                <span class="brand-sub d-block">Finest Dry Fruits &amp; Millets</span>
                                             </div>
                                         </a>
 
@@ -868,14 +886,14 @@
                                                     data-bs-toggle="offcanvas" 
                                                     data-bs-target="#wishlistOffcanvas"
                                                     aria-label="Open Wishlist">
-                                                <span>❤️</span>
+                                                <span class="material-symbols-outlined" style="font-size: 1.25rem; color: #D89A4E;">favorite</span>
                                                 <span class="nav-badge" id="mobileWishlistBadge" style="display: none;">0</span>
                                             </button>
                                             <button class="nav-action-btn position-relative" 
                                                     data-bs-toggle="offcanvas" 
                                                     data-bs-target="#cartOffcanvas"
                                                     aria-label="Open Cart">
-                                                <span>🛍️</span>
+                                                <span class="material-symbols-outlined" style="font-size: 1.25rem; color: #D89A4E;">shopping_bag</span>
                                                 <span class="nav-badge" id="mobileCartBadge" style="display: none;">0</span>
                                             </button>
                                             <button class="navbar-toggler border-0 shadow-none px-1 text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#publicNav" aria-label="Toggle navigation">
@@ -888,22 +906,18 @@
                                             <!-- Navbar Search Input -->
                                             <div class="mx-lg-2 my-2 my-lg-0 flex-grow-1 d-flex justify-content-center">
                                                 <div class="nav-search-wrapper">
-                                                    <span class="nav-search-icon">🔍</span>
+                                                    <span class="nav-search-icon material-symbols-outlined" style="font-size: 1.15rem; color: #D89A4E; line-height: 1;">search</span>
                                                     <input type="search"
                                                            id="navSearchInput"
                                                            class="form-control nav-search-input"
-                                                           placeholder="Search harvests, dates, nuts..."
+                                                           placeholder="Search dry fruits, nuts, dates, millets..."
                                                            aria-label="Search catalog">
-                                                    <div class="nav-search-chips d-none d-xxl-flex">
-                                                        <button type="button" class="nav-search-chip" onclick="searchCatalog('Almonds')">Almonds</button>
-                                                        <button type="button" class="nav-search-chip" onclick="searchCatalog('Saffron')">Saffron</button>
-                                                    </div>
                                                 </div>
                                             </div>
 
                                             <ul class="navbar-nav ms-auto align-items-lg-center gap-2">
                                                 <li class="nav-item">
-                                                    <a class="nav-link fw-semibold px-2 text-dark small" href="/">Home</a>
+                                                     <a class="nav-link fw-semibold px-2 text-dark small" href="/">Home</a>
                                                 </li>
 
                                                 <!-- Category Dropdown -->
@@ -912,14 +926,14 @@
                                                         Collections
                                                     </a>
                                                     <ul class="dropdown-menu dropdown-menu-dark shadow-lg border-0" aria-labelledby="categoriesDropdown" style="background: var(--forest-dark); border-radius: 12px;">
-                                                        <li><a class="dropdown-item py-2" href="/">🥥 All Harvests</a></li>
+                                                        <li><a class="dropdown-item py-2 d-flex align-items-center gap-2" href="/"><span class="material-symbols-outlined text-gold-sheen" style="font-size: 1.1rem; color: #D89A4E;">apps</span> All Products</a></li>
                                                         <li><hr class="dropdown-divider border-secondary opacity-25"></li>
-                                                        <li><a class="dropdown-item py-2" href="/category/Dry%20Fruits">🌰 Royal Almonds &amp; Cashews</a></li>
-                                                        <li><a class="dropdown-item py-2" href="/category/Millets">🌾 Wholesome Millets</a></li>
-                                                        <li><a class="dropdown-item py-2" href="/category/Seeds">🌱 Exotic Seeds &amp; Berries</a></li>
-                                                        <li><a class="dropdown-item py-2" href="/category/Spices">🌶️ Kashmiri Saffron &amp; Spices</a></li>
-                                                        <li><a class="dropdown-item py-2" href="/category/Nuts">🥜 Imported Dates &amp; Figs</a></li>
-                                                        <li><a class="dropdown-item py-2" href="/category/Sweets">🍬 Handcrafted Gift Boxes</a></li>
+                                                        <li><a class="dropdown-item py-2 d-flex align-items-center gap-2" href="/category/Dry%20Fruits"><span class="material-symbols-outlined text-gold-sheen" style="font-size: 1.1rem; color: #D89A4E;">workspace_premium</span> Royal Almonds &amp; Cashews</a></li>
+                                                        <li><a class="dropdown-item py-2 d-flex align-items-center gap-2" href="/category/Millets"><span class="material-symbols-outlined text-gold-sheen" style="font-size: 1.1rem; color: #D89A4E;">grain</span> Wholesome Millets</a></li>
+                                                        <li><a class="dropdown-item py-2 d-flex align-items-center gap-2" href="/category/Seeds"><span class="material-symbols-outlined text-gold-sheen" style="font-size: 1.1rem; color: #D89A4E;">spa</span> Exotic Seeds &amp; Berries</a></li>
+                                                        <li><a class="dropdown-item py-2 d-flex align-items-center gap-2" href="/category/Spices"><span class="material-symbols-outlined text-gold-sheen" style="font-size: 1.1rem; color: #D89A4E;">local_fire_department</span> Kashmiri Saffron &amp; Spices</a></li>
+                                                        <li><a class="dropdown-item py-2 d-flex align-items-center gap-2" href="/category/Nuts"><span class="material-symbols-outlined text-gold-sheen" style="font-size: 1.1rem; color: #D89A4E;">nutrition</span> Imported Dates &amp; Figs</a></li>
+                                                        <li><a class="dropdown-item py-2 d-flex align-items-center gap-2" href="/category/Sweets"><span class="material-symbols-outlined text-gold-sheen" style="font-size: 1.1rem; color: #D89A4E;">card_giftcard</span> Handcrafted Gift Boxes</a></li>
                                                     </ul>
                                                 </li>
 
@@ -930,26 +944,26 @@
 
                                                 <!-- Wishlist Button (Desktop) -->
                                                 <li class="nav-item d-none d-lg-block">
-                                                    <button class="nav-action-btn position-relative" 
+                                                    <button class="nav-action-btn position-relative d-flex align-items-center gap-1" 
                                                             id="wishlistNavBtn"
                                                             data-bs-toggle="offcanvas" 
                                                             data-bs-target="#wishlistOffcanvas"
                                                             aria-label="Wishlist">
-                                                        <span>❤️</span>
+                                                        <span class="material-symbols-outlined" style="font-size: 1.15rem; color: #D89A4E;">favorite</span>
                                                         <span>Wishlist</span>
                                                         <span id="wishlistCountBadge" class="nav-badge" style="display: none;">0</span>
                                                     </button>
                                                 </li>
 
-                                                <!-- Cart / Royal Casket Button (Desktop) -->
+                                                <!-- Cart Button (Desktop) -->
                                                 <li class="nav-item d-none d-lg-block">
-                                                    <button class="nav-btn-casket position-relative" 
+                                                    <button class="nav-btn-casket position-relative d-flex align-items-center gap-1" 
                                                             id="cartNavBtn" 
                                                             data-bs-toggle="offcanvas" 
                                                             data-bs-target="#cartOffcanvas"
                                                             aria-label="Cart">
-                                                        <span>🛍️</span>
-                                                        <span>Royal Casket</span>
+                                                        <span class="material-symbols-outlined" style="font-size: 1.15rem; color: #170C06;">shopping_bag</span>
+                                                        <span>Cart</span>
                                                         <span id="cartCountBadge" class="nav-badge" style="display: none;">0</span>
                                                     </button>
                                                 </li>
@@ -957,40 +971,43 @@
                                                 <!-- Customer Account Link -->
                                                 <% if (session && session.customer_id) { %>
                                                 <li class="nav-item dropdown">
-                                                    <a class="nav-btn-account dropdown-toggle" 
+                                                    <a class="nav-btn-account dropdown-toggle d-flex align-items-center gap-1" 
                                                        href="#" 
                                                        id="accountDropdown" 
                                                        role="button" 
                                                        data-bs-toggle="dropdown" 
                                                        aria-expanded="false">
-                                                        <span>👤 My Account</span>
+                                                        <span class="material-symbols-outlined" style="font-size: 1.15rem; color: #D89A4E;">person</span>
+                                                        <span>My Account</span>
                                                     </a>
                                                     <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark shadow border-0" aria-labelledby="accountDropdown" style="background: var(--forest-dark); border-radius: 12px;">
-                                                        <li><a class="dropdown-item py-2" href="/account">📦 My Orders</a></li>
-                                                        <li><a class="dropdown-item py-2" href="/account/profile">📝 Profile Settings</a></li>
-                                                        <li><a class="dropdown-item py-2" href="/account/addresses">📍 Saved Addresses</a></li>
-                                                        <li><a class="dropdown-item py-2" href="/account/wishlist">❤️ Wishlist</a></li>
+                                                        <li><a class="dropdown-item py-2 d-flex align-items-center gap-2" href="/account"><span class="material-symbols-outlined text-sm" style="font-size: 1rem; color: #D89A4E;">inventory_2</span> My Orders</a></li>
+                                                        <li><a class="dropdown-item py-2 d-flex align-items-center gap-2" href="/account/profile"><span class="material-symbols-outlined text-sm" style="font-size: 1rem; color: #D89A4E;">badge</span> Profile Settings</a></li>
+                                                        <li><a class="dropdown-item py-2 d-flex align-items-center gap-2" href="/account/addresses"><span class="material-symbols-outlined text-sm" style="font-size: 1rem; color: #D89A4E;">location_on</span> Saved Addresses</a></li>
+                                                        <li><a class="dropdown-item py-2 d-flex align-items-center gap-2" href="/account/wishlist"><span class="material-symbols-outlined text-sm" style="font-size: 1rem; color: #D89A4E;">favorite</span> Wishlist</a></li>
                                                         <li><hr class="dropdown-divider border-secondary opacity-25"></li>
                                                         <li>
                                                             <form action="/customer/logout" method="POST" class="m-0">
                                                                 <input type="hidden" name="_csrf" value="<%= locals.csrfToken || '' %>">
-                                                                <button type="submit" class="dropdown-item py-2 text-danger fw-semibold">🚪 Log Out</button>
+                                                                <button type="submit" class="dropdown-item py-2 text-danger fw-semibold d-flex align-items-center gap-2"><span class="material-symbols-outlined text-sm" style="font-size: 1rem;">logout</span> Log Out</button>
                                                             </form>
                                                         </li>
                                                     </ul>
                                                 </li>
                                                 <% } else { %>
                                                 <li class="nav-item">
-                                                    <a class="nav-btn-account" href="/customer/login">
-                                                        <span>👤 Patron Login</span>
+                                                    <a class="nav-btn-account d-flex align-items-center gap-1" href="/customer/login">
+                                                        <span class="material-symbols-outlined" style="font-size: 1.15rem; color: #D89A4E;">person</span>
+                                                        <span>Customer Login</span>
                                                     </a>
                                                 </li>
                                                 <% } %>
                                                 
                                                 <!-- Staff Login Button -->
                                                 <li class="nav-item">
-                                                    <a class="nav-btn-staff" href="/login">
-                                                        <span>🔐 Staff Vault</span>
+                                                    <a class="nav-btn-staff d-flex align-items-center gap-1" href="/login">
+                                                        <span class="material-symbols-outlined" style="font-size: 1.15rem; color: #D89A4E;">lock</span>
+                                                        <span>Staff Login</span>
                                                     </a>
                                                 </li>
                                             </ul>
@@ -1006,19 +1023,19 @@
                                         </div>
                                         <div class="flex-grow-1 min-w-0">
                                             <div class="d-flex align-items-center justify-content-between">
-                                                <p class="toast-eyebrow">Added to Royal Casket</p>
+                                                <p class="toast-eyebrow">Added to Cart</p>
                                                 <button class="toast-close-btn" onclick="window.dismissToast && window.dismissToast()" type="button" aria-label="Close toast">
                                                     <span class="material-symbols-outlined text-sm">close</span>
                                                 </button>
                                             </div>
                                             <p class="toast-product-name font-bold truncate mt-1" id="toastProductName">Royal Mamra Almonds</p>
-                                            <p class="toast-benefit-text mt-0.5">Complies with Free Insulated Cold-Chain Transit.</p>
+                                            <p class="toast-benefit-text mt-0.5">Eligible for Free Fresh &amp; Safe Delivery.</p>
                                             <div class="toast-progress-bar-bg mt-2">
                                                 <div class="toast-progress-bar-fill" id="toastProgressBar" style="width: 82%;"></div>
                                             </div>
                                             <div class="d-flex align-items-center justify-content-between mt-1 text-xs text-muted" style="font-size: 11px;">
                                                 <span id="toastAddedAmount">Item added</span>
-                                                <span class="text-gold font-bold" id="toastFreeShippingGap">Complimentary Cold-Chain Transit</span>
+                                                <span class="text-gold font-bold" id="toastFreeShippingGap">Free Express Delivery</span>
                                             </div>
                                         </div>
                                     </div>
@@ -1029,7 +1046,7 @@
                                     <% if (messages && messages.length > 0) { %>
                                         <div class="alert alert-warning border-0 shadow-sm py-3 d-flex align-items-center gap-2 mb-4 no-print"
                                             role="alert">
-                                            <span>🔔</span> <span><%= messages[0] %></span>
+                                            <span class="material-symbols-outlined text-warning" style="font-size: 1.2rem;">notifications</span> <span><%= messages[0] %></span>
                                         </div>
                                     <% } %>
 
@@ -1038,8 +1055,8 @@
      ============================== -->
 <div class="offcanvas offcanvas-end" tabindex="-1" id="cartOffcanvas" aria-labelledby="cartOffcanvasLabel" style="width: 400px; max-width: 100vw;">
     <div class="offcanvas-header border-bottom py-3" style="background: var(--sf-cream);">
-        <h5 class="offcanvas-title fw-bold brand-font m-0 d-flex align-items-center gap-2" id="cartOffcanvasLabel" style="color: var(--brand-green);">
-            <span>🛒</span> <span>Your Order</span>
+        <h5 class="offcanvas-title fw-bold brand-font m-0 d-flex align-items-center gap-2" id="cartOffcanvasLabel" style="color: var(--primary);">
+            <span class="material-symbols-outlined" style="color: var(--brand-gold); font-size: 1.4rem;">shopping_bag</span> <span>Shopping Cart</span>
         </h5>
         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
@@ -1063,8 +1080,8 @@
     <div class="offcanvas-body p-3 overflow-auto" id="cartItemsList">
         <!-- Injected dynamically by renderCart() in storefront.js -->
         <div class="text-center text-muted py-5">
-            <span class="fs-1 d-block mb-2">🛒</span>
-            <p class="m-0">Your cart is empty.</p>
+            <span class="material-symbols-outlined d-block mb-2" style="font-size: 2.5rem; color: var(--brand-gold); opacity: 0.7;">shopping_bag</span>
+            <p class="m-0">Your cart is currently empty.</p>
         </div>
     </div>
 
@@ -1085,7 +1102,8 @@
                 id="cartWhatsAppBtn"
                 onclick="window.Storefront && window.Storefront.orderCartViaWhatsApp()"
                 style="border-radius: 12px;">
-            <span>💬 Quick Order on WhatsApp</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.669-.699c.969.54 1.761.814 2.791.814 3.179 0 5.766-2.587 5.766-5.766 0-3.18-2.587-5.766-5.766-5.766zm9.969 5.766c0 5.514-4.486 10-10 10-1.745 0-3.382-.452-4.819-1.246l-5.181 1.355 1.378-5.034c-.879-1.488-1.378-3.228-1.378-5.075 0-5.514 4.486-10 10-10s10 4.486 10 10z"/></svg>
+            <span>Quick Order on WhatsApp</span>
         </button>
 
         <!-- Standard Secure Checkout Button -->
@@ -1104,7 +1122,7 @@
 <div class="offcanvas offcanvas-end" tabindex="-1" id="wishlistOffcanvas" aria-labelledby="wishlistOffcanvasLabel" style="width: 380px; max-width: 100vw;">
     <div class="offcanvas-header border-bottom py-3" style="background: var(--sf-cream);">
         <h5 class="offcanvas-title fw-bold brand-font m-0 d-flex align-items-center gap-2" id="wishlistOffcanvasLabel" style="color: var(--brand-green);">
-            <span>❤️</span> <span>Saved Wishlist</span>
+            <span class="material-symbols-outlined" style="color: #D89A4E; font-size: 1.4rem;">favorite</span> <span>Saved Wishlist</span>
         </h5>
         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
@@ -1113,7 +1131,7 @@
     <div class="offcanvas-body p-3 overflow-auto" id="wishlistItemsList">
         <!-- Injected dynamically by renderWishlist() in storefront.js -->
         <div class="text-center text-muted py-5">
-            <span class="fs-1 d-block mb-2">🤍</span>
+            <span class="material-symbols-outlined d-block mb-2" style="font-size: 2.5rem; color: #D89A4E; opacity: 0.6;">favorite_border</span>
             <h6 class="fw-bold">Your wishlist is empty</h6>
             <p class="small">Tap the heart icon on any product to save it for later.</p>
         </div>
@@ -1131,31 +1149,31 @@
      ============================== -->
 <div class="mobile-bottom-nav no-print" id="mobileBottomNav">
     <a href="/" class="mobile-nav-item active">
-        <span class="mobile-nav-icon">🏠</span>
+        <span class="material-symbols-outlined mobile-nav-icon">home</span>
         <span>Home</span>
     </a>
     <a href="/#searchInput" class="mobile-nav-item" onclick="setTimeout(function(){ const el = document.getElementById('searchInput') || document.getElementById('navSearchInput'); if (el) el.focus(); }, 150);">
-        <span class="mobile-nav-icon">🔍</span>
+        <span class="material-symbols-outlined mobile-nav-icon">search</span>
         <span>Search</span>
     </a>
     <button type="button" class="mobile-nav-item border-0 bg-transparent position-relative" data-bs-toggle="offcanvas" data-bs-target="#wishlistOffcanvas">
-        <span class="mobile-nav-icon">❤️</span>
+        <span class="material-symbols-outlined mobile-nav-icon">favorite</span>
         <span>Wishlist</span>
         <span class="mobile-nav-badge" id="mobileBottomWishlistBadge" style="display: none;">0</span>
     </button>
     <button type="button" class="mobile-nav-item border-0 bg-transparent position-relative" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas">
-        <span class="mobile-nav-icon">🛒</span>
+        <span class="material-symbols-outlined mobile-nav-icon">shopping_bag</span>
         <span>Cart</span>
         <span class="mobile-nav-badge" id="mobileBottomCartBadge" style="display: none;">0</span>
     </button>
     <% if (session && session.customer_id) { %>
     <a href="/account" class="mobile-nav-item">
-        <span class="mobile-nav-icon">👤</span>
+        <span class="material-symbols-outlined mobile-nav-icon">person</span>
         <span>Account</span>
     </a>
     <% } else { %>
     <a href="/customer/login" class="mobile-nav-item">
-        <span class="mobile-nav-icon">👤</span>
+        <span class="material-symbols-outlined mobile-nav-icon">person</span>
         <span>Login</span>
     </a>
     <% } %>

@@ -1,82 +1,134 @@
 <%- include('header') %>
 
 <style>
-    /* =========================
-       INVOICE STYLE (Thermal Print Mockup)
-       ========================= */
-    .invoice-card-wrapper {
-        background-color: #E9EFEA;
-        border-radius: 24px;
-        padding: 40px 20px;
-        box-shadow: inset 0 3px 10px rgba(6, 58, 34, 0.05);
+    /* ==============================================================================
+       THERMAL RECEIPT SLATE WRAPPER & PRINT STYLES (Stitch)
+       ============================================================================== */
+    .thermal-receipt-slate-wrap {
+        background-color: #F4F5F7;
+        min-height: 100vh;
+        padding: 24px 16px 60px 16px;
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
+        font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
     }
 
-    .invoice-container {
-        width: 320px;
-        background: #ffffff;
-        font-family: 'JetBrains Mono', 'Plus Jakarta Sans', monospace;
-        font-size: 12px;
+    .thermal-slip-paper {
+        width: 330px;
+        max-width: 100%;
+        background: #FFFFFF;
         color: #000000;
-        line-height: 1.4;
-        padding: 24px 20px;
-        box-shadow: 0 15px 40px -10px rgba(6, 58, 34, 0.15);
+        padding: 24px 20px 28px 20px;
+        font-family: 'JetBrains Mono', 'Courier New', monospace;
+        font-size: 11.5px;
+        line-height: 1.35;
+        box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
         border-radius: 4px;
-        border-top: 5px solid var(--brand-gold);
         position: relative;
+        border-top: 5px solid #052E16;
     }
 
-    /* Elegant thermal zig-zag border effect on screen */
-    .invoice-container::after {
+    /* Elegant thermal zig-zag paper tear border */
+    .thermal-slip-paper::after {
         content: "";
         position: absolute;
         bottom: -8px; left: 0; right: 0;
         height: 8px;
-        background-image: linear-gradient(-45deg, transparent 4px, #ffffff 4px), 
-                          linear-gradient(45deg, transparent 4px, #ffffff 4px);
+        background-image: linear-gradient(-45deg, transparent 4px, #FFFFFF 4px), 
+                          linear-gradient(45deg, transparent 4px, #FFFFFF 4px);
         background-size: 8px 12px;
     }
 
-    .header-text { text-align: center; margin-bottom: 12px; }
-    .store-name { font-size: 18px; font-weight: 800; text-transform: uppercase; margin-bottom: 2px; font-family: 'Playfair Display', serif; color: var(--brand-green-dark); }
-    .sub-details { font-size: 11px; color: #444; margin-bottom: 2px; }
-    
-    .invoice-title { 
-        text-align: center; font-weight: bold; margin: 8px 0; 
-        border-bottom: 1px dashed #000000; padding-bottom: 8px; text-transform: uppercase;
-        font-size: 13px;
+    .thermal-header { text-align: center; margin-bottom: 12px; }
+    .store-brand-title { 
+        font-size: 18px; 
+        font-weight: 800; 
+        text-transform: uppercase; 
+        margin-bottom: 2px; 
+        color: #052E16;
+        letter-spacing: 0.04em;
+    }
+    .store-sub-detail { font-size: 10.5px; color: #333333; margin-bottom: 2px; font-weight: 500; }
+
+    .thermal-title-bar { 
+        text-align: center; 
+        font-weight: 800; 
+        margin: 8px 0; 
+        border-top: 1px dashed #000000;
+        border-bottom: 1px dashed #000000; 
+        padding: 6px 0; 
+        text-transform: uppercase;
+        font-size: 12px;
         letter-spacing: 0.08em;
     }
 
-    .bill-meta {
-        display: flex; justify-content: space-between; 
-        font-weight: bold; font-size: 12px; margin: 8px 0;
+    .thermal-meta-row {
+        display: flex; 
+        justify-content: space-between; 
+        font-weight: 700; 
+        font-size: 11.5px; 
+        margin-bottom: 4px;
     }
 
-    .row-item-name { font-weight: bold; font-size: 12px; margin-top: 6px;}
-    .row-item-details { font-size: 11px; display: flex; justify-content: space-between; margin-bottom: 6px; }
-
-    .summary-box { border-top: 1px dashed #000000; margin-top: 8px; padding-top: 8px; }
-    .flex-row { display: flex; justify-content: space-between; }
-    
-    .total-row { 
-        font-size: 20px; font-weight: 800; 
-        border-top: 1.5px dashed #000000; border-bottom: 1.5px dashed #000000;
-        padding: 8px 0; margin: 8px 0;
+    .thermal-row-item-name { 
+        font-weight: 700; 
+        font-size: 11.5px; 
+        margin-top: 4px;
+    }
+    .thermal-row-item-cols { 
+        font-size: 10.5px; 
+        display: flex; 
+        justify-content: space-between; 
+        margin-bottom: 4px; 
     }
 
-    .invoice-footer { text-align: center; font-size: 11px; margin-top: 15px; border-top: 1px dashed #000000; padding-top: 12px; }
-    
+    .thermal-summary-box { 
+        border-top: 1px dashed #000000; 
+        margin-top: 8px; 
+        padding-top: 6px; 
+    }
+    .thermal-flex-row { 
+        display: flex; 
+        justify-content: space-between; 
+        margin-bottom: 3px;
+    }
+
+    .thermal-net-total-row { 
+        font-size: 19px; 
+        font-weight: 800; 
+        border-top: 1.5px dashed #000000; 
+        border-bottom: 1.5px dashed #000000;
+        padding: 8px 0; 
+        margin: 8px 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .thermal-tax-table {
+        border: 1px dashed #000000;
+        margin-top: 8px;
+        padding: 6px;
+        font-size: 9.5px;
+    }
+
+    .thermal-footer-notes { 
+        text-align: center; 
+        font-size: 10.5px; 
+        margin-top: 14px; 
+        border-top: 1px dashed #000000; 
+        padding-top: 10px; 
+        line-height: 1.4;
+    }
+
     @media print {
         @page { margin: 0; size: auto; }
-        body { margin: 0; padding: 0; background: #ffffff !important; }
+        body { margin: 0; padding: 0; background: #FFFFFF !important; }
         .no-print { display: none !important; }
-        .invoice-card-wrapper { background: none !important; padding: 0 !important; box-shadow: none !important; }
-        .invoice-container { width: 100% !important; padding: 0 !important; box-shadow: none !important; border-top: none !important; }
-        .invoice-container::after { display: none !important; }
+        .thermal-receipt-slate-wrap { background: none !important; padding: 0 !important; }
+        .thermal-slip-paper { width: 100% !important; padding: 10px !important; box-shadow: none !important; border-top: none !important; }
+        .thermal-slip-paper::after { display: none !important; }
         * { color: #000000 !important; background: transparent !important; }
     }
 </style>
@@ -87,59 +139,72 @@ function numToWords(n) {
     const b = ['', '', 'Twenty','Thirty','Forty','Fifty', 'Sixty','Seventy','Eighty','Ninety'];
     if ((n = n.toString()).length > 9) return 'overflow';
     const match = ('000000000' + n).slice(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
-    if (!match) return; 
+    if (!match) return ''; 
     let str = '';
     str += (match[1] !== '00') ? (a[Number(match[1])] || b[match[1][0]] + ' ' + a[match[1][1]]) + 'Crore ' : '';
     str += (match[2] !== '00') ? (a[Number(match[2])] || b[match[2][0]] + ' ' + a[match[2][1]]) + 'Lakh ' : '';
     str += (match[3] !== '00') ? (a[Number(match[3])] || b[match[3][0]] + ' ' + a[match[3][1]]) + 'Thousand ' : '';
     str += (match[4] !== '0') ? (a[Number(match[4])] || b[match[4][0]] + ' ' + a[match[4][1]]) + 'Hundred ' : '';
     str += (match[5] !== '00') ? ((str !== '') ? 'and ' : '') + (a[Number(match[5])] || b[match[5][0]] + ' ' + a[match[5][1]]) + 'Only' : '';
-    return str;
+    return str.trim();
 }
 </script>
 
-<div class="row justify-content-center">
-    <div class="col-lg-6 col-md-8 text-center no-print mb-3">
-        <h3 class="brand-font text-success">🖨️ Invoice Issued</h3>
-        <p class="text-muted small">You can review the invoice on screen below. Click Print to physically issue the thermal slip.</p>
+<div class="thermal-receipt-slate-wrap">
+    
+    <!-- Top Action Notice (Non-Printable) -->
+    <div class="text-center no-print mb-4" style="max-width: 480px;">
+        <span class="badge bg-success bg-opacity-10 text-success py-2 px-3 rounded-pill fw-bold mb-2 d-inline-flex align-items-center gap-1">
+            <span class="material-symbols-outlined" style="font-size: 1.1rem;">check_circle</span> Invoice #<%= sale_id %> Successfully Finalized
+        </span>
+        <h4 class="fw-bold text-dark m-0" style="color: #052E16 !important;">Thermal Cash Memorandum Issued</h4>
+        <p class="text-muted small mt-1 mb-0">
+            Print thermal slip directly or press <kbd class="bg-light text-dark border">Esc</kbd> for the next customer counter transaction.
+        </p>
     </div>
-</div>
 
-<div class="invoice-card-wrapper">
-    <div class="invoice-container">
+    <!-- Authentic Thermal Slip Paper Container -->
+    <div class="thermal-slip-paper" id="printableReceipt">
         
-        <div class="header-text">
-            <div class="store-name">SRI TIRUMALA</div>
-            <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; color: #444; letter-spacing: 0.05em;">Dryfruits</div>
-            <div class="sub-details">OPP RTC COMPLEX, TEKKALI- 532201</div>
-            <div class="sub-details">PHONE: +91 9133133931</div>
+        <!-- Store Identity Header -->
+        <div class="thermal-header">
+            <div class="store-brand-title">SRI TIRUMALA</div>
+            <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; margin-bottom: 3px; color: #222; letter-spacing: 0.06em;">
+                Dry Fruits &amp; Millets
+            </div>
+            <div class="store-sub-detail">OPP RTC COMPLEX, TEKKALI, AP - 532201</div>
+            <div class="store-sub-detail">PHONE: +91 9133133931</div>
+            <div class="store-sub-detail" style="font-size: 9.5px;">GSTIN: 37AAAAA0000A1Z5 • FSSAI: 20124000000000</div>
         </div>
 
-        <div class="invoice-title">CASH MEMORANDUM</div>
+        <!-- Title -->
+        <div class="thermal-title-bar">CASH MEMORANDUM / RETAIL INVOICE</div>
 
-        <div class="bill-meta">
-            <span>Bill No: <span style="font-size: 14px; font-weight: 800;"><%= sale_id %></span></span>
+        <!-- Invoice Meta Details -->
+        <div class="thermal-meta-row">
+            <span>Bill No: <strong style="font-size: 13.5px;"><%= sale_id %></strong></span>
             <span>Date: <%= date %></span>
         </div>
-        <% if (typeof payment_method !== 'undefined' && payment_method) { %>
-        <div class="bill-meta" style="margin-top: 0;">
-            <span>Payment: <%= payment_method %></span>
+
+        <div class="thermal-meta-row" style="margin-top: 0;">
+            <span>Payment: <strong><%= typeof payment_method !== 'undefined' && payment_method ? payment_method : 'Cash' %></strong></span>
+            <span>Time: <%= time %></span>
         </div>
-        <% } %>
 
         <% if ((typeof customer_name !== 'undefined' && customer_name) || (typeof customer_phone !== 'undefined' && customer_phone)) { %>
-        <div style="border-bottom: 1px dashed #000000; padding-bottom: 6px; margin-bottom: 6px; font-size: 11px;">
+        <div style="border-bottom: 1px dashed #000000; padding-bottom: 5px; margin-bottom: 6px; font-size: 11px;">
             <% if (customer_name) { %><div><strong>Customer:</strong> <%= customer_name %></div><% } %>
             <% if (customer_phone) { %><div><strong>Phone:</strong> <%= customer_phone %></div><% } %>
         </div>
         <% } %>
 
+        <!-- Item Columns Header -->
         <div style="border-bottom: 1px dashed #000000; margin-bottom: 6px; padding-bottom: 4px;">
             <div style="display:flex; font-size:11px; font-weight:bold;">
-                <span style="width:15%">SNo</span>
-                <span style="width:85%">Item Description</span>
+                <span style="width:12%">SNo</span>
+                <span style="width:88%">Item Description</span>
             </div>
-            <div style="display:flex; font-size:11px; justify-content: space-between; margin-top:2px; font-weight: bold;">
+            <div style="display:flex; font-size:10.5px; justify-content: space-between; margin-top:2px; font-weight: bold;">
                 <span style="width:20%">MRP</span>
                 <span style="width:20%">Disc</span>
                 <span style="width:20%">Rate</span>
@@ -148,6 +213,7 @@ function numToWords(n) {
             </div>
         </div>
 
+        <!-- Line Items Loop -->
         <% 
         let gross = 0;
         let total_disc = 0;
@@ -161,7 +227,7 @@ function numToWords(n) {
                 const line_gross = item_mrp * item.qty;
                 const item_total = item.price * item.qty;
 
-                const tRate = item.tax_rate || 0;
+                const tRate = item.tax_rate || 5;
                 const baseP = item_total / (1 + (tRate / 100));
                 const taxAmt = item_total - baseP;
                 if (!taxSummary[tRate]) taxSummary[tRate] = { base: 0, tax: 0 };
@@ -172,11 +238,11 @@ function numToWords(n) {
                 total_disc += item_disc * item.qty;
                 total_qty += Number(item.qty);
         %>
-            <div style="border-bottom: 1px dotted #dddddd; padding-bottom: 4px; margin-bottom: 4px;">
-                <div class="row-item-name">
-                    <span style="margin-right: 5px;"><%= index + 1 %></span> <%= item.name %>
+            <div style="border-bottom: 1px dotted #cccccc; padding-bottom: 3px; margin-bottom: 3px;">
+                <div class="thermal-row-item-name">
+                    <span style="margin-right: 4px;"><%= index + 1 %></span> <%= item.name %>
                 </div>
-                <div class="row-item-details">
+                <div class="thermal-row-item-cols">
                     <span style="width:20%"><%= Number(item_mrp).toFixed(2) %></span>
                     <span style="width:20%"><%= Number(item_disc).toFixed(2) %></span>
                     <span style="width:20%"><%= Number(item.price).toFixed(2) %></span>
@@ -189,37 +255,41 @@ function numToWords(n) {
         } 
         %>
 
-        <div class="summary-box">
-            <div class="flex-row">
+        <!-- Summary Totals -->
+        <div class="thermal-summary-box">
+            <div class="thermal-flex-row">
                 <span>Gross Total :</span>
-                <span><%= Number(gross).toFixed(2) %></span>
+                <span>₹<%= Number(gross).toFixed(2) %></span>
             </div>
-            <div class="flex-row">
+            <div class="thermal-flex-row">
                 <span>Item Discount :</span>
-                <span>-<%= Number(total_disc).toFixed(2) %></span>
+                <span>-₹<%= Number(total_disc).toFixed(2) %></span>
             </div>
             <% if (typeof discount_amount !== 'undefined' && discount_amount > 0) { %>
-            <div class="flex-row" style="font-weight: bold;">
+            <div class="thermal-flex-row" style="font-weight: bold;">
                 <span>Bill Discount :</span>
-                <span>-<%= Number(discount_amount).toFixed(2) %></span>
+                <span>-₹<%= Number(discount_amount).toFixed(2) %></span>
             </div>
             <% } %>
-            <div class="flex-row" style="font-weight: bold; border-top: 1px dotted #000000; padding-top: 4px; margin-top: 4px;">
+            <div class="thermal-flex-row" style="font-weight: bold; border-top: 1px dotted #000000; padding-top: 4px; margin-top: 4px;">
                 <span>Total Savings :</span>
-                <span><%= Number(total_disc + (typeof discount_amount !== 'undefined' ? discount_amount : 0)).toFixed(2) %></span>
+                <span>₹<%= Number(total_disc + (typeof discount_amount !== 'undefined' ? discount_amount : 0)).toFixed(2) %></span>
             </div>
         </div>
 
-        <div class="total-row flex-row align-items-center">
+        <!-- Net Total Payable (Prominent) -->
+        <div class="thermal-net-total-row">
             <span>Net Payable :</span>
-            <span>₹ <%= Number(total).toFixed(2) %></span>
+            <span>₹<%= Number(total).toFixed(2) %></span>
         </div>
 
-        <!-- TAX SUMMARY TABLE -->
+        <!-- GST Tax Summary Table -->
         <% if (Object.keys(taxSummary).length > 0) { %>
-        <div style="border: 1px dashed #000; margin-top: 10px; padding: 6px; font-size: 10px;">
-            <div style="text-align: center; font-weight: bold; margin-bottom: 4px; text-transform: uppercase;">Tax Summary (Included in Net)</div>
-            <div style="display: flex; font-weight: bold; border-bottom: 1px dotted #000; padding-bottom: 2px; margin-bottom: 4px;">
+        <div class="thermal-tax-table">
+            <div style="text-align: center; font-weight: bold; margin-bottom: 3px; text-transform: uppercase;">
+                Tax Summary (Included in Net)
+            </div>
+            <div style="display: flex; font-weight: bold; border-bottom: 1px dotted #000; padding-bottom: 2px; margin-bottom: 3px;">
                 <span style="width: 25%">Rate</span>
                 <span style="width: 25%; text-align: center;">Base</span>
                 <span style="width: 25%; text-align: center;">CGST</span>
@@ -241,79 +311,91 @@ function numToWords(n) {
         </div>
         <% } %>
 
-        <div style="font-size: 11px; margin-top:6px; font-weight:bold; text-align: left; line-height: 1.3;">
-            RUPEES IN WORDS: <span id="word-display" style="text-transform: uppercase; font-weight: normal; font-size: 10px;"></span>
+        <!-- Currency in Words -->
+        <div style="font-size: 10.5px; margin-top: 6px; font-weight: bold; text-align: left; line-height: 1.35;">
+            RUPEES IN WORDS: <span id="word-display" style="text-transform: uppercase; font-weight: 500; font-size: 10px;"></span>
         </div>
 
-        <div class="flex-row" style="margin-top:12px; font-size:11px;">
+        <!-- Meta Counters -->
+        <div class="thermal-flex-row" style="margin-top: 10px; font-size: 10.5px;">
             <span>Items Count: <%= items ? items.length : 0 %></span>
             <span>Total Qty: <%= Number(total_qty).toFixed(3) %></span>
         </div>
-        <div class="flex-row" style="font-size:11px; margin-top: 2px;">
+        <div class="thermal-flex-row" style="font-size: 10.5px; margin-top: 2px;">
             <span>Billed By: <%= session && session.user ? session.user : 'Staff' %></span>
             <span><%= time %></span>
         </div>
 
-        <div class="invoice-footer">
-            <div style="font-weight: bold; margin-bottom: 2px;">* FREE HOME DELIVERY *</div>
-            <div style="margin-bottom: 6px;">* NO EXCHANGE & NO RETURN *</div>
-            <div style="font-weight:bold; letter-spacing: 0.05em; font-size: 11px;">*** THANK YOU & VISIT AGAIN ***</div>
+        <!-- Footer Notes -->
+        <div class="thermal-footer-notes">
+            <div style="font-weight: bold; margin-bottom: 2px;">* FREE LOCAL HOME DELIVERY *</div>
+            <div style="margin-bottom: 4px;">* NO EXCHANGE &amp; NO RETURN *</div>
+            <div style="font-weight: bold; letter-spacing: 0.05em; font-size: 11px; margin-top: 4px;">*** THANK YOU &amp; VISIT AGAIN ***</div>
         </div>
     </div>
-</div>
 
-<div class="text-center mt-5 no-print" style="max-width: 420px; margin: 0 auto;">
-    <div class="d-grid gap-3">
-        <button onclick="printAndNext()" class="btn btn-success btn-lg py-3 fw-bold shadow" style="border-radius: 12px; font-size: 1.1rem; letter-spacing: 0.05em;">
-            🖨️ PRINT SLIP (F1 / Enter)
-        </button>
-        <a href="/bill/pdf/<%= sale_id %>" target="_blank" class="btn btn-outline-dark py-2 fw-bold" style="border-radius: 10px;">
-            📄 Download PDF Receipt
-        </a>
-        <a href="/sell" class="btn btn-outline-secondary py-2" style="border-radius: 10px;">
-            Next Customer &larr; (Esc)
-        </a>
+    <!-- Non-Printable Action Buttons -->
+    <div class="text-center mt-4 no-print" style="width: 330px; max-width: 100%;">
+        <div class="d-grid gap-2">
+            <button onclick="printAndNext()" 
+                    class="btn btn-success btn-lg py-3 fw-bold shadow d-flex align-items-center justify-content-center gap-2" 
+                    style="border-radius: 10px; font-size: 1.05rem; background: #052E16; border-color: #052E16; color: #FAF8F5;">
+                <span class="material-symbols-outlined" style="font-size: 1.25rem;">print</span>
+                <span>PRINT SLIP</span>
+                <span class="shortcut-badge text-white bg-white bg-opacity-25">F1 / Enter</span>
+            </button>
+            <a href="/bill/pdf/<%= sale_id %>" target="_blank" class="btn btn-outline-dark py-2 fw-bold d-inline-flex align-items-center justify-content-center gap-1" style="border-radius: 8px;">
+                <span class="material-symbols-outlined" style="font-size: 1.15rem;">picture_as_pdf</span> Download PDF Receipt
+            </a>
+            <a href="/sell" class="btn btn-outline-secondary py-2 fw-semibold" style="border-radius: 8px;">
+                &larr; Next Customer (Esc)
+            </a>
+        </div>
     </div>
-</div>
 
-<!-- RETURN MANAGEMENT SECTION -->
-<% if (typeof allow_return !== 'undefined' && allow_return && items && items.length > 0) { %>
-<div class="row justify-content-center mt-5 no-print">
-    <div class="col-lg-6 col-md-8">
-        <div class="card p-4 border-danger shadow-sm bg-white" style="border-radius: 20px; border: 1.5px solid rgba(220, 53, 69, 0.2) !important;">
-            <div class="text-center mb-3">
-                <span class="fs-3">↩️</span>
-                <h5 class="text-danger fw-bold brand-font m-0 mt-1" style="font-size: 1.25rem;">Return Policy Processing</h5>
-                <small class="text-muted">In case of returns, process line items below to return stock to shelf inventory.</small>
+    <!-- Return Policy Processing Section -->
+    <% if (typeof allow_return !== 'undefined' && allow_return && items && items.length > 0) { %>
+    <div class="mt-5 no-print" style="width: 480px; max-width: 100%;">
+        <div class="card p-3 border-danger shadow-sm bg-white" style="border-radius: 14px; border: 1.5px solid rgba(220, 53, 69, 0.25) !important;">
+            <div class="text-center mb-2">
+                <span class="fs-4">↩️</span>
+                <h6 class="text-danger fw-bold m-0 mt-1">Return Policy Processing</h6>
+                <small class="text-muted">Process line items below to return stock to physical shelf inventory.</small>
             </div>
             
-            <div class="table-responsive bg-white rounded shadow-sm border border-light">
-                <table class="table table-hover align-middle mb-0" style="font-size: 13px;">
+            <div class="table-responsive bg-white rounded border border-light">
+                <table class="table table-hover align-middle mb-0" style="font-size: 12.5px;">
                     <thead class="bg-danger text-white">
                         <tr>
-                            <th class="p-3">Product Item</th>
-                            <th class="p-3 text-center" style="width: 100px;">Sold Qty</th>
-                            <th class="p-3 text-end" style="width: 160px;">Process Return</th>
+                            <th class="p-2">Product Item</th>
+                            <th class="p-2 text-center" style="width: 90px;">Sold Qty</th>
+                            <th class="p-2 text-end" style="width: 150px;">Process Return</th>
                         </tr>
                     </thead>
                     <tbody>
                         <% items.forEach(function(item) { %>
                         <tr>
-                            <td class="p-3">
+                            <td class="p-2">
                                 <span class="fw-bold text-dark d-block"><%= item.name %></span>
                             </td>
-                            <td class="p-3 text-center fw-bold"><%= Number(item.qty).toFixed(3) %></td>
-                            <td class="p-3 text-end">
-                                <form action="/return_item" method="POST" class="d-flex gap-1 justify-content-end" onsubmit="return confirm('Confirm Return item? This adjusts inventory and profits.');">
+                            <td class="p-2 text-center fw-bold"><%= Number(item.qty).toFixed(3) %></td>
+                            <td class="p-2 text-end">
+                                <form action="/return_item" method="POST" class="d-flex gap-1 justify-content-end" onsubmit="return confirm('Confirm Return item? This adjusts shelf inventory.');">
                                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                     <input type="hidden" name="bill_id" value="<%= sale_id %>">
                                     <input type="hidden" name="sale_id" value="<%= item.sale_id %>">
                                     <input type="hidden" name="product_id" value="<%= item.product_id %>">
                                     
-                                    <input type="number" name="return_qty" class="form-control form-control-sm text-center fw-bold text-danger border-danger" 
-                                           step="0.001" min="0.001" max="<%= item.qty %>" 
-                                           placeholder="Qty" required style="width: 80px; border-radius: 6px;">
-                                    <button type="submit" class="btn btn-danger btn-sm fw-bold px-3" style="border-radius: 6px;">↩️</button>
+                                    <input type="number" 
+                                           name="return_qty" 
+                                           class="form-control form-control-sm text-center fw-bold text-danger border-danger" 
+                                           step="0.001" 
+                                           min="0.001" 
+                                           max="<%= item.qty %>" 
+                                           placeholder="Qty" 
+                                           required 
+                                           style="width: 75px; border-radius: 6px;">
+                                    <button type="submit" class="btn btn-danger btn-sm fw-bold px-2" style="border-radius: 6px;">↩️</button>
                                 </form>
                             </td>
                         </tr>
@@ -323,15 +405,18 @@ function numToWords(n) {
             </div>
         </div>
     </div>
+    <% } %>
 </div>
-<% } %>
 
 <script>
-    // 1. Convert Numbers to Words
+    // 1. Convert Number to English Words
     const totalAmount = Number("<%= total %>");
-    document.getElementById('word-display').innerText = numToWords(Math.floor(totalAmount)) + " RUPEES ONLY";
+    const wordsEl = document.getElementById('word-display');
+    if (wordsEl) {
+        wordsEl.innerText = numToWords(Math.floor(totalAmount)) + " RUPEES ONLY";
+    }
 
-    // 2. Print Function
+    // 2. Print Function & Return to Counter
     function printAndNext() {
         window.print();
         setTimeout(function(){
@@ -339,7 +424,7 @@ function numToWords(n) {
         }, 1200);
     }
 
-    // 3. KEYBOARD SHORTCUTS FOR BILL PAGE
+    // 3. Hotkeys for Thermal Bill View
     document.addEventListener('keydown', function(event) {
         if (event.key === "F1" || event.key === "Enter") {
             event.preventDefault();
@@ -351,9 +436,8 @@ function numToWords(n) {
         }
     });
 
-    // 4. AUTO-PRINT TRIGGER FOR FRESH BILLS
+    // 4. Auto-print trigger for fresh bills (not search history)
     window.addEventListener('DOMContentLoaded', () => {
-        // Check if this is a fresh finalized bill (not a historical search)
         const urlParams = new URLSearchParams(window.location.search);
         const isSearch = urlParams.has('bill_id');
         if (!isSearch) {

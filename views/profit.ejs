@@ -13,7 +13,9 @@
     <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
         <div>
             <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill mb-2 fw-bold" style="font-size: 0.8rem;">LEDGER & TAX REPORTS</span>
-            <h2 style="color: var(--brand-green);" class="brand-font m-0">💰 Profit Analytics</h2>
+            <h2 style="color: var(--brand-green);" class="brand-font m-0 d-flex align-items-center gap-2">
+                <span class="material-symbols-outlined" style="font-size: 1.8rem;">analytics</span> Profit Analytics
+            </h2>
         </div>
         <span class="badge bg-dark py-2 px-3 fw-bold rounded-pill text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.05em;">FINANCIAL AUDITING</span>
     </div>
@@ -70,7 +72,7 @@
                     <button class="accordion-button <%= index !== 0 ? 'collapsed' : '' %> bg-white py-3 px-4" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<%= index %>" style="box-shadow: none; border-bottom: 1px solid rgba(6, 58, 34, 0.05);">
                         <div class="d-flex flex-wrap justify-content-between w-100 me-3 align-items-center gap-2">
                             <span class="fw-bold text-dark fs-6 d-flex align-items-center gap-2">
-                                <span>📅</span> <%= date %>
+                                <span class="material-symbols-outlined" style="font-size: 1.15rem; color: #2D5A27;">calendar_today</span> <%= date %>
                             </span>
                             <div class="d-flex gap-2">
                                 <span class="badge bg-secondary bg-opacity-10 text-dark fw-bold border border-secondary border-opacity-10 py-2 px-3 rounded-pill" style="font-size: 0.78rem;">Sales: ₹<%= Number(details.daily_sales).toFixed(2) %></span>
@@ -119,11 +121,13 @@
 
                                         <td class="text-end pe-4">
                                             <div class="d-flex justify-content-end gap-1">
-                                                <button class="btn btn-sm btn-outline-success fw-bold px-3" style="border-radius: 8px;"
+                                                <button class="btn btn-sm btn-outline-success fw-bold px-3 d-inline-flex align-items-center gap-1" style="border-radius: 8px;"
                                                         onclick="openEditModal('<%= bill.bill_id %>', '<%= bill.bill_profit %>')">
-                                                    ✏️ Edit
+                                                    <span class="material-symbols-outlined" style="font-size: 1rem;">edit</span> Edit
                                                 </button>
-                                                <a href="/search_bill?bill_id=<%= bill.bill_id %>" class="btn btn-sm btn-primary px-3" style="border-radius: 8px;">📄 View</a>
+                                                <a href="/search_bill?bill_id=<%= bill.bill_id %>" class="btn btn-sm btn-primary px-3 d-inline-flex align-items-center gap-1" style="border-radius: 8px;">
+                                                    <span class="material-symbols-outlined" style="font-size: 1rem;">description</span> View
+                                                </a>
                                             </div>
                                         </td>
                                     </tr>
@@ -139,7 +143,7 @@
     <% } else { %>
         <div class="text-center text-muted py-5 card border-0 bg-white shadow-sm" style="border-radius: 20px;">
             <div class="py-5">
-                <span class="fs-1">📉</span>
+                <span class="material-symbols-outlined" style="font-size: 3rem; color: #D89A4E;">trending_down</span>
                 <h4 class="fw-bold text-dark mt-3">No Sales Registered Yet</h4>
                 <p class="mb-0">Run billing transactions on the POS terminal to populate this panel.</p>
             </div>
@@ -151,7 +155,9 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 bg-white shadow" style="border-radius: 20px;">
             <div class="modal-header border-bottom border-light" style="padding: 24px;">
-                <h5 class="modal-title fw-bold text-success brand-font" style="font-size: 1.25rem;">✏️ Edit Invoice Profit</h5>
+                <h5 class="modal-title fw-bold text-success brand-font d-flex align-items-center gap-2" style="font-size: 1.25rem;">
+                    <span class="material-symbols-outlined" style="font-size: 1.25rem;">edit</span> Edit Invoice Profit
+                </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <form action="/update_profit" method="POST">

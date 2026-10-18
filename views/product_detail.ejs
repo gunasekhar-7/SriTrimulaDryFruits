@@ -30,13 +30,13 @@
         const discountPercent = hasDiscount ? Math.round(((product.mrp - product.selling_price) / product.mrp) * 100) : 0;
         const savingsAmount = hasDiscount ? (Number(product.mrp) - Number(product.selling_price)).toFixed(2) : 0;
         const cat = product.category || 'Dry Fruits';
-        let emoji = "🥥";
-        if (cat === 'Dry Fruits') emoji = "🌰";
-        else if (cat === 'Millets') emoji = "🌾";
-        else if (cat === 'Seeds') emoji = "🌱";
-        else if (cat === 'Spices') emoji = "🌶️";
-        else if (cat === 'Nuts') emoji = "🥜";
-        else if (cat === 'Sweets') emoji = "🍬";
+        let catIcon = "spa";
+        if (cat === 'Dry Fruits') catIcon = "workspace_premium";
+        else if (cat === 'Millets') catIcon = "grain";
+        else if (cat === 'Seeds') catIcon = "spa";
+        else if (cat === 'Spices') catIcon = "local_fire_department";
+        else if (cat === 'Nuts') catIcon = "nutrition";
+        else if (cat === 'Sweets') catIcon = "card_giftcard";
         const safeName = product.name.replace(/'/g, "\\'");
     %>
 
@@ -67,14 +67,14 @@
                              style="max-height: 420px; border-radius: 20px; z-index: 1;"
                              loading="eager"
                              decoding="async"
-                             onerror="this.style.display='none'; document.getElementById('productEmojiLarge').style.display='block';">
+                             onerror="this.style.display='none'; document.getElementById('productEmojiLarge').style.display='flex';">
                     <% } %>
 
-                    <!-- Emoji Fallback Backdrop -->
+                    <!-- Material Symbol Fallback Backdrop -->
                     <div id="productEmojiLarge" 
-                         style="font-size: 8rem; user-select: none; <%= product.image_url ? 'display: none;' : '' %>" 
+                         style="user-select: none; color: rgba(216, 154, 78, 0.35); align-items: center; justify-content: center; <%= product.image_url ? 'display: none;' : 'display: flex;' %>" 
                          aria-hidden="true">
-                        <%= emoji %>
+                        <span class="material-symbols-outlined" style="font-size: 7.5rem;"><%= catIcon %></span>
                     </div>
                 </div>
 
@@ -82,19 +82,25 @@
                 <div class="row g-2 mt-3 text-center">
                     <div class="col-4">
                         <div class="p-2 rounded bg-light border text-muted" style="font-size: 0.75rem;">
-                            <div class="fw-bold text-dark">🌱 100% Pure</div>
+                            <div class="fw-bold text-dark d-flex align-items-center justify-content-center gap-1">
+                                <span class="material-symbols-outlined" style="font-size: 1rem; color: #2D5A27;">eco</span> 100% Pure
+                            </div>
                             Natural Harvest
                         </div>
                     </div>
                     <div class="col-4">
                         <div class="p-2 rounded bg-light border text-muted" style="font-size: 0.75rem;">
-                            <div class="fw-bold text-dark">🔒 Sealed</div>
+                            <div class="fw-bold text-dark d-flex align-items-center justify-content-center gap-1">
+                                <span class="material-symbols-outlined" style="font-size: 1rem; color: #D89A4E;">lock</span> Sealed
+                            </div>
                             Vacuum Packed
                         </div>
                     </div>
                     <div class="col-4">
                         <div class="p-2 rounded bg-light border text-muted" style="font-size: 0.75rem;">
-                            <div class="fw-bold text-dark">⚡ Fresh</div>
+                            <div class="fw-bold text-dark d-flex align-items-center justify-content-center gap-1">
+                                <span class="material-symbols-outlined" style="font-size: 1rem; color: #B86A28;">bolt</span> Fresh
+                            </div>
                             Direct from Tekkali
                         </div>
                     </div>
@@ -125,24 +131,28 @@
                         <% if (stock <= 0) { %>
                             <span class="badge bg-secondary px-3 py-1">Out of Stock</span>
                         <% } else if (stock < 10) { %>
-                            <span class="badge bg-warning text-dark px-3 py-1">⚠️ Only <%= stock %> left in stock</span>
+                            <span class="badge bg-warning text-dark px-3 py-1 d-inline-flex align-items-center gap-1">
+                                <span class="material-symbols-outlined" style="font-size: 0.95rem;">warning</span> Only <%= stock %> left in stock
+                            </span>
                         <% } else { %>
-                            <span class="badge bg-success px-3 py-1">✓ In Stock (<%= stock %> available)</span>
+                            <span class="badge bg-success px-3 py-1 d-inline-flex align-items-center gap-1">
+                                <span class="material-symbols-outlined" style="font-size: 0.95rem;">check_circle</span> In Stock (<%= stock %> available)
+                            </span>
                         <% } %>
                     </div>
 
                     <!-- Verified Attribute Badges -->
                     <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
                         <% if (locals.content && content.gradeVariety) { %>
-                            <span class="badge bg-light text-dark border px-2 py-1 rounded-pill">
-                                🏷️ <%= content.gradeVariety %>
+                            <span class="badge bg-light text-dark border px-2 py-1 rounded-pill d-inline-flex align-items-center gap-1">
+                                <span class="material-symbols-outlined" style="font-size: 0.9rem; color: #B86A28;">loyalty</span> <%= content.gradeVariety %>
                             </span>
                         <% } %>
-                        <span class="badge bg-light text-dark border px-2 py-1 rounded-pill">
-                            📦 <%= locals.content ? content.packSizeText : 'Standard Pack' %>
+                        <span class="badge bg-light text-dark border px-2 py-1 rounded-pill d-inline-flex align-items-center gap-1">
+                            <span class="material-symbols-outlined" style="font-size: 0.9rem; color: #2D5A27;">inventory_2</span> <%= locals.content ? content.packSizeText : 'Standard Pack' %>
                         </span>
-                        <span class="badge bg-light text-dark border px-2 py-1 rounded-pill">
-                            📍 Tekkali Storefront
+                        <span class="badge bg-light text-dark border px-2 py-1 rounded-pill d-inline-flex align-items-center gap-1">
+                            <span class="material-symbols-outlined" style="font-size: 0.9rem; color: #D89A4E;">location_on</span> Tekkali Storefront
                         </span>
                     </div>
 
@@ -170,7 +180,7 @@
                     <!-- Description -->
                     <div class="p-3 rounded mb-3" style="background: var(--sf-cream, #FAF9F5); border: 1px solid var(--sf-border, #E5ECE7);">
                         <h6 class="fw-bold mb-2" style="color: var(--sf-primary, #063A22);">
-                            <%= locals.content && content.isCustomDescription ? 'Product Details' : 'Product Overview & Sourcing' %>
+                            <%= locals.content && content.isCustomDescription ? 'Product Details' : 'Product Overview & Fresh Quality' %>
                         </h6>
                         <p class="m-0 text-secondary" style="font-size: 0.95rem; line-height: 1.6;">
                             <%= locals.content ? content.description : product.name %>
@@ -182,13 +192,17 @@
                     <div class="row g-2 mb-4">
                         <div class="col-12 col-sm-6">
                             <div class="p-3 rounded h-100" style="background: #ffffff; border: 1px solid var(--sf-border, #E5ECE7);">
-                                <div class="fw-bold small text-dark mb-1">🌿 Recommended Storage</div>
+                                <div class="fw-bold small text-dark mb-1 d-flex align-items-center gap-1">
+                                    <span class="material-symbols-outlined" style="font-size: 1.05rem; color: #2D5A27;">shelves</span> Recommended Storage
+                                </div>
                                 <div class="text-muted small" style="line-height: 1.5;"><%= content.storageInstructions %></div>
                             </div>
                         </div>
                         <div class="col-12 col-sm-6">
                             <div class="p-3 rounded h-100" style="background: #ffffff; border: 1px solid var(--sf-border, #E5ECE7);">
-                                <div class="fw-bold small text-dark mb-1">🥣 Culinary Uses & Serving</div>
+                                <div class="fw-bold small text-dark mb-1 d-flex align-items-center gap-1">
+                                    <span class="material-symbols-outlined" style="font-size: 1.05rem; color: #D89A4E;">restaurant</span> How to Use &amp; Serving Ideas
+                                </div>
                                 <div class="text-muted small" style="line-height: 1.5;"><%= content.culinaryUsage %></div>
                             </div>
                         </div>
@@ -210,11 +224,12 @@
                         <!-- Add to Cart Button -->
                         <div class="col">
                             <label class="form-label small fw-bold text-muted mb-1 d-block">&nbsp;</label>
-                            <button class="btn btn-brand w-100 py-2 fw-bold shadow-sm" 
+                            <button class="btn btn-brand w-100 py-2 fw-bold shadow-sm d-inline-flex align-items-center justify-content-center gap-2" 
                                     id="detailAddToCartBtn"
                                     <%= stock <= 0 ? 'disabled' : '' %>
                                     onclick="handleDetailAddToCart(<%= product.id %>, '<%= safeName %>')">
-                                <%= stock <= 0 ? 'Out of Stock' : '🛒 Add to Cart' %>
+                                <span class="material-symbols-outlined" style="font-size: 1.15rem;">shopping_bag</span>
+                                <span><%= stock <= 0 ? 'Out of Stock' : 'Add to Cart' %></span>
                             </button>
                         </div>
 
@@ -222,9 +237,10 @@
                         <div class="col-12 col-sm-auto">
                             <label class="form-label small fw-bold text-muted mb-1 d-block d-none d-sm-block">&nbsp;</label>
                             <button type="button" 
-                                    class="btn btn-outline-success w-100 py-2 fw-bold"
+                                    class="btn btn-outline-success w-100 py-2 fw-bold d-inline-flex align-items-center justify-content-center gap-2"
                                     onclick="orderDetailViaWhatsApp(<%= product.id %>, '<%= safeName %>', <%= product.selling_price %>, '<%= cat %>')">
-                                💬 WhatsApp Order
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                                <span>WhatsApp Order</span>
                             </button>
                         </div>
                     </div>
@@ -233,10 +249,10 @@
                     <div class="mt-auto pt-3 border-top">
                         <div class="row g-2 text-muted small">
                             <div class="col-12 col-md-6 d-flex align-items-center gap-2">
-                                <span>🚚</span> Express dispatch across Tekkali, Srikakulam & Andhra Pradesh
+                                <span class="material-symbols-outlined" style="font-size: 1.15rem; color: #2D5A27;">local_shipping</span> Fast delivery across Tekkali, Srikakulam &amp; Andhra Pradesh
                             </div>
                             <div class="col-12 col-md-6 d-flex align-items-center gap-2">
-                                <span>📞</span> Customer Helpline & WhatsApp: +91 91331 33931
+                                <span class="material-symbols-outlined" style="font-size: 1.15rem; color: #D89A4E;">support_agent</span> Customer Helpline &amp; WhatsApp: +91 91331 33931
                             </div>
                         </div>
                     </div>
@@ -280,7 +296,7 @@
                     </tr>
                     <tr>
                         <th class="bg-light text-muted">Availability</th>
-                        <td><%= stock > 0 ? '✓ In Stock (' + stock + ' units available for dispatch)' : 'Currently Unavailable' %></td>
+                        <td><%= stock > 0 ? 'In Stock (' + stock + ' available for quick delivery)' : 'Out of Stock' %></td>
                     </tr>
                 </tbody>
             </table>
@@ -293,7 +309,7 @@
         <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
             <div>
                 <h3 class="brand-font m-0" style="color: var(--sf-primary, #063A22); font-size: 1.6rem;">Related Products</h3>
-                <small class="text-muted">Handcrafted selections from our <%= cat %> collection</small>
+                <small class="text-muted">More popular choices from our <%= cat %> collection</small>
             </div>
             <div class="d-flex align-items-center gap-2">
                 <a href="/category/<%= encodeURIComponent(cat) %>" class="btn btn-outline-success btn-sm rounded-pill px-3 fw-bold">
@@ -320,13 +336,13 @@
                 const rpStock = (rp.total_qty || 0) - (rp.sold_qty || 0);
                 const rpHadDiscount = rp.mrp && Number(rp.mrp) > Number(rp.selling_price);
                 const rpDiscount = rpHadDiscount ? Math.round(((rp.mrp - rp.selling_price) / rp.mrp) * 100) : 0;
-                let rpEmoji = "🌰";
+                let rpIcon = "workspace_premium";
                 const rpCat = rp.category || 'Dry Fruits';
-                if (rpCat === 'Millets') rpEmoji = "🌾";
-                else if (rpCat === 'Seeds') rpEmoji = "🌱";
-                else if (rpCat === 'Spices') rpEmoji = "🌶️";
-                else if (rpCat === 'Nuts') rpEmoji = "🥜";
-                else if (rpCat === 'Sweets') rpEmoji = "🍬";
+                if (rpCat === 'Millets') rpIcon = "grain";
+                else if (rpCat === 'Seeds') rpIcon = "spa";
+                else if (rpCat === 'Spices') rpIcon = "local_fire_department";
+                else if (rpCat === 'Nuts') rpIcon = "nutrition";
+                else if (rpCat === 'Sweets') rpIcon = "card_giftcard";
             %>
             <div class="related-carousel-card">
                 <div class="product-grid-card h-100 d-flex flex-column">
@@ -339,7 +355,9 @@
                             <% if (rp.image_url) { %>
                                 <img src="<%= rp.image_url %>" alt="<%= rp.name %>" loading="lazy" decoding="async" class="product-card-img" onerror="this.style.display='none';">
                             <% } %>
-                            <div class="product-emoji-backdrop" aria-hidden="true"><%= rpEmoji %></div>
+                            <div class="product-emoji-backdrop" aria-hidden="true" style="display: flex; align-items: center; justify-content: center;">
+                                <span class="material-symbols-outlined" style="font-size: 3.5rem; color: rgba(216, 154, 78, 0.3);"><%= rpIcon %></span>
+                            </div>
                         </a>
                     </div>
                     <div class="product-details d-flex flex-column flex-grow-1 p-3">
@@ -450,7 +468,7 @@ function orderDetailViaWhatsApp(id, name, price, category) {
     const qty = qtyInput ? (parseInt(qtyInput.value, 10) || 1) : 1;
     const total = (price * qty).toFixed(2);
     const storeUrl = window.location.href;
-    const msg = `Hello Sri Tirumala Dry Fruits! I would like to order:\n\n📦 *${name}*\n🏷️ Category: ${category}\n🔢 Quantity: ${qty}\n💰 Price: ₹${price} each (Total: ₹${total})\n🔗 Product Link: ${storeUrl}\n\nPlease confirm availability and dispatch details.`;
+    const msg = `*SRI TIRUMALA DRY FRUITS — ORDER ENQUIRY*\n\nProduct: *${name}*\nCategory: ${category}\nQuantity: ${qty}\nPrice: ₹${price} each (Total: ₹${total})\nProduct Link: ${storeUrl}\n\nPlease confirm availability and dispatch details.`;
     window.open(`https://wa.me/919133133931?text=${encodeURIComponent(msg)}`, '_blank');
 }
 </script>

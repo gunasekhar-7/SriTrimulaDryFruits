@@ -7,6 +7,7 @@ import { requireAuth, requireAdmin, requireCustomerAuth } from '../middleware/au
 import { sendSuccess } from '../utils/apiResponse.js';
 import { productService } from '../services/product.service.js';
 import { adminController } from '../controllers/admin.controller.js';
+import { billingController } from '../controllers/billing.controller.js';
 
 export const apiV1Router = express.Router();
 
@@ -93,6 +94,13 @@ storeApiRouter.post('/checkout', checkoutLimiter, (req, res, next) => {
   storeController.checkoutApi(req, res).catch(next);
 });
 apiV1Router.use('/store', storeApiRouter);
+
+// 6.1 Sales API (POS Terminal Checkout)
+const salesApiRouter = express.Router();
+salesApiRouter.post('/complete', requireAuth, (req, res, next) => {
+  billingController.completeSaleApi(req, res).catch(next);
+});
+apiV1Router.use('/sales', salesApiRouter);
 
 // 7. WhatsApp API
 const whatsappApiRouter = express.Router();

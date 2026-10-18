@@ -34,13 +34,17 @@
                                 <tr><td class="text-muted">Type:</td>
                                     <td class="fw-bold">
                                         <% if (order.delivery_type === 'DELIVERY') { %>
-                                            🚚 Home Delivery
+                                            <span class="d-inline-flex align-items-center gap-1">
+                                                <span class="material-symbols-outlined" style="font-size: 1.1rem; color: #2D5A27;">local_shipping</span> Home Delivery
+                                            </span>
                                         <% } else { %>
-                                            🏪 Store Pickup
+                                            <span class="d-inline-flex align-items-center gap-1">
+                                                <span class="material-symbols-outlined" style="font-size: 1.1rem; color: #D89A4E;">storefront</span> Store Pickup
+                                            </span>
                                         <% } %>
                                     </td>
                                 </tr>
-                                <tr><td class="text-muted">Payment:</td><td class="fw-bold"><%= order.payment_mode === 'COD' ? '💵 Cash / Pay on Delivery' : '📱 UPI / QR' %></td></tr>
+                                <tr><td class="text-muted">Payment:</td><td class="fw-bold"><%= order.payment_mode === 'COD' ? 'Cash / Pay on Delivery' : 'UPI / QR' %></td></tr>
                                 <tr><td class="text-muted">Items:</td><td class="fw-bold"><%= order.items.length %></td></tr>
                             </tbody>
                         </table>
@@ -54,7 +58,9 @@
                     <div class="card-body">
                         <h6 class="text-muted fw-bold text-uppercase mb-3">Customer Details</h6>
                         <div class="fw-bold fs-5 mb-1"><%= order.customer.name %></div>
-                        <div class="text-muted mb-2 font-monospace">📞 +<%= order.customer.phone %></div>
+                        <div class="text-muted mb-2 font-monospace d-flex align-items-center gap-1">
+                            <span class="material-symbols-outlined" style="font-size: 1rem;">call</span> +<%= order.customer.phone %>
+                        </div>
                         
                         <% if (order.delivery_type === 'DELIVERY') { %>
                             <div class="small text-dark mt-3">
@@ -76,7 +82,9 @@
 
         <% if (order.notes) { %>
             <div class="alert alert-info rounded-4 border-0 shadow-sm">
-                <strong>📝 Customer Notes:</strong><br>
+                <strong class="d-flex align-items-center gap-1 mb-1">
+                    <span class="material-symbols-outlined" style="font-size: 1.1rem;">sticky_note_2</span> Customer Notes:
+                </strong>
                 <%= order.notes %>
             </div>
         <% } %>
@@ -142,15 +150,15 @@
             <div class="card-body">
                 <h6 class="text-muted fw-bold text-uppercase mb-3">Quick Actions</h6>
                 
-                <a href="https://wa.me/<%= order.customer.phone %>" target="_blank" class="btn btn-lg w-100 mb-3 text-white fw-bold shadow-sm" style="background-color: #25D366;">
-                    💬 Chat on WhatsApp
+                <a href="https://wa.me/<%= order.customer.phone %>" target="_blank" class="btn btn-lg w-100 mb-3 text-white fw-bold shadow-sm d-flex align-items-center justify-content-center gap-2" style="background-color: #25D366;">
+                    <i class="fab fa-whatsapp"></i> Chat on WhatsApp
                 </a>
                 
                 <% if (order.status !== 'COMPLETED' && order.status !== 'CANCELLED') { %>
                     <form action="/admin/online-orders/<%= order.id %>/push-to-pos" method="POST" class="mb-3" onsubmit="return confirm('Are you sure you want to convert this to a POS bill? This will process inventory deductions and close the order.');">
                         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                        <button type="submit" class="btn btn-brand btn-lg w-100 fw-bold shadow-sm">
-                            🧾 Push to POS Bill & Print
+                        <button type="submit" class="btn btn-brand btn-lg w-100 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-2">
+                            <span class="material-symbols-outlined" style="font-size: 1.25rem;">point_of_sale</span> Push to POS Bill &amp; Print
                         </button>
                     </form>
                 <% } %>
@@ -161,7 +169,9 @@
                         <form action="/admin/online-orders/<%= order.id %>/status" method="POST">
                             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                             <input type="hidden" name="new_status" value="CONFIRMED">
-                            <button type="submit" class="btn btn-primary w-100 fw-bold">👍 Confirm Order</button>
+                            <button type="submit" class="btn btn-primary w-100 fw-bold d-flex align-items-center justify-content-center gap-2">
+                                <span class="material-symbols-outlined" style="font-size: 1.15rem;">thumb_up</span> Confirm Order
+                            </button>
                         </form>
                     <% } %>
                     
@@ -169,7 +179,9 @@
                         <form action="/admin/online-orders/<%= order.id %>/status" method="POST">
                             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                             <input type="hidden" name="new_status" value="PACKING">
-                            <button type="submit" class="btn btn-warning w-100 fw-bold">📦 Mark Packing</button>
+                            <button type="submit" class="btn btn-warning w-100 fw-bold d-flex align-items-center justify-content-center gap-2">
+                                <span class="material-symbols-outlined" style="font-size: 1.15rem;">inventory_2</span> Mark Packing
+                            </button>
                         </form>
                     <% } %>
 
@@ -177,7 +189,9 @@
                         <form action="/admin/online-orders/<%= order.id %>/status" method="POST">
                             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                             <input type="hidden" name="new_status" value="DISPATCHED">
-                            <button type="submit" class="btn btn-info w-100 fw-bold">🛵 Mark Dispatched</button>
+                            <button type="submit" class="btn btn-info w-100 fw-bold d-flex align-items-center justify-content-center gap-2">
+                                <span class="material-symbols-outlined" style="font-size: 1.15rem;">two_wheeler</span> Mark Dispatched
+                            </button>
                         </form>
                     <% } %>
 
@@ -185,7 +199,9 @@
                         <form action="/admin/online-orders/<%= order.id %>/status" method="POST">
                             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                             <input type="hidden" name="new_status" value="READY">
-                            <button type="submit" class="btn btn-info w-100 fw-bold">🛍️ Mark Ready</button>
+                            <button type="submit" class="btn btn-info w-100 fw-bold d-flex align-items-center justify-content-center gap-2">
+                                <span class="material-symbols-outlined" style="font-size: 1.15rem;">shopping_bag</span> Mark Ready
+                            </button>
                         </form>
                     <% } %>
 
@@ -193,7 +209,9 @@
                         <form action="/admin/online-orders/<%= order.id %>/status" method="POST">
                             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                             <input type="hidden" name="new_status" value="COMPLETED">
-                            <button type="submit" class="btn btn-success w-100 fw-bold">✅ Mark Completed</button>
+                            <button type="submit" class="btn btn-success w-100 fw-bold d-flex align-items-center justify-content-center gap-2">
+                                <span class="material-symbols-outlined" style="font-size: 1.15rem;">check_circle</span> Mark Completed
+                            </button>
                         </form>
                     <% } %>
 
@@ -202,7 +220,9 @@
                         <form action="/admin/online-orders/<%= order.id %>/status" method="POST">
                             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                             <input type="hidden" name="new_status" value="CANCELLED">
-                            <button type="submit" class="btn btn-outline-danger w-100 fw-bold">❌ Cancel Order</button>
+                            <button type="submit" class="btn btn-outline-danger w-100 fw-bold d-flex align-items-center justify-content-center gap-2">
+                                <span class="material-symbols-outlined" style="font-size: 1.15rem;">cancel</span> Cancel Order
+                            </button>
                         </form>
                     <% } %>
                 </div>

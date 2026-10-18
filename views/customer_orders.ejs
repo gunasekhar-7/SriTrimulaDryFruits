@@ -7,6 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
   <link rel="stylesheet" href="/storefront.css">
   <style>
     body {
@@ -43,13 +44,13 @@
 
         <% if (orders.length === 0) { %>
           <div class="text-center py-5 border rounded-3 bg-white shadow-sm" style="border-radius: 20px !important;">
-            <span class="fs-1 d-block mb-3">📦</span>
+            <span class="material-symbols-outlined d-block mb-3" style="font-size: 3rem; color: #D89A4E;">inventory_2</span>
             <h5 class="fw-bold text-dark">No orders placed yet</h5>
             <p class="text-muted small max-w-600 mx-auto mb-4">
               You haven't placed any orders with us yet. Explore our fresh, nutritious catalog of dry fruits and seeds.
             </p>
-            <a href="/" class="btn btn-brand px-4 py-2 fw-bold" style="border-radius: 20px;">
-              🛍️ Start Shopping
+            <a href="/" class="btn btn-brand px-4 py-2 fw-bold d-inline-flex align-items-center gap-1" style="border-radius: 20px;">
+              <span class="material-symbols-outlined" style="font-size: 1.1rem; vertical-align: middle;">shopping_bag</span> Start Shopping
             </a>
           </div>
         <% } else { %>
@@ -82,12 +83,18 @@
 
                     <div class="col-6 col-md-4">
                       <div class="text-muted small">Fulfillment</div>
-                      <div class="fw-semibold text-dark"><%= order.delivery_type === 'DELIVERY' ? '🚚 Home Delivery' : '🏬 Store Pickup' %></div>
+                      <div class="fw-semibold text-dark d-inline-flex align-items-center gap-1">
+                        <% if (order.delivery_type === 'DELIVERY') { %>
+                          <span class="material-symbols-outlined" style="font-size: 1rem; color: #2D5A27;">local_shipping</span> Home Delivery
+                        <% } else { %>
+                          <span class="material-symbols-outlined" style="font-size: 1rem; color: #D89A4E;">storefront</span> Store Pickup
+                        <% } %>
+                      </div>
                     </div>
 
                     <div class="col-12 col-md-5 d-flex gap-2">
-                      <a href="/account/orders/<%= order.id %>" class="btn btn-outline-success btn-sm flex-grow-1 fw-bold py-2" style="border-radius: 10px;">
-                        🔍 Track & Details
+                      <a href="/account/orders/<%= order.id %>" class="btn btn-outline-success btn-sm flex-grow-1 fw-bold py-2 d-inline-flex align-items-center justify-content-center gap-1" style="border-radius: 10px;">
+                        <span class="material-symbols-outlined" style="font-size: 1rem;">search</span> Track &amp; Details
                       </a>
                       <a href="https://wa.me/919133133931?text=<%= encodeURIComponent('Hi Sri Tirumala Dry Fruits, I need assistance with order ' + order.order_number) %>" 
                          target="_blank" 

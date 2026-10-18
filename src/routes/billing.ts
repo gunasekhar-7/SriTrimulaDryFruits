@@ -17,6 +17,13 @@ router.post('/discard_held/:index', requireShift, csrfProtection, billingControl
 
 router.post('/finalize_bill', requireShift, csrfProtection, billingController.finalizeBill.bind(billingController));
 
+router.get('/bill/:id', requireAuth, csrfProtection, billingController.getBillById.bind(billingController));
+
+// POS Online Pickup Conversion Endpoints
+router.get('/api/v1/pos/pending-pickups', requireShift, billingController.getPendingPickups.bind(billingController));
+router.post('/api/v1/pos/load-order/:id', requireShift, csrfProtection, billingController.loadOrderToCart.bind(billingController));
+router.post('/pos/load-order/:id', requireShift, csrfProtection, billingController.loadOrderToCart.bind(billingController));
+
 
 
 export default router;

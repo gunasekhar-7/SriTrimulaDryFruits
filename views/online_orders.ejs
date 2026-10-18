@@ -110,9 +110,13 @@
                             <td class="fw-bold">₹<%= o.total_amount.toFixed(2) %></td>
                             <td>
                                 <% if (o.delivery_type === 'DELIVERY') { %>
-                                    <span class="badge bg-primary bg-opacity-10 text-primary border border-primary-subtle rounded-pill">🚚 Home Delivery</span>
+                                    <span class="badge bg-primary bg-opacity-10 text-primary border border-primary-subtle rounded-pill d-inline-flex align-items-center gap-1">
+                                        <span class="material-symbols-outlined" style="font-size: 0.95rem;">local_shipping</span> Home Delivery
+                                    </span>
                                 <% } else { %>
-                                    <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary-subtle rounded-pill">🏪 Store Pickup</span>
+                                    <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary-subtle rounded-pill d-inline-flex align-items-center gap-1">
+                                        <span class="material-symbols-outlined" style="font-size: 0.95rem;">storefront</span> Store Pickup
+                                    </span>
                                 <% } %>
                             </td>
                             <td>
@@ -127,7 +131,11 @@
                                         Actions
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end shadow">
-                                        <li><a class="dropdown-item" href="/admin/online-orders/<%= o.id %>">👁️ View Details</a></li>
+                                        <li>
+                                            <a class="dropdown-item d-flex align-items-center gap-2" href="/admin/online-orders/<%= o.id %>">
+                                                <span class="material-symbols-outlined" style="font-size: 1.1rem;">visibility</span> View Details
+                                            </a>
+                                        </li>
                                         <li><hr class="dropdown-divider"></li>
                                         
                                         <% if (o.status === 'NEW') { %>
@@ -135,7 +143,9 @@
                                                 <form action="/admin/online-orders/<%= o.id %>/status" method="POST">
                                                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                                     <input type="hidden" name="new_status" value="CONFIRMED">
-                                                    <button type="submit" class="dropdown-item text-primary">👍 Confirm Order</button>
+                                                    <button type="submit" class="dropdown-item text-primary d-flex align-items-center gap-2">
+                                                        <span class="material-symbols-outlined" style="font-size: 1.1rem;">thumb_up</span> Confirm Order
+                                                    </button>
                                                 </form>
                                             </li>
                                         <% } %>
@@ -145,7 +155,9 @@
                                                 <form action="/admin/online-orders/<%= o.id %>/status" method="POST">
                                                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                                     <input type="hidden" name="new_status" value="PACKING">
-                                                    <button type="submit" class="dropdown-item text-warning">📦 Mark Packing</button>
+                                                    <button type="submit" class="dropdown-item text-warning d-flex align-items-center gap-2">
+                                                        <span class="material-symbols-outlined" style="font-size: 1.1rem;">inventory_2</span> Mark Packing
+                                                    </button>
                                                 </form>
                                             </li>
                                         <% } %>
@@ -155,7 +167,9 @@
                                                 <form action="/admin/online-orders/<%= o.id %>/status" method="POST">
                                                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                                     <input type="hidden" name="new_status" value="DISPATCHED">
-                                                    <button type="submit" class="dropdown-item text-info">🛵 Mark Dispatched</button>
+                                                    <button type="submit" class="dropdown-item text-info d-flex align-items-center gap-2">
+                                                        <span class="material-symbols-outlined" style="font-size: 1.1rem;">two_wheeler</span> Mark Dispatched
+                                                    </button>
                                                 </form>
                                             </li>
                                         <% } %>
@@ -165,7 +179,9 @@
                                                 <form action="/admin/online-orders/<%= o.id %>/status" method="POST">
                                                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                                     <input type="hidden" name="new_status" value="READY">
-                                                    <button type="submit" class="dropdown-item text-info">🛍️ Mark Ready</button>
+                                                    <button type="submit" class="dropdown-item text-info d-flex align-items-center gap-2">
+                                                        <span class="material-symbols-outlined" style="font-size: 1.1rem;">shopping_bag</span> Mark Ready
+                                                    </button>
                                                 </form>
                                             </li>
                                         <% } %>
@@ -175,7 +191,9 @@
                                                 <form action="/admin/online-orders/<%= o.id %>/status" method="POST">
                                                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                                     <input type="hidden" name="new_status" value="COMPLETED">
-                                                    <button type="submit" class="dropdown-item text-success">✅ Mark Completed</button>
+                                                    <button type="submit" class="dropdown-item text-success d-flex align-items-center gap-2">
+                                                        <span class="material-symbols-outlined" style="font-size: 1.1rem;">check_circle</span> Mark Completed
+                                                    </button>
                                                 </form>
                                             </li>
                                         <% } %>
@@ -184,7 +202,9 @@
                                                 <form action="/admin/online-orders/<%= o.id %>/status" method="POST">
                                                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                                     <input type="hidden" name="new_status" value="CANCELLED">
-                                                    <button type="submit" class="dropdown-item text-danger">❌ Cancel Order</button>
+                                                    <button type="submit" class="dropdown-item text-danger d-flex align-items-center gap-2">
+                                                        <span class="material-symbols-outlined" style="font-size: 1.1rem;">cancel</span> Cancel Order
+                                                    </button>
                                                 </form>
                                             </li>
                                         <% } %>
@@ -194,7 +214,9 @@
                                             <li>
                                                 <form action="/admin/online-orders/<%= o.id %>/push-to-pos" method="POST">
                                                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                                    <button type="submit" class="dropdown-item text-primary fw-bold">🏪 Push to POS</button>
+                                                    <button type="submit" class="dropdown-item text-primary fw-bold d-flex align-items-center gap-2">
+                                                        <span class="material-symbols-outlined" style="font-size: 1.1rem;">point_of_sale</span> Push to POS
+                                                    </button>
                                                 </form>
                                             </li>
                                         <% } %>
@@ -208,7 +230,7 @@
             </div>
         <% } else { %>
             <div class="text-center py-5">
-                <div class="display-1 text-muted mb-3">🍃</div>
+                <div class="mb-3"><span class="material-symbols-outlined" style="font-size: 4rem; color: #94A3B8;">inbox</span></div>
                 <h4 class="text-muted fw-bold">No orders found</h4>
                 <p class="text-muted mb-0">No online orders match the current filter criteria.</p>
             </div>
@@ -219,8 +241,8 @@
 <!-- Notification Banner for New Orders -->
 <div id="newOrderNotification" class="toast align-items-center text-bg-success border-0 position-fixed top-0 end-0 m-4" style="z-index: 1060; display: none;" role="alert" aria-live="assertive" aria-atomic="true">
     <div class="d-flex">
-        <div class="toast-body fw-bold">
-            🔔 New online order received!
+        <div class="toast-body fw-bold d-flex align-items-center gap-2">
+            <span class="material-symbols-outlined" style="font-size: 1.25rem;">notifications_active</span> New online order received!
         </div>
         <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close" onclick="document.getElementById('newOrderNotification').style.display='none';"></button>
     </div>

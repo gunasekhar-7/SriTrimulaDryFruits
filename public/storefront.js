@@ -15,7 +15,7 @@
   let allCatalogProducts = [];
   let currentCategory = 'All';
 
-  const STORE_WHATSAPP = '919133133931';
+  const STORE_WHATSAPP = '918945244184';
 
   // ─── CSRF Helpers ──────────────────────────────────────────────────────────
   function getCsrfToken() {
@@ -37,7 +37,7 @@
   }
 
   // ─── Toast Notifications ───────────────────────────────────────────────────
-  function showToast(message, icon = '✅') {
+  function showToast(message, icon = 'check_circle') {
     let container = document.getElementById('storefrontToastContainer');
     if (!container) {
       container = document.createElement('div');
@@ -46,9 +46,20 @@
       document.body.appendChild(container);
     }
 
+    const iconMap = {
+      'check': 'check_circle',
+      'cart': 'shopping_bag',
+      'warning': 'warning',
+      'error': 'error',
+      'delete': 'delete',
+      'wishlist': 'favorite',
+      'unwishlist': 'heart_broken'
+    };
+    const iconName = iconMap[icon] || icon || 'check_circle';
+
     const toast = document.createElement('div');
     toast.className = 'sf-toast';
-    toast.innerHTML = `<span>${icon}</span> <span>${message}</span>`;
+    toast.innerHTML = `<span class="material-symbols-outlined" style="font-size: 1.15rem; color: #D89A4E; vertical-align: middle;">${iconName}</span> <span>${message}</span>`;
     container.appendChild(toast);
 
     setTimeout(() => {
@@ -98,13 +109,13 @@
           cartSubtotal = resData.data.subtotal || 0;
           updateCartBadge();
           renderCart();
-          showToast(`Added ${productName} to cart!`, '🛒');
+          showToast(`Added ${productName} to Cart!`, 'shopping_bag');
           if (typeof window.showRoyalCasketToast === 'function') {
             window.showRoyalCasketToast(productName, cartSubtotal);
           }
 
           // Bounce badge animation
-          const badge = document.getElementById('cartCountBadge');
+          const badge = document.getElementById('cartCountBadge') || document.getElementById('mobileCartBadge');
           if (badge) {
             badge.style.transform = 'scale(1.4)';
             setTimeout(() => { badge.style.transform = 'scale(1)'; }, 250);
@@ -112,10 +123,10 @@
         }
       } else {
         const err = await res.json();
-        showToast(err.error?.message || 'Could not add to cart', '⚠️');
+        showToast(err.error?.message || 'Could not add to cart', 'warning');
       }
     } catch {
-      showToast('Network error adding to cart', '❌');
+      showToast('Network error adding to cart', 'error');
     }
   }
 
@@ -150,7 +161,7 @@
         }
       }
     } catch {
-      showToast('Error updating quantity', '⚠️');
+      showToast('Error updating quantity', 'warning');
     }
   }
 
@@ -170,11 +181,11 @@
           cartSubtotal = resData.data.subtotal || 0;
           updateCartBadge();
           renderCart();
-          showToast('Item removed from cart', '🗑️');
+          showToast('Item removed from cart', 'delete');
         }
       }
     } catch {
-      showToast('Error removing item', '⚠️');
+      showToast('Error removing item', 'warning');
     }
   }
 
@@ -182,7 +193,8 @@
     const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
     const badges = [
       document.getElementById('cartCountBadge'),
-      document.getElementById('mobileCartBadge')
+      document.getElementById('mobileCartBadge'),
+      document.getElementById('mobileBottomCartBadge')
     ];
 
     badges.forEach(b => {
@@ -203,14 +215,14 @@
     if (!list || !subtotalEl) return;
 
     const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
-    if (drawerTitle) drawerTitle.innerHTML = `🛒 Your Cart (${totalQty})`;
+    if (drawerTitle) drawerTitle.innerHTML = `<span class="material-symbols-outlined" style="color: var(--brand-gold); font-size: 1.4rem; vertical-align: middle;">shopping_bag</span> <span>Shopping Cart (${totalQty})</span>`;
 
     if (cart.length === 0) {
       list.innerHTML = `
         <div class="empty-state-box my-4">
-          <div class="empty-state-icon">🛒</div>
-          <h5 class="fw-bold text-dark mb-1">Your cart is empty</h5>
-          <p class="text-muted small mb-3">Browse our premium harvest of dry fruits and nuts!</p>
+          <div class="empty-state-icon"><span class="material-symbols-outlined" style="font-size: 3rem; color: var(--brand-gold); opacity: 0.8;">shopping_bag</span></div>
+          <h5 class="fw-bold text-dark mb-1">Your cart is currently empty</h5>
+          <p class="text-muted small mb-3">Browse our fresh selection of dry fruits and nuts!</p>
           <button class="btn btn-sm btn-outline-success px-4 rounded-pill" data-bs-dismiss="offcanvas">
             Start Shopping →
           </button>
@@ -225,13 +237,15 @@
           <div class="d-flex align-items-center justify-content-between p-3 mb-2 bg-white rounded-3 border">
             <div style="flex: 1; min-width: 0;">
               <h6 class="mb-1 text-dark fw-bold text-truncate" style="font-size: 0.92rem;">${item.name}</h6>
-              <div class="small text-muted">₹${price.toFixed(2)} × ${qty} = <strong class="text-success">₹${itemTotal.toFixed(2)}</strong></div>
+              <div class="small text-muted">₹${price.toFixed(2)} × ${qty} = <strong style="color: #B86A28;">₹${itemTotal.toFixed(2)}</strong></div>
             </div>
             <div class="d-flex align-items-center gap-1 ms-2">
               <button class="btn btn-sm btn-light border px-2 py-0 fw-bold" onclick="window.storefront.updateQty(${item.id}, -1)">−</button>
               <span class="px-2 fw-bold" style="font-size: 0.9rem;">${qty}</span>
               <button class="btn btn-sm btn-light border px-2 py-0 fw-bold" onclick="window.storefront.updateQty(${item.id}, 1)">+</button>
-              <button class="btn btn-sm text-danger ms-2 px-1 py-0" title="Remove" onclick="window.storefront.removeFromCart(${item.id})">✕</button>
+              <button class="btn btn-sm text-danger ms-2 px-1 py-0 d-inline-flex align-items-center justify-content-center" title="Remove" onclick="window.storefront.removeFromCart(${item.id})">
+                <span class="material-symbols-outlined" style="font-size: 1.1rem; line-height: 1;">close</span>
+              </button>
             </div>
           </div>
         `;
@@ -246,15 +260,17 @@
     if (progress && text) {
       if (cartSubtotal >= 500) {
         progress.style.width = '100%';
-        progress.style.backgroundColor = '#198754';
-        text.innerHTML = '🎉 <strong>Congratulations!</strong> You qualify for FREE local delivery!';
-        text.className = 'text-success fw-bold d-block text-center mb-1';
+        progress.style.backgroundColor = '#DE9A4B';
+        text.innerHTML = '<span class="material-symbols-outlined align-middle me-1" style="font-size: 1.1rem; color: #DE9A4B;">verified</span> <strong>Congratulations!</strong> You qualify for FREE local delivery!';
+        text.className = 'fw-bold d-block text-center mb-1';
+        text.style.color = '#B86A28';
       } else {
         const needed = 500 - cartSubtotal;
         progress.style.width = Math.min((cartSubtotal / 500) * 100, 100) + '%';
         progress.style.backgroundColor = 'var(--sf-gold)';
         text.innerText = `Add ₹${needed.toFixed(2)} more for FREE delivery in Tekkali!`;
         text.className = 'text-muted fw-bold d-block text-center mb-1';
+        text.style.color = '';
       }
     }
   }
@@ -262,14 +278,14 @@
   // ─── WhatsApp 1-Click Ordering from Cart ────────────────────────────────────
   function orderCartViaWhatsApp() {
     if (cart.length === 0) {
-      showToast('Your cart is empty! Add products first.', '⚠️');
+      showToast('Your cart is empty! Add products first.', 'warning');
       return;
     }
 
-    let message = `🌴 *SRI TIRUMALA DRY FRUITS — WHATSAPP ORDER* 🌴\n`;
+    let message = `*SRI TIRUMALA DRY FRUITS — ROYAL ORDER CONCIERGE*\n`;
     message += `━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
-    message += `📅 Date: ${new Date().toLocaleDateString('en-IN')}\n\n`;
-    message += `🛍️ *Order Items:*\n`;
+    message += `Date: ${new Date().toLocaleDateString('en-IN')}\n\n`;
+    message += `*Selected Harvest Items:*\n`;
 
     cart.forEach((item, idx) => {
       message += `${idx + 1}. *${item.name}* × ${item.qty} = ₹${(Number(item.price) * item.qty).toFixed(2)}\n`;
@@ -277,15 +293,15 @@
 
     const isFreeDelivery = cartSubtotal >= 500;
     message += `━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
-    message += `💵 *Subtotal:* ₹${cartSubtotal.toFixed(2)}\n`;
-    message += `🚚 *Delivery:* ${isFreeDelivery ? 'FREE (Tekkali Express)' : '₹50.00'}\n`;
-    message += `💰 *Grand Total:* *₹${(cartSubtotal + (isFreeDelivery ? 0 : 50)).toFixed(2)}*\n`;
+    message += `• *Subtotal:* ₹${cartSubtotal.toFixed(2)}\n`;
+    message += `• *Cold-Chain Transit:* ${isFreeDelivery ? 'COMPLIMENTARY (Tekkali Express)' : '₹50.00'}\n`;
+    message += `• *Grand Total:* *₹${(cartSubtotal + (isFreeDelivery ? 0 : 50)).toFixed(2)}*\n`;
     message += `━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
-    message += `👤 *My Delivery Details:*\n`;
+    message += `*Delivery Coordinates:*\n`;
     message += `Name: \n`;
     message += `Address / Landmark (Tekkali): \n`;
     message += `Phone: \n\n`;
-    message += `👉 *Please confirm this order!*`;
+    message += `*Please confirm availability and dispatch schedule.*`;
 
     const url = `https://wa.me/${STORE_WHATSAPP}?text=${encodeURIComponent(message)}`;
     window.open(url, '_blank');
@@ -306,7 +322,7 @@
       unit = param3 || 'pack';
     }
 
-    const message = `Hi Sri Tirumala Dry Fruits! 🌴\n\nI want to order: *${name}* (${unit}) priced at *₹${Number(price).toFixed(2)}*.\n\nPlease confirm availability and delivery in Tekkali!`;
+    const message = `Hello Sri Tirumala Dry Fruits,\n\nI would like to order: *${name}* (${unit}) priced at *₹${Number(price).toFixed(2)}*.\n\nPlease confirm availability and dispatch schedule in Tekkali.`;
     const url = `https://wa.me/${STORE_WHATSAPP}?text=${encodeURIComponent(message)}`;
     window.open(url, '_blank');
   }
@@ -337,10 +353,10 @@
     const idx = wishlist.findIndex(item => item.id === product.id);
     if (idx >= 0) {
       wishlist.splice(idx, 1);
-      showToast(`Removed ${product.name} from wishlist`, '💔');
+      showToast(`Removed ${product.name} from wishlist`, 'heart_broken');
     } else {
       wishlist.push(product);
-      showToast(`Saved ${product.name} to wishlist!`, '💖');
+      showToast(`Saved ${product.name} to wishlist!`, 'favorite');
     }
     saveWishlist();
   }
@@ -350,10 +366,10 @@
       const id = parseInt(btn.dataset.id, 10);
       if (wishlist.some(item => item.id === id)) {
         btn.classList.add('active');
-        btn.innerHTML = '❤️';
+        btn.innerHTML = '<span class="material-symbols-outlined" style="font-size: 1.3rem; color: #DE9A4B; font-variation-settings: \'FILL\' 1;">favorite</span>';
       } else {
         btn.classList.remove('active');
-        btn.innerHTML = '🤍';
+        btn.innerHTML = '<span class="material-symbols-outlined" style="font-size: 1.3rem; color: #B86A28;">favorite_border</span>';
       }
     });
   }
@@ -380,7 +396,7 @@
     if (wishlist.length === 0) {
       list.innerHTML = `
         <div class="empty-state-box my-4">
-          <div class="empty-state-icon">💖</div>
+          <div class="empty-state-icon"><span class="material-symbols-outlined" style="font-size: 2.8rem; color: #DE9A4B; opacity: 0.8;">favorite_border</span></div>
           <h5 class="fw-bold text-dark mb-1">Your wishlist is empty</h5>
           <p class="text-muted small mb-3">Tap the heart icon on any product to save it for later!</p>
           <button class="btn btn-sm btn-outline-success px-4 rounded-pill" data-bs-dismiss="offcanvas">
@@ -393,14 +409,14 @@
         <div class="d-flex align-items-center justify-content-between p-3 mb-2 bg-white rounded-3 border">
           <div>
             <h6 class="mb-1 text-dark fw-bold" style="font-size: 0.92rem;">${item.name}</h6>
-            <div class="small fw-bold text-success">₹${Number(item.price).toFixed(2)}</div>
+            <div class="small fw-bold" style="color: #B86A28;">₹${Number(item.price).toFixed(2)}</div>
           </div>
           <div class="d-flex align-items-center gap-2">
-            <button class="btn btn-sm btn-success px-2 py-1" onclick="window.storefront.moveWishlistToCart(${item.id})">
+            <button class="btn btn-sm btn-brand px-2 py-1" onclick="window.storefront.moveWishlistToCart(${item.id})">
               + Cart
             </button>
-            <button class="btn btn-sm text-danger px-1 py-1" onclick="window.storefront.removeFromWishlist(${item.id})">
-              ✕
+            <button class="btn btn-sm text-danger px-1 py-1 d-inline-flex align-items-center justify-content-center" title="Remove" onclick="window.storefront.removeFromWishlist(${item.id})">
+              <span class="material-symbols-outlined" style="font-size: 1.1rem; line-height: 1;">close</span>
             </button>
           </div>
         </div>
@@ -484,7 +500,7 @@
     } else {
       if (modalImg) modalImg.style.display = 'none';
       if (modalEmoji) {
-        modalEmoji.innerText = product.emoji || '🥥';
+        modalEmoji.innerHTML = '<span class="material-symbols-outlined" style="font-size: 3rem; color: #D89A4E; opacity: 0.7;">spa</span>';
         modalEmoji.style.display = 'flex';
       }
     }

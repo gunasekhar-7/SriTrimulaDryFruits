@@ -29,7 +29,7 @@ export class StockController {
   postAdd(req: Request, res: Response) {
     const parsed = productSchema.safeParse(req.body);
     if (!parsed.success) {
-      req.flash('info', `❌ Validation Error: ${parsed.error.issues.map(i => i.message).join(', ')}`);
+      req.flash('info', `Validation Error: ${parsed.error.issues.map(i => i.message).join(', ')}`);
       return res.redirect('/add');
     }
     const { name, barcode, qty, cost, sell, mrp, category, image_url, tax_rate } = parsed.data;
@@ -60,10 +60,10 @@ export class StockController {
         });
       }
 
-      req.flash('info', '✅ Product added successfully!');
+      req.flash('info', 'Product added successfully!');
       res.redirect('/stock');
     } catch (e: any) {
-      req.flash('info', `❌ Error: ${e.message}`);
+      req.flash('info', `Error: ${e.message}`);
       res.redirect('/add');
     }
   }
@@ -83,7 +83,7 @@ export class StockController {
 
     const parsed = productSchema.safeParse(req.body);
     if (!parsed.success) {
-      req.flash('info', `❌ Validation Error: ${parsed.error.issues.map(i => i.message).join(', ')}`);
+      req.flash('info', `Validation Error: ${parsed.error.issues.map(i => i.message).join(', ')}`);
       return res.redirect(`/edit/${id}`);
     }
     const { name, barcode, qty, cost, sell, mrp, category, image_url, tax_rate } = parsed.data;
@@ -141,10 +141,10 @@ export class StockController {
         }
       });
 
-      req.flash('info', '✅ Product details updated!');
+      req.flash('info', 'Product details updated!');
       res.redirect('/stock');
     } catch (e: any) {
-      req.flash('info', `❌ Error: ${e.message}`);
+      req.flash('info', `Error: ${e.message}`);
       res.redirect(`/edit/${id}`);
     }
   }
@@ -163,7 +163,7 @@ export class StockController {
 
     const added_qty = parseFloat(req.body.added_qty);
     if (isNaN(added_qty) || added_qty <= 0) {
-      req.flash('info', '❌ Invalid quantity.');
+      req.flash('info', 'Invalid quantity.');
       return res.redirect(`/add_stock/${id}`);
     }
     const image_url = req.body.image_url || undefined;
@@ -183,7 +183,7 @@ export class StockController {
       reason: 'Manual Add Stock'
     });
 
-    req.flash('info', `✅ Added ${added_qty} to ${product.name}`);
+    req.flash('info', `Added ${added_qty} to ${product.name}`);
     res.redirect('/stock');
   }
 
@@ -193,7 +193,7 @@ export class StockController {
     if (product) {
       productService.deleteProduct(id);
       logger.warn(`Product deleted: ${product.name} (id=${id}) by ${req.session.user}`);
-      req.flash('info', `✅ Deleted ${product.name}`);
+      req.flash('info', `Deleted ${product.name}`);
     }
     res.redirect('/stock');
   }

@@ -21,12 +21,14 @@ if (products && products.length > 0) {
 <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
     <div>
         <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill mb-2 fw-bold" style="font-size: 0.8rem;">INVENTORY CONTROL</span>
-        <h2 style="color: var(--brand-green);" class="brand-font m-0">📦 Stock Inventory</h2>
+        <h2 style="color: var(--brand-green);" class="brand-font m-0 d-flex align-items-center gap-2">
+            <span class="material-symbols-outlined fs-2" style="color: #D89A4E;">inventory_2</span> Stock Inventory
+        </h2>
     </div>
     
     <% if (session && session.role === 'admin') { %>
         <a href="/add" class="btn btn-success fw-bold d-flex align-items-center gap-2" style="border-radius: 12px; padding: 12px 24px;">
-            <span>➕</span> Add New Product
+            <span class="material-symbols-outlined" style="font-size: 1.15rem;">add_circle</span> Add New Product
         </a>
     <% } %>
 </div>
@@ -40,7 +42,7 @@ if (products && products.length > 0) {
                     <small class="text-muted text-uppercase fw-bold" style="font-size: 0.72rem; letter-spacing: 0.05em;">Total Catalog Items</small>
                     <h3 class="fw-extrabold text-dark m-0 mt-1" style="font-family: 'Plus Jakarta Sans', sans-serif;"><%= totalUniqueItems %> Unique</h3>
                 </div>
-                <span class="fs-2 text-success opacity-50">📋</span>
+                <span class="material-symbols-outlined fs-2 text-success opacity-50">receipt_long</span>
             </div>
         </div>
     </div>
@@ -51,7 +53,7 @@ if (products && products.length > 0) {
                     <small class="text-muted text-uppercase fw-bold" style="font-size: 0.72rem; letter-spacing: 0.05em;">Low Stock Warnings</small>
                     <h3 class="fw-extrabold text-danger m-0 mt-1" style="font-family: 'Plus Jakarta Sans', sans-serif;"><%= lowStockItems.length %> Alerts</h3>
                 </div>
-                <span class="fs-2 text-danger opacity-50">⚠️</span>
+                <span class="material-symbols-outlined fs-2 text-danger opacity-50">warning</span>
             </div>
         </div>
     </div>
@@ -62,7 +64,7 @@ if (products && products.length > 0) {
                     <small class="text-muted text-uppercase fw-bold" style="font-size: 0.72rem; letter-spacing: 0.05em;">Out of Stock Items</small>
                     <h3 class="fw-extrabold text-warning m-0 mt-1" style="font-family: 'Plus Jakarta Sans', sans-serif; color: #b18b10 !important;"><%= outOfStockCount %> Products</h3>
                 </div>
-                <span class="fs-2 text-warning opacity-50">🚫</span>
+                <span class="material-symbols-outlined fs-2 text-warning opacity-50">block</span>
             </div>
         </div>
     </div>
@@ -71,7 +73,9 @@ if (products && products.length > 0) {
 <% if (lowStockItems.length > 0) { %>
 <div class="alert alert-danger shadow-sm border-start border-4 border-danger mb-4 no-print p-3" role="alert" style="border-radius: 12px; background-color: #fff8f8;">
     <div class="d-flex align-items-center gap-2 mb-2">
-        <h5 class="alert-heading fw-bold m-0" style="font-size: 1.05rem;">⚠️ High Priority Restock Required</h5>
+        <h5 class="alert-heading fw-bold m-0 d-flex align-items-center gap-2" style="font-size: 1.05rem;">
+            <span class="material-symbols-outlined text-danger">warning</span> High Priority Restock Required
+        </h5>
     </div>
     <p class="m-0 text-muted small">The following premium items are running critical (under 5.000 units remaining). Please restock soon:</p>
     <div class="mt-2 d-flex flex-wrap gap-2">
@@ -90,7 +94,9 @@ if (products && products.length > 0) {
     <div class="row g-3 align-items-center">
         <div class="col-md-7">
             <div class="input-group">
-                <span class="input-group-text bg-white border-end-0 border-success" style="padding-left: 16px;">🔍</span>
+                <span class="input-group-text bg-white border-end-0 border-success" style="padding-left: 16px;">
+                    <span class="material-symbols-outlined text-muted" style="font-size: 1.15rem;">search</span>
+                </span>
                 <input type="text" id="searchInput" class="form-control border-start-0 border-success" placeholder="Search product name or scan barcode to filter inventory..." onkeyup="filterStock()">
             </div>
         </div>
@@ -137,19 +143,19 @@ if (products && products.length > 0) {
                             <div class="d-flex align-items-center gap-3">
                                 <div class="product-thumbnail-wrapper" style="width: 44px; height: 44px; position: relative; flex-shrink: 0; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef; display: flex; align-items: center; justify-content: center; overflow: hidden;">
                                     <% 
-                                    let catEmoji = '🥥';
+                                    let catIcon = 'workspace_premium';
                                     const categoryUpper = (p.category || '').toUpperCase();
-                                    if (categoryUpper.includes('MILLET')) catEmoji = '🌾';
-                                    else if (categoryUpper.includes('SEED')) catEmoji = '🌻';
-                                    else if (categoryUpper.includes('SPICE')) catEmoji = '🌶️';
-                                    else if (categoryUpper.includes('NUT')) catEmoji = '🥜';
-                                    else if (categoryUpper.includes('SWEET')) catEmoji = '🍬';
+                                    if (categoryUpper.includes('MILLET')) catIcon = 'grain';
+                                    else if (categoryUpper.includes('SEED')) catIcon = 'spa';
+                                    else if (categoryUpper.includes('SPICE')) catIcon = 'local_fire_department';
+                                    else if (categoryUpper.includes('NUT')) catIcon = 'nutrition';
+                                    else if (categoryUpper.includes('SWEET')) catIcon = 'card_giftcard';
                                     %>
                                     <% if (p.image_url) { %>
-                                        <img src="<%= p.image_url %>" alt="<%= p.name %>" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                                        <span class="fs-4 text-muted" style="display: none;"><%= catEmoji %></span>
+                                        <img src="<%= p.image_url %>" alt="<%= p.name %>" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                        <span class="text-muted align-items-center justify-content-center" style="display: none; width: 100%; height: 100%;"><span class="material-symbols-outlined text-muted" style="font-size: 1.5rem;"><%= catIcon %></span></span>
                                     <% } else { %>
-                                        <span class="fs-4"><%= catEmoji %></span>
+                                        <span class="d-flex align-items-center justify-content-center w-100 h-100"><span class="material-symbols-outlined text-muted" style="font-size: 1.5rem;"><%= catIcon %></span></span>
                                     <% } %>
                                 </div>
                                 <div>
@@ -175,20 +181,22 @@ if (products && products.length > 0) {
                         
                         <td class="text-center py-3">
                             <div class="d-flex justify-content-center gap-1">
-                                <a href="/print_label/<%= p.id %>" target="_blank" class="btn btn-sm btn-outline-dark" title="Print Sticker Label" style="border-radius: 8px; padding: 6px 10px;">
-                                    🖨️
+                                <a href="/print_label/<%= p.id %>" target="_blank" class="btn btn-sm btn-outline-dark d-inline-flex align-items-center justify-content-center" title="Print Sticker Label" style="border-radius: 8px; padding: 6px 10px;">
+                                    <span class="material-symbols-outlined" style="font-size: 1.05rem;">print</span>
                                 </a>
-                                <a href="/add_stock/<%= p.id %>" class="btn btn-sm btn-success text-white" title="Quick Restock" style="border-radius: 8px; padding: 6px 12px; font-size: 0.8rem;">
-                                    ➕ Restock
+                                <a href="/add_stock/<%= p.id %>" class="btn btn-sm btn-success text-white d-inline-flex align-items-center gap-1" title="Quick Restock" style="border-radius: 8px; padding: 6px 12px; font-size: 0.8rem;">
+                                    <span class="material-symbols-outlined" style="font-size: 0.95rem;">add</span> Restock
                                 </a>
 
                                 <% if (session && session.role === 'admin') { %>
-                                    <a href="/edit/<%= p.id %>" class="btn btn-sm btn-outline-primary" title="Edit details" style="border-radius: 8px; padding: 6px 10px;">
-                                        ✏️
+                                    <a href="/edit/<%= p.id %>" class="btn btn-sm btn-outline-primary d-inline-flex align-items-center justify-content-center" title="Edit details" style="border-radius: 8px; padding: 6px 10px;">
+                                        <span class="material-symbols-outlined" style="font-size: 1.05rem;">edit</span>
                                     </a>
                                     <form action="/delete/<%= p.id %>" method="POST" style="display:inline;">
                                         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                        <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this item completely from registry?')" title="Delete product" style="border-radius: 8px; padding: 6px 10px;">🗑️</button>
+                                        <button type="submit" class="btn btn-sm btn-outline-danger d-inline-flex align-items-center justify-content-center" onclick="return confirm('Delete this item completely from registry?')" title="Delete product" style="border-radius: 8px; padding: 6px 10px;">
+                                            <span class="material-symbols-outlined" style="font-size: 1.05rem;">delete</span>
+                                        </button>
                                     </form>
                                 <% } %>
                             </div>

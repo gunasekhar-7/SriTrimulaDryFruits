@@ -7,23 +7,26 @@
         <div>
             <div class="d-flex align-items-center gap-2 mb-1">
                 <span class="badge bg-dark text-white px-2 py-1 rounded" style="font-size: 0.72rem; letter-spacing: 0.05em;">ENTERPRISE COMPLIANCE</span>
-                <span class="badge <%= integrity.isValid ? 'bg-success' : 'bg-danger' %> bg-opacity-10 <%= integrity.isValid ? 'text-success border border-success' : 'text-danger border border-danger' %> border-opacity-25 px-2 py-1 rounded" style="font-size: 0.72rem;">
-                    <%= integrity.isValid ? '🔒 IMMUTABLE LEDGER VERIFIED' : '⚠️ TAMPER ALERT DETECTED' %>
+                <span class="badge <%= integrity.isValid ? 'bg-success' : 'bg-danger' %> bg-opacity-10 <%= integrity.isValid ? 'text-success border border-success' : 'text-danger border border-danger' %> border-opacity-25 px-2 py-1 rounded d-inline-flex align-items-center gap-1" style="font-size: 0.72rem;">
+                    <span class="material-symbols-outlined" style="font-size: 0.95rem;"><%= integrity.isValid ? 'lock' : 'warning' %></span>
+                    <%= integrity.isValid ? 'IMMUTABLE LEDGER VERIFIED' : 'TAMPER ALERT DETECTED' %>
                 </span>
             </div>
-            <h2 class="brand-font m-0" style="color: var(--brand-green);">🛡️ System Audit Logs</h2>
+            <h2 class="brand-font m-0 d-flex align-items-center gap-2" style="color: var(--brand-green);">
+                <span class="material-symbols-outlined" style="font-size: 1.8rem; color: #D89A4E;">verified_user</span> System Audit Logs
+            </h2>
             <p class="text-muted small m-0">Cryptographically hash-chained, write-only historical audit trail across all critical application events.</p>
         </div>
 
         <div class="d-flex gap-2">
             <button class="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1 shadow-sm" onclick="exportAuditCsv()">
-                <span>📥</span> Export CSV
+                <span class="material-symbols-outlined" style="font-size: 1rem;">download</span> Export CSV
             </button>
             <button class="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1 shadow-sm" onclick="exportAuditJson()">
-                <span>📋</span> Export JSON
+                <span class="material-symbols-outlined" style="font-size: 1rem;">data_object</span> Export JSON
             </button>
             <button class="btn btn-sm btn-outline-success d-flex align-items-center gap-1 shadow-sm" onclick="verifyLedgerIntegrity()">
-                <span>🔍</span> Run Integrity Check
+                <span class="material-symbols-outlined" style="font-size: 1rem;">policy</span> Run Integrity Check
             </button>
         </div>
     </div>
@@ -32,7 +35,7 @@
     <% if (integrity.isValid) { %>
     <div class="alert alert-success border-0 bg-success bg-opacity-10 py-2 px-3 mb-4 rounded-3 d-flex align-items-center justify-content-between" style="font-size: 0.82rem;">
         <div class="d-flex align-items-center gap-2">
-            <span>🛡️</span>
+            <span class="material-symbols-outlined text-success" style="font-size: 1.25rem;">verified_user</span>
             <span><strong>Blockchain-Style Hash Verification Passed:</strong> All <strong><%= integrity.checkedCount %></strong> recorded events are verified against SHA-256 parent hash chains with zero tampering.</span>
         </div>
         <span class="text-success fw-bold font-monospace">STATUS: 100% UNCOMPROMISED</span>
@@ -40,7 +43,7 @@
     <% } else { %>
     <div class="alert alert-danger border-0 bg-danger bg-opacity-10 py-2 px-3 mb-4 rounded-3 d-flex align-items-center justify-content-between" style="font-size: 0.82rem;">
         <div class="d-flex align-items-center gap-2">
-            <span>🚨</span>
+            <span class="material-symbols-outlined text-danger" style="font-size: 1.25rem;">warning</span>
             <span><strong>CRITICAL LEDGER INTEGRITY MISMATCH:</strong> <%= integrity.reason %> (Discrepancy at record #<%= integrity.brokenAtId %>)</span>
         </div>
         <span class="text-danger fw-bold font-monospace">STATUS: TAMPER WARNING</span>
@@ -251,7 +254,7 @@
                     <% } else { %>
                         <tr>
                             <td colspan="8" class="text-center py-5 text-muted">
-                                <div class="fs-2 mb-2">📜</div>
+                                <div class="mb-2"><span class="material-symbols-outlined fs-1 text-muted">receipt_long</span></div>
                                 <div class="fw-bold">No Audit Events Found</div>
                                 <div class="small">No logs matched the selected filter criteria. Try adjusting your query filters.</div>
                             </td>
@@ -292,7 +295,9 @@
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content border-0 shadow" style="border-radius: 16px;">
             <div class="modal-header text-white" style="background-color: var(--brand-green); border-radius: 16px 16px 0 0;">
-                <h5 class="modal-title font-monospace" id="payloadModalLabel">🛡️ Audit Payload Inspector</h5>
+                <h5 class="modal-title font-monospace d-flex align-items-center gap-2" id="payloadModalLabel">
+                    <span class="material-symbols-outlined" style="font-size: 1.25rem;">receipt_long</span> Audit Payload Inspector
+                </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-4">
@@ -318,7 +323,7 @@
 
 <script>
 function showPayloadModal(id, action, rawJson, hash, prevHash) {
-    document.getElementById('payloadModalLabel').innerText = `🛡️ Audit Record #${id} — ${action}`;
+    document.getElementById('payloadModalLabel').innerHTML = `<span class="material-symbols-outlined" style="font-size: 1.25rem; vertical-align: middle;">receipt_long</span> Audit Record #${id} — ${action}`;
     document.getElementById('modalHash').innerText = hash || 'N/A';
     document.getElementById('modalPrevHash').innerText = prevHash || 'GENESIS';
 
@@ -338,9 +343,9 @@ function verifyLedgerIntegrity() {
         .then(res => res.json())
         .then(data => {
             if (data.success && data.data.isValid) {
-                alert(`✅ Ledger Integrity Verified!\n\nAll ${data.data.checkedCount} audit records passed cryptographic hash-chain validation.\nZero records have been altered, omitted, or reordered.`);
+                alert(`Ledger Integrity Verified!\n\nAll ${data.data.checkedCount} audit records passed cryptographic hash-chain validation.\nZero records have been altered, omitted, or reordered.`);
             } else {
-                alert(`⚠️ Warning: Integrity Discrepancy Found!\n\n${data.data?.reason || 'Unknown error'}`);
+                alert(`Warning: Integrity Discrepancy Found!\n\n${data.data?.reason || 'Unknown error'}`);
             }
         })
         .catch(err => {

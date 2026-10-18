@@ -1,10 +1,10 @@
 <%- include('header') %>
 
-<% if (locals.activeCategory) { %>
+<% if (locals.activeCategory && activeCategory !== 'All') { %>
 <!-- ==============================================================================
      CATEGORY BREADCRUMB & COLLECTION HERO
      ============================================================================== -->
-<section class="category-breadcrumb-section py-4 border-bottom no-print" style="background: linear-gradient(135deg, #FAF8F2 0%, #EDEAE1 100%); border-color: var(--sf-border, #E5ECE7) !important;">
+<section class="category-breadcrumb-section py-4 border-bottom no-print" style="background: linear-gradient(135deg, #FAF8F5 0%, #EDEAE1 100%); border-color: var(--sf-border, #EBE7DF) !important;">
     <div class="max-w-7xl mx-auto px-3">
         <%- include('partials/breadcrumbs', { breadcrumbs: locals.breadcrumbs || [
             { name: 'Home', url: '/' },
@@ -28,173 +28,158 @@
 </section>
 <% } %>
 
+<% if (!locals.activeCategory || activeCategory === 'All') { %>
 <!-- ==============================================================================
-     1. HERO EDITORIAL SECTION (Stitch Artisanal Botanical Luxury)
+     1. CINEMATIC SCROLL STORYTELLING STAGE (Hailuo AI Film Asset)
      ============================================================================== -->
-<section class="hero-editorial-section no-print" <% if (locals.activeCategory) { %>style="display: none;"<% } %>>
-    <div class="max-w-7xl mx-auto px-3">
-        <div class="row align-items-center g-5">
-            <!-- Left Editorial Column -->
-            <div class="col-12 col-lg-7 z-1">
-                <!-- Prestige Pill -->
-                <div class="hero-prestige-pill mb-3">
-                    <span class="pulsing-gold-dot"></span>
-                    <span class="font-label-caps text-primary">1984 Royal Estate Reserve</span>
-                    <span class="text-muted">•</span>
-                    <span class="font-label-caps text-gold font-bold">Limited Winter Crop</span>
-                </div>
+<section class="cinematic-scroll-track no-print" id="cinematic-experience" aria-label="Cinematic Dry Fruits Experience">
+    <div class="cinematic-sticky-stage">
+        <!-- Live Video Element Controlled by Scroll Position -->
+        <div class="cinematic-video-canvas">
+            <video id="cinematic-video"
+                   poster="/videos/cinematic-poster.jpg"
+                   preload="auto"
+                   muted
+                   playsinline
+                   webkit-playsinline
+                   aria-hidden="true">
+                <source src="/videos/cinematic-story-720p.mp4" media="(max-width: 768px)" type="video/mp4">
+                <source src="/videos/cinematic-story.mp4" type="video/mp4">
+            </video>
+        </div>
 
-                <!-- Headline -->
-                <h1 class="font-display-hero text-primary font-bold tracking-tight mb-3">
-                    Handpicked Harvest, <br/>
-                    <span class="italic font-title-editorial font-normal" style="font-size: clamp(30px, 4.2vw, 54px); color: var(--gold-burnished);">
-                        Royal Indulgence.
-                    </span>
+        <!-- Fallback Keyframe Background (Active if video encounters any issue or in reduced-motion) -->
+        <div id="cinematic-fallback-bg" class="cinematic-fallback-bg" aria-hidden="true"></div>
+
+        <!-- Atmospheric Cinematic Lighting & Gradient Overlays -->
+        <div class="cinematic-lighting-overlay" aria-hidden="true"></div>
+        <div class="cinematic-ambient-bloom" aria-hidden="true"></div>
+
+        <!-- Narrative Content Overlays (Masked Line Reveals, Staggered Hierarchy) -->
+        <div class="cinematic-content-container">
+            <!-- CHAPTER ONE — THE FLOATING-FRUIT OPENING -->
+            <div class="cinematic-chapter active" id="cinematic-chapter-1">
+                <div class="cinematic-eyebrow">THE ART OF GOODNESS</div>
+                <h1 class="cinematic-headline">
+                    <span class="reveal-line-wrap"><span class="reveal-line">Nature's finest,</span></span>
+                    <span class="reveal-line-wrap"><span class="reveal-line italic-serif">brought closer.</span></span>
                 </h1>
-
-                <!-- Subtext -->
-                <p class="font-body-lg text-muted mb-4" style="max-width: 580px;">
-                    Purveyors of heirloom-grade royal dry fruits, grade-A hand-selected jumbo cashews, pure Mongra saffron, and artisanal Medjool dates directly harvested from celebrated family orchards.
+                <p class="cinematic-description">
+                    Discover a world of nuts and dried fruits, thoughtfully chosen for everyday enjoyment.
                 </p>
-
-                <!-- CTA Action Group -->
-                <div class="d-flex flex-wrap align-items-center gap-3 pt-1 mb-4">
-                    <a href="#festive-spotlight" class="hero-cta-btn-primary">
-                        <span>Explore Festive Hampers</span>
+                <div class="cinematic-cta-group">
+                    <a href="#product-categories" class="btn-cinema-gold">
+                        <span>Explore Our Collection</span>
                         <span class="material-symbols-outlined text-sm">arrow_forward</span>
                     </a>
-                    <a href="#catalog-section" class="hero-cta-btn-secondary">
-                        <span class="material-symbols-outlined text-sm" style="color: var(--gold-burnished);">menu_book</span>
-                        <span>Wholesale &amp; Retail Catalog</span>
+                    <a href="#brand-story" class="btn-cinema-secondary">
+                        <span class="material-symbols-outlined text-sm">auto_stories</span>
+                        <span>Discover Our Story</span>
                     </a>
                 </div>
+            </div>
 
-                <!-- Trust Badges Bar -->
-                <div class="row g-3 pt-3" style="max-width: 520px;">
-                    <div class="col-4">
-                        <div class="d-flex align-items-center gap-1" style="color: var(--gold-burnished);">
-                            <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
-                            <strong class="font-price-md text-primary">4.9 / 5</strong>
-                        </div>
-                        <span class="font-label-caps text-muted" style="font-size: 10px;">12,400+ Patrons</span>
-                    </div>
-                    <div class="col-4">
-                        <div class="d-flex align-items-center gap-1 text-primary">
-                            <span class="material-symbols-outlined text-sm text-forest-light">eco</span>
-                            <strong class="font-label-lg text-primary">100% Pure</strong>
-                        </div>
-                        <span class="font-label-caps text-muted" style="font-size: 10px;">Unadulterated</span>
-                    </div>
-                    <div class="col-4">
-                        <div class="d-flex align-items-center gap-1 text-primary">
-                            <span class="material-symbols-outlined text-sm" style="color: var(--gold-burnished);">local_shipping</span>
-                            <strong class="font-label-lg text-primary">Cold-Chain</strong>
-                        </div>
-                        <span class="font-label-caps text-muted" style="font-size: 10px;">Same-Day Transit</span>
-                    </div>
+            <!-- CHAPTER TWO — THE PRODUCT REVEAL -->
+            <div class="cinematic-chapter" id="cinematic-chapter-2">
+                <div class="cinematic-eyebrow">QUALITY IN EVERY DETAIL</div>
+                <h2 class="cinematic-headline">
+                    <span class="reveal-line-wrap"><span class="reveal-line">Every handful</span></span>
+                    <span class="reveal-line-wrap"><span class="reveal-line italic-serif">tells a story.</span></span>
+                </h2>
+                <p class="cinematic-description">
+                    From familiar favourites to delightful discoveries, find the dry fruits that belong in your everyday moments.
+                </p>
+                <div class="cinematic-feature-chips">
+                    <span class="cinematic-chip">
+                        <span class="material-symbols-outlined chip-symbol" style="font-size: 13px; color: var(--gold-caramel); vertical-align: middle;">verified</span> Hand-Cleaned &amp; Graded
+                    </span>
+                    <span class="cinematic-chip">
+                        <span class="material-symbols-outlined chip-symbol" style="font-size: 13px; color: var(--gold-caramel); vertical-align: middle;">verified</span> Top Brand Selections
+                    </span>
+                    <span class="cinematic-chip">
+                        <span class="material-symbols-outlined chip-symbol" style="font-size: 13px; color: var(--gold-caramel); vertical-align: middle;">verified</span> Rich in Natural Healthy Oils
+                    </span>
+                </div>
+                <div class="cinematic-cta-group">
+                    <a href="#featured-spotlight" class="btn-cinema-gold">
+                        <span>Discover Bestsellers</span>
+                        <span class="material-symbols-outlined text-sm">star</span>
+                    </a>
+                    <a href="#brand-story" class="btn-cinema-secondary">
+                        <span>Our Brands &amp; Quality</span>
+                    </a>
                 </div>
             </div>
 
-            <!-- Right Visual Showcase with Floating Badges -->
-            <div class="col-12 col-lg-5 position-relative text-center">
-                <!-- Floating Badge 1 (Top Left) -->
-                <div class="floating-badge-top animate-pulse d-none d-sm-flex">
-                    <div class="w-8 h-8 rounded-circle bg-light d-flex align-items-center justify-content-center text-primary" style="width: 34px; height: 34px;">
-                        <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1; color: var(--gold-burnished);">military_tech</span>
-                    </div>
-                    <div class="text-start">
-                        <p class="font-label-caps text-muted m-0" style="font-size: 9px;">Heritage Lot</p>
-                        <p class="font-label-lg text-primary font-bold m-0" style="font-size: 12px;">Bestseller: Jumbo Mamra</p>
-                    </div>
+            <!-- CHAPTER THREE — ABUNDANCE AND THE FINAL REVEAL -->
+            <div class="cinematic-chapter" id="cinematic-chapter-3">
+                <div class="cinematic-eyebrow">MADE FOR YOUR EVERYDAY MOMENTS</div>
+                <h2 class="cinematic-headline">
+                    <span class="reveal-line-wrap"><span class="reveal-line">Goodness worth</span></span>
+                    <span class="reveal-line-wrap"><span class="reveal-line italic-serif">sharing.</span></span>
+                </h2>
+                <p class="cinematic-description">
+                    Bring a little natural richness to everyday routines, thoughtful gifts, and moments around the table.
+                </p>
+                <div class="cinematic-cta-group">
+                    <a href="#catalog-section" class="btn-cinema-gold">
+                        <span>Shop Our Collection</span>
+                        <span class="material-symbols-outlined text-sm">shopping_bag</span>
+                    </a>
+                    <a href="https://wa.me/918945244184?text=Hello%20Sri%20Tirumala%20Dryfruits,%20I%20would%20like%20to%20order%20premium%20dry%20fruits." 
+                       target="_blank" 
+                       rel="noopener noreferrer" 
+                       class="btn-cinema-whatsapp">
+                        <span>Order on WhatsApp</span>
+                        <span class="material-symbols-outlined text-sm">chat</span>
+                    </a>
                 </div>
+            </div>
+        </div>
 
-                <!-- Central Product Imagery Canvas -->
-                <div class="hero-showcase-canvas">
-                    <img class="hero-showcase-img" 
-                         src="/images/stitch/hero_casket.jpg" 
-                         alt="Editorial still life presentation of Sri Tirumala luxury dry fruits casket"
-                         loading="eager">
-                    <div class="hero-showcase-overlay"></div>
-                    <div class="hero-showcase-caption text-start">
-                        <span class="font-label-caps text-gold-sheen">Master Harvester Selection</span>
-                        <h4 class="font-headline-sm text-white m-0">The Regal Teak Casket</h4>
-                        <p class="font-body-sm text-white-50 m-0">Contains 4 Imperial Provenances • 1.2kg Net Weight</p>
-                    </div>
-                </div>
-
-                <!-- Floating Badge 2 (Bottom Right) -->
-                <div class="floating-badge-bottom d-none d-sm-flex">
-                    <span class="material-symbols-outlined text-gold-sheen text-base">verified</span>
-                    <div class="text-start">
-                        <p class="font-label-caps text-white-50 m-0" style="font-size: 9px;">Harvest Dispatch</p>
-                        <p class="font-label-lg text-white font-bold m-0" style="font-size: 12px;">Fresh 2026 Winter Lot</p>
-                    </div>
-                </div>
+        <!-- Cinematic Story HUD (Timeline Dots, Scrub Progress & Controls) -->
+        <div class="cinematic-hud" aria-label="Story chapters navigation">
+            <div class="hud-chapter-dots" role="tablist">
+                <button type="button" class="hud-dot-btn active" data-chapter-target="1" aria-label="Jump to Chapter 1: The Harvest">
+                    <span class="hud-dot-indicator"></span>
+                    <span class="hud-dot-label">01 Harvest</span>
+                </button>
+                <button type="button" class="hud-dot-btn" data-chapter-target="2" aria-label="Jump to Chapter 2: Quality Selection">
+                    <span class="hud-dot-indicator"></span>
+                    <span class="hud-dot-label">02 Selection</span>
+                </button>
+                <button type="button" class="hud-dot-btn" data-chapter-target="3" aria-label="Jump to Chapter 3: Abundance">
+                    <span class="hud-dot-indicator"></span>
+                    <span class="hud-dot-label">03 Abundance</span>
+                </button>
             </div>
         </div>
     </div>
 </section>
 
 <!-- ==============================================================================
-     2. PROVENANCE CATEGORY FILTER RIBBON (Stitch)
+     SECTION B — CONNOISSEUR RESERVE BESTSELLERS (Interactive Spotlight Cards)
      ============================================================================== -->
-<section class="provenance-ribbon-bar no-print">
-    <div class="max-w-7xl mx-auto px-3">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <div>
-                <span class="font-label-caps text-gold font-bold">Select Harvest</span>
-                <h2 class="font-headline-sm text-primary m-0">Explore by Provenance</h2>
-            </div>
-            <div class="d-none d-sm-flex align-items-center gap-1 text-muted font-label-md">
-                <span class="material-symbols-outlined text-base">tune</span>
-                <span>6 Imperial Categories</span>
-            </div>
-        </div>
-
-        <!-- Horizontal Pill Scroll -->
-        <div class="cat-pill-scroll" id="provenancePills" role="navigation" aria-label="Product Categories">
-            <a href="/" 
-               class="cat-pill text-decoration-none <%= (!locals.activeCategory || activeCategory === 'All') ? 'active' : '' %>" 
-               onclick="if (window.filterByProvenance && window.location.pathname === '/') { event.preventDefault(); filterByProvenance('All', this); }">
-                🥥 All Harvests
-            </a>
-            <% 
-            const categoriesToDisplay = (locals.storefrontCategories && storefrontCategories.length > 0)
-              ? storefrontCategories
-              : [
-                { name: 'Dry Fruits', slug: 'Dry%20Fruits', emoji: '🌰', tagline: 'Royal Almonds & Cashews', count: 0 },
-                { name: 'Spices', slug: 'Spices', emoji: '🌶️', tagline: 'Kashmiri Walnuts & Saffron', count: 0 },
-                { name: 'Nuts', slug: 'Nuts', emoji: '🥜', tagline: 'Imported Dates & Figs', count: 0 },
-                { name: 'Millets', slug: 'Millets', emoji: '🌾', tagline: 'Wholesome Millets', count: 0 },
-                { name: 'Seeds', slug: 'Seeds', emoji: '🌱', tagline: 'Superfood Berries & Seeds', count: 0 },
-                { name: 'Sweets', slug: 'Sweets', emoji: '🍬', tagline: 'Handcrafted Gift Boxes', count: 0 }
-              ];
-            categoriesToDisplay.forEach(function(cat) { 
-                const isActive = (locals.activeCategory && activeCategory.toLowerCase() === cat.name.toLowerCase());
-            %>
-            <a href="/category/<%= cat.slug %>" 
-               class="cat-pill text-decoration-none <%= isActive ? 'active' : '' %>"
-               title="Explore <%= cat.name %> - <%= cat.tagline %>"
-               onclick="if (window.filterByProvenance && window.location.pathname === '/') { event.preventDefault(); filterByProvenance('<%= cat.name.replace(/'/g, "\\'") %>', this); }">
-                <%= cat.emoji %> <%= cat.tagline %>
-            </a>
-            <% }); %>
-        </div>
-    </div>
-</section>
-
-<!-- ==============================================================================
-     3. CONNOISSEUR RESERVE BESTSELLERS (Interactive Spotlight Cards)
-     ============================================================================== -->
-<section class="py-5 no-print" style="background: var(--surface);">
-    <div class="max-w-7xl mx-auto px-3">
+<%
+const prodList = (typeof products !== 'undefined' && products) ? products : [];
+const mamraItem = prodList.find(p => /mamra|almond/i.test(p.name)) || prodList[0] || { id: 1, name: 'Royal Mamra Almonds', selling_price: 1450, mrp: 1700 };
+const cashewItem = prodList.find(p => /cashew|kaju/i.test(p.name)) || prodList[1] || { id: 2, name: 'King Size W180 Cashews', selling_price: 890, mrp: 1050 };
+const datesItem = prodList.find(p => /date|khajoor/i.test(p.name)) || prodList[2] || { id: 3, name: 'Original Medjool Dates', selling_price: 1650, mrp: 1890 };
+const saffronItem = prodList.find(p => /saffron|kesar|spices/i.test(p.name)) || prodList[3] || { id: 4, name: 'Pure Kashmiri Mongra Saffron', selling_price: 1199, mrp: 1350 };
+%>
+<section class="featured-spotlight-section py-5 no-print" id="featured-spotlight">
+    <div class="max-w-7xl mx-auto px-3 position-relative" style="z-index: 2;">
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end mb-4 gap-3">
             <div>
-                <span class="font-label-caps text-gold font-bold">Seasonal Pantry Treasures</span>
-                <h2 class="font-headline-lg text-primary m-0">Connoisseur Reserve Bestsellers</h2>
+                <div class="spotlight-eyebrow">
+                    <span class="material-symbols-outlined eyebrow-sparkle">stars</span>
+                    <span>Fresh Seasonal Favorites</span>
+                    <span class="material-symbols-outlined eyebrow-sparkle">stars</span>
+                </div>
+                <h2 class="spotlight-main-heading">Customer Favorites &amp; <span class="heading-accent">Bestsellers</span></h2>
             </div>
-            <p class="font-body-sm text-muted m-0" style="max-width: 460px;">
-                Each batch is individually batch-tested, nitrogen-sealed within 2 hours of grading, ensuring unmatched crispness and delicate aromatics.
+            <p class="spotlight-subtext m-0">
+                Carefully selected from top brands and trusted farms, ensuring fresh crispness and natural, healthy taste.
             </p>
         </div>
 
@@ -204,20 +189,16 @@
                 <div class="product-card-luxury">
                     <div class="card-badge-row">
                         <span class="badge-discount-tag">15% Off</span>
-                        <span class="badge-rating-tag">
-                            <span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1; color: var(--gold-burnished);">star</span>
-                            4.9 (420)
-                        </span>
                     </div>
 
                     <div class="product-media-canvas">
                         <img src="/images/stitch/asset_2.jpg" 
                              alt="Royal Mamra Almonds" 
                              loading="lazy">
-                        <span class="provenance-tag-overlay">Omega-3 Rich • High Oil</span>
+                        <span class="provenance-tag-overlay">Rich in Omega-3 • Pure Natural Oil</span>
                     </div>
 
-                    <span class="provenance-label">Iran Valley Provenance</span>
+                    <span class="provenance-label">Origin: Iran Valley</span>
                     <h3 class="product-title-editorial">Royal Mamra Almonds</h3>
 
                     <!-- Weight Selector -->
@@ -232,15 +213,26 @@
                             <span class="price-main" id="price-mamra">₹1,450</span>
                             <span class="price-mrp">₹1,700</span>
                         </div>
-                        <p class="stock-indicator-text" style="color: var(--secondary);">Only 14 reserve lots remaining</p>
+                        <p class="stock-indicator-text" style="color: var(--secondary);">Hand-Cleaned • Fresh Vacuum Sealed</p>
                     </div>
 
-                    <div class="d-flex gap-2 mt-3">
-                        <button type="button" class="btn-quick-add flex-grow-1" onclick="quickAddFeaturedItem('Royal Mamra Almonds (500g)', 1450)">
+                    <div class="card-action-row">
+                        <button type="button" 
+                                class="btn-quick-add add-to-cart-btn" 
+                                id="btn-add-mamra"
+                                data-id="<%= mamraItem.id %>"
+                                data-base-name="Royal Mamra Almonds"
+                                data-name="Royal Mamra Almonds (500g)"
+                                data-price="1450"
+                                onclick="window.Storefront && window.Storefront.addToCart(<%= mamraItem.id %>, 1, this.dataset.name)">
+                            <span class="material-symbols-outlined" style="font-size: 16px;">shopping_bag</span>
                             <span>Quick Add +</span>
                         </button>
-                        <button type="button" class="btn-whatsapp-icon" onclick="orderWhatsAppDirect('Royal Mamra Almonds (500g)', '₹1,450')" title="Order on WhatsApp">
-                            <span>💬</span>
+                        <button type="button" 
+                                class="btn-whatsapp-icon" 
+                                onclick="window.Storefront && window.Storefront.orderProductViaWhatsApp({ id: <%= mamraItem.id %>, name: 'Royal Mamra Almonds (500g)', price: 1450 })" 
+                                title="Order on WhatsApp">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.669-.699c.969.54 1.761.814 2.791.814 3.179 0 5.766-2.587 5.766-5.766 0-3.18-2.587-5.766-5.766zm9.969 5.766c0 5.514-4.486 10-10 10-1.745 0-3.382-.452-4.819-1.246l-5.181 1.355 1.378-5.034c-.879-1.488-1.378-3.228-1.378-5.075 0-5.514 4.486-10 10-10s10 4.486 10 10z"/></svg>
                         </button>
                     </div>
                 </div>
@@ -251,42 +243,49 @@
                 <div class="product-card-luxury">
                     <div class="card-badge-row">
                         <span class="badge-discount-tag" style="background: var(--surface-container-high); color: var(--primary);">Jumbo Grade</span>
-                        <span class="badge-rating-tag">
-                            <span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1; color: var(--gold-burnished);">star</span>
-                            4.8 (310)
-                        </span>
                     </div>
 
                     <div class="product-media-canvas">
                         <img src="/images/stitch/asset_3.jpg" 
                              alt="King Size W180 Cashews" 
                              loading="lazy">
-                        <span class="provenance-tag-overlay">Zero Cholesterol • Raw / Roast</span>
+                        <span class="provenance-tag-overlay">Zero Cholesterol • Fresh &amp; Crunchy</span>
                     </div>
 
-                    <span class="provenance-label">Goa Coastal Orchards</span>
+                    <span class="provenance-label">Origin: Goa, India</span>
                     <h3 class="product-title-editorial">King Size W180 Cashews</h3>
 
                     <!-- Roast Toggle -->
                     <div class="variant-chip-group">
-                        <button type="button" class="variant-chip active" onclick="toggleRoast(this)">Raw Heirloom</button>
-                        <button type="button" class="variant-chip" onclick="toggleRoast(this)">Gently Roasted</button>
+                        <button type="button" class="variant-chip active" onclick="toggleRoast(this, 'Natural Plain')">Natural Plain</button>
+                        <button type="button" class="variant-chip" onclick="toggleRoast(this, 'Gently Roasted')">Gently Roasted</button>
                     </div>
 
                     <div class="price-stock-box">
                         <div class="d-flex align-items-baseline">
-                            <span class="price-main">₹890</span>
+                            <span class="price-main" id="price-cashew">₹890</span>
                             <span class="price-mrp">₹1,050</span>
                         </div>
                         <p class="stock-indicator-text">In Stock • Fresh Roasted Weekly</p>
                     </div>
 
-                    <div class="d-flex gap-2 mt-3">
-                        <button type="button" class="btn-quick-add flex-grow-1" onclick="quickAddFeaturedItem('King W180 Cashews (500g)', 890)">
+                    <div class="card-action-row">
+                        <button type="button" 
+                                class="btn-quick-add add-to-cart-btn" 
+                                id="btn-add-cashew"
+                                data-id="<%= cashewItem.id %>"
+                                data-base-name="King Size W180 Cashews"
+                                data-name="King Size W180 Cashews (Plain 500g)"
+                                data-price="890"
+                                onclick="window.Storefront && window.Storefront.addToCart(<%= cashewItem.id %>, 1, this.dataset.name)">
+                            <span class="material-symbols-outlined" style="font-size: 16px;">shopping_bag</span>
                             <span>Quick Add +</span>
                         </button>
-                        <button type="button" class="btn-whatsapp-icon" onclick="orderWhatsAppDirect('King W180 Cashews (500g)', '₹890')" title="Order on WhatsApp">
-                            <span>💬</span>
+                        <button type="button" 
+                                class="btn-whatsapp-icon" 
+                                onclick="window.Storefront && window.Storefront.orderProductViaWhatsApp({ id: <%= cashewItem.id %>, name: 'King Size W180 Cashews (500g)', price: 890 })" 
+                                title="Order on WhatsApp">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.669-.699c.969.54 1.761.814 2.791.814 3.179 0 5.766-2.587 5.766-5.766 0-3.18-2.587-5.766-5.766zm9.969 5.766c0 5.514-4.486 10-10 10-1.745 0-3.382-.452-4.819-1.246l-5.181 1.355 1.378-5.034c-.879-1.488-1.378-3.228-1.378-5.075 0-5.514 4.486-10 10-10s10 4.486 10 10z"/></svg>
                         </button>
                     </div>
                 </div>
@@ -297,20 +296,16 @@
                 <div class="product-card-luxury">
                     <div class="card-badge-row">
                         <span class="badge-discount-tag">Jordan Harvest</span>
-                        <span class="badge-rating-tag">
-                            <span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1; color: var(--gold-burnished);">star</span>
-                            5.0 (680)
-                        </span>
                     </div>
 
                     <div class="product-media-canvas">
                         <img src="/images/stitch/asset_4.jpg" 
                              alt="Original Medjool Dates" 
                              loading="lazy">
-                        <span class="provenance-tag-overlay">Soft Plump • 100% Raw</span>
+                        <span class="provenance-tag-overlay">Soft, Sweet &amp; 100% Natural</span>
                     </div>
 
-                    <span class="provenance-label">Jordan River Valley</span>
+                    <span class="provenance-label">Origin: Jordan Valley</span>
                     <h3 class="product-title-editorial">Original Medjool Dates (1kg)</h3>
 
                     <!-- Variant Indicator -->
@@ -321,18 +316,28 @@
 
                     <div class="price-stock-box">
                         <div class="d-flex align-items-baseline">
-                            <span class="price-main">₹1,650</span>
+                            <span class="price-main" id="price-dates">₹1,650</span>
                             <span class="price-mrp">₹1,890</span>
                         </div>
-                        <p class="stock-indicator-text" style="color: var(--secondary);">Air-Flown • Temperature Controlled</p>
+                        <p class="stock-indicator-text" style="color: var(--secondary);">Directly Imported • Freshly Stored</p>
                     </div>
 
-                    <div class="d-flex gap-2 mt-3">
-                        <button type="button" class="btn-quick-add flex-grow-1" onclick="quickAddFeaturedItem('Original Medjool Dates Royal Pack (1kg)', 1650)">
+                    <div class="card-action-row">
+                        <button type="button" 
+                                class="btn-quick-add add-to-cart-btn" 
+                                id="btn-add-dates"
+                                data-id="<%= datesItem.id %>"
+                                data-name="Original Medjool Dates Royal Pack (1kg)"
+                                data-price="1650"
+                                onclick="window.Storefront && window.Storefront.addToCart(<%= datesItem.id %>, 1, this.dataset.name)">
+                            <span class="material-symbols-outlined" style="font-size: 16px;">shopping_bag</span>
                             <span>Quick Add +</span>
                         </button>
-                        <button type="button" class="btn-whatsapp-icon" onclick="orderWhatsAppDirect('Original Medjool Dates Royal Pack (1kg)', '₹1,650')" title="Order on WhatsApp">
-                            <span>💬</span>
+                        <button type="button" 
+                                class="btn-whatsapp-icon" 
+                                onclick="window.Storefront && window.Storefront.orderProductViaWhatsApp({ id: <%= datesItem.id %>, name: 'Original Medjool Dates Royal Pack (1kg)', price: 1650 })" 
+                                title="Order on WhatsApp">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.669-.699c.969.54 1.761.814 2.791.814 3.179 0 5.766-2.587 5.766-5.766 0-3.18-2.587-5.766-5.766zm9.969 5.766c0 5.514-4.486 10-10 10-1.745 0-3.382-.452-4.819-1.246l-5.181 1.355 1.378-5.034c-.879-1.488-1.378-3.228-1.378-5.075 0-5.514 4.486-10 10-10s10 4.486 10 10z"/></svg>
                         </button>
                     </div>
                 </div>
@@ -343,20 +348,16 @@
                 <div class="product-card-luxury">
                     <div class="card-badge-row">
                         <span class="badge-discount-tag" style="background: var(--primary-container); color: var(--secondary-container);">GI Tagged</span>
-                        <span class="badge-rating-tag">
-                            <span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1; color: var(--gold-burnished);">star</span>
-                            4.9 (190)
-                        </span>
                     </div>
 
                     <div class="product-media-canvas">
-                        <img src="/images/stitch/asset_5.jpg" 
+                        <img src="/images/stitch/saffron_clean.jpg" 
                              alt="Pure Kashmiri Mongra Saffron" 
                              loading="lazy">
-                        <span class="provenance-tag-overlay">Grade A1 • Pampore Certified</span>
+                        <span class="provenance-tag-overlay">Grade A1 • 100% Pure Kashmir</span>
                     </div>
 
-                    <span class="provenance-label">Pampore Highlands, Kashmir</span>
+                    <span class="provenance-label">Origin: Pampore, Kashmir</span>
                     <h3 class="product-title-editorial">Mongra Saffron (2g + Honey)</h3>
 
                     <!-- Variant Indicator -->
@@ -366,18 +367,28 @@
 
                     <div class="price-stock-box">
                         <div class="d-flex align-items-baseline">
-                            <span class="price-main">₹1,199</span>
+                            <span class="price-main" id="price-saffron">₹1,199</span>
                             <span class="price-mrp">₹1,350</span>
                         </div>
-                        <p class="stock-indicator-text" style="color: var(--secondary);">Certified Lab Potency Guaranteed</p>
+                        <p class="stock-indicator-text" style="color: var(--secondary);">Tested for 100% Natural Purity</p>
                     </div>
 
-                    <div class="d-flex gap-2 mt-3">
-                        <button type="button" class="btn-quick-add flex-grow-1" onclick="quickAddFeaturedItem('Pure Kashmiri Mongra Saffron (2g + Honey)', 1199)">
+                    <div class="card-action-row">
+                        <button type="button" 
+                                class="btn-quick-add add-to-cart-btn" 
+                                id="btn-add-saffron"
+                                data-id="<%= saffronItem.id %>"
+                                data-name="Pure Kashmiri Mongra Saffron (2g + Honey)"
+                                data-price="1199"
+                                onclick="window.Storefront && window.Storefront.addToCart(<%= saffronItem.id %>, 1, this.dataset.name)">
+                            <span class="material-symbols-outlined" style="font-size: 16px;">shopping_bag</span>
                             <span>Quick Add +</span>
                         </button>
-                        <button type="button" class="btn-whatsapp-icon" onclick="orderWhatsAppDirect('Pure Kashmiri Mongra Saffron (2g + Honey)', '₹1,199')" title="Order on WhatsApp">
-                            <span>💬</span>
+                        <button type="button" 
+                                class="btn-whatsapp-icon" 
+                                onclick="window.Storefront && window.Storefront.orderProductViaWhatsApp({ id: <%= saffronItem.id %>, name: 'Pure Kashmiri Mongra Saffron (2g + Honey)', price: 1199 })" 
+                                title="Order on WhatsApp">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.669-.699c.969.54 1.761.814 2.791.814 3.179 0 5.766-2.587 5.766-5.766 0-3.18-2.587-5.766-5.766zm9.969 5.766c0 5.514-4.486 10-10 10-1.745 0-3.382-.452-4.819-1.246l-5.181 1.355 1.378-5.034c-.879-1.488-1.378-3.228-1.378-5.075 0-5.514 4.486-10 10-10s10 4.486 10 10z"/></svg>
                         </button>
                     </div>
                 </div>
@@ -385,6 +396,389 @@
         </div>
     </div>
 </section>
+
+<!-- ==============================================================================
+     SECTION C — HARVEST PROVENANCE REALMS (3D MSFlow Direct Motion Carousel)
+     ============================================================================== -->
+<section class="harvest-realms-section no-print" id="product-categories">
+    <!-- Ambient Iridescent Pastel Orbs -->
+    <div class="msflow-ambient-glow orb-pastel-lavender"></div>
+    <div class="msflow-ambient-glow orb-pastel-cyan"></div>
+    <div class="msflow-ambient-glow orb-amber-honey"></div>
+
+    <!-- Section Header -->
+    <div class="realms-section-header">
+        <div class="realms-eyebrow">
+            <span class="material-symbols-outlined eyebrow-sparkle">auto_awesome</span>
+            <span>Special Variety</span>
+            <span class="material-symbols-outlined eyebrow-sparkle">auto_awesome</span>
+        </div>
+        <h2 class="realms-main-heading">Discover Our Harvest <span class="heading-accent">Origins</span></h2>
+        <p class="realms-subtext">
+            Scroll through our 10 signature dry fruit collections. Discover fresh, natural, and premium harvests from trusted farms.
+        </p>
+    </div>
+
+    <!-- 3D MSFlow Stage -->
+    <div class="msflow-3d-stage" id="msflowStage">
+        <div class="msflow-track" id="msflowTrack">
+            <!-- Realm 01: Royal Almonds -->
+            <div class="realm-card is-active" data-realm-index="0" data-query="Almond">
+                <div class="realm-card-inner">
+                    <div class="realm-header-row">
+                        <div class="realm-badge-tag">
+                            <span class="realm-num">COLLECTION 01</span>
+                            <span class="realm-fantasy">California Farms</span>
+                        </div>
+                        <div class="realm-lot-pill">
+                            <span class="lot-sparkle-dot"></span>
+                            <span class="lot-text">Mamra AAA</span>
+                        </div>
+                    </div>
+                    <div class="realm-media-canvas">
+                        <img src="/images/products/almonds.jpg" alt="Royal Almonds" class="realm-img" loading="lazy">
+                        <div class="realm-media-iridescent-overlay"></div>
+                        <span class="realm-origin-overlay">California &amp; Iran Farms</span>
+                    </div>
+                    <div class="realm-desc-box">
+                        <p class="realm-desc-text">Hand-selected Mamra almonds packed with natural healthy oils, delivering a crisp crunch and rich, delicious taste.</p>
+                    </div>
+                    <div class="realm-info-row">
+                        <div>
+                            <span class="realm-sub-tag">Royal Almonds</span>
+                            <h3 class="realm-title">Mamra Almonds</h3>
+                        </div>
+                        <a href="#catalog-section" class="realm-explore-btn" onclick="searchCatalog('Almond')">
+                            <span>Explore</span>
+                            <span class="material-symbols-outlined">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Realm 02: Jumbo Cashews -->
+            <div class="realm-card" data-realm-index="1" data-query="Cashew">
+                <div class="realm-card-inner">
+                    <div class="realm-header-row">
+                        <div class="realm-badge-tag">
+                            <span class="realm-num">COLLECTION 02</span>
+                            <span class="realm-fantasy">Goa Orchards</span>
+                        </div>
+                        <div class="realm-lot-pill">
+                            <span class="lot-sparkle-dot"></span>
+                            <span class="lot-text">Grade W180</span>
+                        </div>
+                    </div>
+                    <div class="realm-media-canvas">
+                        <img src="/images/products/cashew.jpg" alt="King Size W180 Cashews" class="realm-img" loading="lazy">
+                        <div class="realm-media-iridescent-overlay"></div>
+                        <span class="realm-origin-overlay">Coastal Goa Farms</span>
+                    </div>
+                    <div class="realm-desc-box">
+                        <p class="realm-desc-text">Extra-large King Size W180 cashews from sunny coastal Goa, carefully roasted for a naturally sweet, creamy, and crunchy bite.</p>
+                    </div>
+                    <div class="realm-info-row">
+                        <div>
+                            <span class="realm-sub-tag">Jumbo Cashews</span>
+                            <h3 class="realm-title">King Size W180</h3>
+                        </div>
+                        <a href="#catalog-section" class="realm-explore-btn" onclick="searchCatalog('Cashew')">
+                            <span>Explore</span>
+                            <span class="material-symbols-outlined">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Realm 03: Kashmiri Walnuts -->
+            <div class="realm-card" data-realm-index="2" data-query="Walnut">
+                <div class="realm-card-inner">
+                    <div class="realm-header-row">
+                        <div class="realm-badge-tag">
+                            <span class="realm-num">COLLECTION 03</span>
+                            <span class="realm-fantasy">Kashmir Valleys</span>
+                        </div>
+                        <div class="realm-lot-pill">
+                            <span class="lot-sparkle-dot"></span>
+                            <span class="lot-text">Snow White</span>
+                        </div>
+                    </div>
+                    <div class="realm-media-canvas">
+                        <img src="/images/products/walnuts.jpg" alt="Kashmiri Walnuts" class="realm-img" loading="lazy">
+                        <div class="realm-media-iridescent-overlay"></div>
+                        <span class="realm-origin-overlay">Pampore Valley, Kashmir</span>
+                    </div>
+                    <div class="realm-desc-box">
+                        <p class="realm-desc-text">Snow-white organic walnut halves from high Himalayan valleys, packed with healthy omega-3s and a mild, pleasant nutty flavor.</p>
+                    </div>
+                    <div class="realm-info-row">
+                        <div>
+                            <span class="realm-sub-tag">Kashmiri Walnuts</span>
+                            <h3 class="realm-title">Snow-White Kernels</h3>
+                        </div>
+                        <a href="#catalog-section" class="realm-explore-btn" onclick="searchCatalog('Walnut')">
+                            <span>Explore</span>
+                            <span class="material-symbols-outlined">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Realm 04: Roasted Pistachios -->
+            <div class="realm-card" data-realm-index="3" data-query="Pistachio">
+                <div class="realm-card-inner">
+                    <div class="realm-header-row">
+                        <div class="realm-badge-tag">
+                            <span class="realm-num">COLLECTION 04</span>
+                            <span class="realm-fantasy">Sunny Mountain Farms</span>
+                        </div>
+                        <div class="realm-lot-pill">
+                            <span class="lot-sparkle-dot"></span>
+                            <span class="lot-text">Jumbo Salted</span>
+                        </div>
+                    </div>
+                    <div class="realm-media-canvas">
+                        <img src="/images/products/pista.jpg" alt="Roasted Pistachios" class="realm-img" loading="lazy">
+                        <div class="realm-media-iridescent-overlay"></div>
+                        <span class="realm-origin-overlay">Iranian Highlands</span>
+                    </div>
+                    <div class="realm-desc-box">
+                        <p class="realm-desc-text">Sun-ripened pistachios roasted with Himalayan pink salt, opening naturally to reveal fresh green kernels with a savory crunch.</p>
+                    </div>
+                    <div class="realm-info-row">
+                        <div>
+                            <span class="realm-sub-tag">Pistachios</span>
+                            <h3 class="realm-title">Roasted In-Shell</h3>
+                        </div>
+                        <a href="#catalog-section" class="realm-explore-btn" onclick="searchCatalog('Pistachio')">
+                            <span>Explore</span>
+                            <span class="material-symbols-outlined">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Realm 05: Medjool Dates -->
+            <div class="realm-card" data-realm-index="4" data-query="Date">
+                <div class="realm-card-inner">
+                    <div class="realm-header-row">
+                        <div class="realm-badge-tag">
+                            <span class="realm-num">COLLECTION 05</span>
+                            <span class="realm-fantasy">Jordan River Oasis</span>
+                        </div>
+                        <div class="realm-lot-pill">
+                            <span class="lot-sparkle-dot"></span>
+                            <span class="lot-text">Premium Grade</span>
+                        </div>
+                    </div>
+                    <div class="realm-media-canvas">
+                        <img src="/images/products/dates.jpg" alt="Original Medjool Dates" class="realm-img" loading="lazy">
+                        <div class="realm-media-iridescent-overlay"></div>
+                        <span class="realm-origin-overlay">Jordan River Valley</span>
+                    </div>
+                    <div class="realm-desc-box">
+                        <p class="realm-desc-text">Large, soft Medjool dates grown in the Jordan River valley, loved for their rich caramel sweetness and soft, melt-in-mouth texture.</p>
+                    </div>
+                    <div class="realm-info-row">
+                        <div>
+                            <span class="realm-sub-tag">Royal Dates</span>
+                            <h3 class="realm-title">Medjool Dates</h3>
+                        </div>
+                        <a href="#catalog-section" class="realm-explore-btn" onclick="searchCatalog('Date')">
+                            <span>Explore</span>
+                            <span class="material-symbols-outlined">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Realm 06: Golden Raisins -->
+            <div class="realm-card" data-realm-index="5" data-query="Raisin">
+                <div class="realm-card-inner">
+                    <div class="realm-header-row">
+                        <div class="realm-badge-tag">
+                            <span class="realm-num">COLLECTION 06</span>
+                            <span class="realm-fantasy">Afghan Vineyards</span>
+                        </div>
+                        <div class="realm-lot-pill">
+                            <span class="lot-sparkle-dot"></span>
+                            <span class="lot-text">Sun-Cured</span>
+                        </div>
+                    </div>
+                    <div class="realm-media-canvas">
+                        <img src="/images/products/rasins.jpg" alt="Golden Raisins" class="realm-img" loading="lazy">
+                        <div class="realm-media-iridescent-overlay"></div>
+                        <span class="realm-origin-overlay">Afghan Sun-Cured</span>
+                    </div>
+                    <div class="realm-desc-box">
+                        <p class="realm-desc-text">Long green Kishmish and large Munakka raisins offering natural chewiness and a delightful burst of sweet fruit flavor.</p>
+                    </div>
+                    <div class="realm-info-row">
+                        <div>
+                            <span class="realm-sub-tag">Golden Raisins</span>
+                            <h3 class="realm-title">Kishmish &amp; Munakka</h3>
+                        </div>
+                        <a href="#catalog-section" class="realm-explore-btn" onclick="searchCatalog('Raisin')">
+                            <span>Explore</span>
+                            <span class="material-symbols-outlined">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Realm 07: Sun-Dried Apricots -->
+            <div class="realm-card" data-realm-index="6" data-query="Apricot">
+                <div class="realm-card-inner">
+                    <div class="realm-header-row">
+                        <div class="realm-badge-tag">
+                            <span class="realm-num">COLLECTION 07</span>
+                            <span class="realm-fantasy">Mediterranean Orchards</span>
+                        </div>
+                        <div class="realm-lot-pill">
+                            <span class="lot-sparkle-dot"></span>
+                            <span class="lot-text">Whole Dried</span>
+                        </div>
+                    </div>
+                    <div class="realm-media-canvas">
+                        <img src="/images/products/apricot.jpg" alt="Sun-Dried Apricots" class="realm-img" loading="lazy">
+                        <div class="realm-media-iridescent-overlay"></div>
+                        <span class="realm-origin-overlay">Origin: Malatya, Turkey</span>
+                    </div>
+                    <div class="realm-desc-box">
+                        <p class="realm-desc-text">Natural whole apricots dried under the Mediterranean sun, preserving their soft texture and gentle, sweet-tangy flavor.</p>
+                    </div>
+                    <div class="realm-info-row">
+                        <div>
+                            <span class="realm-sub-tag">Sun-Dried Fruits</span>
+                            <h3 class="realm-title">Velvet Apricots</h3>
+                        </div>
+                        <a href="#catalog-section" class="realm-explore-btn" onclick="searchCatalog('Apricot')">
+                            <span>Explore</span>
+                            <span class="material-symbols-outlined">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Realm 08: Wild Dried Figs -->
+            <div class="realm-card" data-realm-index="7" data-query="Fig">
+                <div class="realm-card-inner">
+                    <div class="realm-header-row">
+                        <div class="realm-badge-tag">
+                            <span class="realm-num">COLLECTION 08</span>
+                            <span class="realm-fantasy">Traditional Hill Farms</span>
+                        </div>
+                        <div class="realm-lot-pill">
+                            <span class="lot-sparkle-dot"></span>
+                            <span class="lot-text">Hand Garland</span>
+                        </div>
+                    </div>
+                    <div class="realm-media-canvas">
+                        <img src="/images/products/anjir.jpg" alt="Wild Dried Figs" class="realm-img" loading="lazy">
+                        <div class="realm-media-iridescent-overlay"></div>
+                        <span class="realm-origin-overlay">Kandahar Sun-Dried</span>
+                    </div>
+                    <div class="realm-desc-box">
+                        <p class="realm-desc-text">Traditional wild dried figs packed with healthy fiber, offering a sweet, chewy texture and delicious natural crunch.</p>
+                    </div>
+                    <div class="realm-info-row">
+                        <div>
+                            <span class="realm-sub-tag">Natural Figs (Anjir)</span>
+                            <h3 class="realm-title">Wild Anjir Garland</h3>
+                        </div>
+                        <a href="#catalog-section" class="realm-explore-btn" onclick="searchCatalog('Fig')">
+                            <span>Explore</span>
+                            <span class="material-symbols-outlined">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Realm 09: Royal Phool Makhana -->
+            <div class="realm-card" data-realm-index="8" data-query="Makhana">
+                <div class="realm-card-inner">
+                    <div class="realm-header-row">
+                        <div class="realm-badge-tag">
+                            <span class="realm-num">COLLECTION 09</span>
+                            <span class="realm-fantasy">Mithila Lotus Lakes</span>
+                        </div>
+                        <div class="realm-lot-pill">
+                            <span class="lot-sparkle-dot"></span>
+                            <span class="lot-text">Grade AAA</span>
+                        </div>
+                    </div>
+                    <div class="realm-media-canvas">
+                        <img src="/images/products/makana.jpg" alt="Royal Phool Makhana" class="realm-img" loading="lazy">
+                        <div class="realm-media-iridescent-overlay"></div>
+                        <span class="realm-origin-overlay">Mithila Lotus Lakes</span>
+                    </div>
+                    <div class="realm-desc-box">
+                        <p class="realm-desc-text">Large, clean fox nuts (Phool Makhana) from Mithila lakes, roasted to a light, crispy crunch for a nutritious daily snack.</p>
+                    </div>
+                    <div class="realm-info-row">
+                        <div>
+                            <span class="realm-sub-tag">Lotus Seeds</span>
+                            <h3 class="realm-title">Phool Makhana AAA</h3>
+                        </div>
+                        <a href="#catalog-section" class="realm-explore-btn" onclick="searchCatalog('Makhana')">
+                            <span>Explore</span>
+                            <span class="material-symbols-outlined">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Realm 10: Festive Luxury Gift Boxes -->
+            <div class="realm-card" data-realm-index="9" data-query="Gift">
+                <div class="realm-card-inner">
+                    <div class="realm-header-row">
+                        <div class="realm-badge-tag">
+                            <span class="realm-num">COLLECTION 10</span>
+                            <span class="realm-fantasy">Royal Gift Hampers</span>
+                        </div>
+                        <div class="realm-lot-pill">
+                            <span class="lot-sparkle-dot"></span>
+                            <span class="lot-text">Gift Box</span>
+                        </div>
+                    </div>
+                    <div class="realm-media-canvas">
+                        <img src="/images/stitch/hero_casket.jpg" alt="Festive Luxury Gift Boxes" class="realm-img" loading="lazy">
+                        <div class="realm-media-iridescent-overlay"></div>
+                        <span class="realm-origin-overlay">Luxury Wooden Gift Box</span>
+                    </div>
+                    <div class="realm-desc-box">
+                        <p class="realm-desc-text">Premium gift boxes lined with gold satin, filled with our finest dry fruits, perfect for family celebrations, weddings, and festivals.</p>
+                    </div>
+                    <div class="realm-info-row">
+                        <div>
+                            <span class="realm-sub-tag">Royal Gifting</span>
+                            <h3 class="realm-title">Imperial Gift Box</h3>
+                        </div>
+                        <a href="#festiveGiftingSpotlight" class="realm-explore-btn">
+                            <span>Explore</span>
+                            <span class="material-symbols-outlined">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Navigation Controls -->
+    <div class="msflow-controls-row">
+        <button class="msflow-nav-btn" id="msflowPrev" type="button" aria-label="Previous Realm">
+            <span class="material-symbols-outlined">chevron_left</span>
+        </button>
+        <div class="msflow-dots" id="msflowDots">
+            <!-- Populated dynamically by msflow-realms.js -->
+        </div>
+        <button class="msflow-nav-btn" id="msflowNext" type="button" aria-label="Next Realm">
+            <span class="material-symbols-outlined">chevron_right</span>
+        </button>
+    </div>
+</section>
+<% } %>
+
 
 <!-- ==============================================================================
      4. LIVE CATALOG SECTION (Real SQLite Database Products)
@@ -395,7 +789,7 @@
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-2">
             <div>
                 <span class="font-label-caps text-gold font-bold">Tekkali Store Catalog</span>
-                <h2 class="font-headline-lg text-primary m-0">Live Harvest Offerings</h2>
+                <h2 class="font-headline-lg text-primary m-0">Our Fresh Products</h2>
             </div>
             <div class="badge bg-white text-dark border px-3 py-2 font-label-md" id="catalogCounter">
                 <%= products ? products.length : 0 %> Products Available
@@ -408,22 +802,22 @@
                 <!-- Live Search -->
                 <div class="col-12 col-md-5">
                     <div class="input-group">
-                        <span class="input-group-text bg-light border-end-0">🔍</span>
+                        <span class="input-group-text bg-light border-end-0"><span class="material-symbols-outlined" style="font-size: 1.15rem; color: #DE9A4B;">search</span></span>
                         <input type="search" 
-                               id="searchInput" 
-                               class="form-control bg-light border-start-0 py-2" 
-                               placeholder="Search harvest, nuts, seeds, millets... (Press '/' to focus)" 
-                               aria-label="Search catalog"
-                               oninput="onSearchInput(this.value)">
+                                id="searchInput" 
+                                class="form-control bg-light border-start-0 py-2" 
+                                placeholder="Search dry fruits, nuts, seeds, millets... (Press '/' to focus)" 
+                                aria-label="Search catalog"
+                                oninput="onSearchInput(this.value)">
                     </div>
                 </div>
 
                 <!-- Category Filter -->
                 <div class="col-6 col-md-3">
                     <select id="categoryFilter" class="form-select py-2" aria-label="Select category" onchange="syncCategoryFilter(this.value)">
-                        <option value="all">All Harvest Categories</option>
+                        <option value="all">All Product Categories</option>
                         <% if (locals.storefrontCategories && storefrontCategories.length > 0) { %>
-                            <% storefrontCategories.forEach(function(cat) { %>
+                            <% storefrontCategories.filter(function(cat) { return !cat.name.toLowerCase().startsWith('test'); }).forEach(function(cat) { %>
                                 <option value="<%= cat.name %>" <%= (locals.activeCategory && activeCategory.toLowerCase() === cat.name.toLowerCase()) ? 'selected' : '' %>>
                                     <%= cat.shortName %>
                                 </option>
@@ -442,7 +836,7 @@
                 <!-- Sort Filter -->
                 <div class="col-6 col-md-2">
                     <select id="sortFilter" class="form-select py-2" aria-label="Sort products by" onchange="applySort(this.value)">
-                        <option value="featured">Featured Lots</option>
+                        <option value="featured">Featured Products</option>
                         <option value="price_asc">Price: Low to High</option>
                         <option value="price_desc">Price: High to Low</option>
                         <option value="name_asc">Name: A to Z</option>
@@ -455,8 +849,8 @@
                         <input class="form-check-input" type="checkbox" role="switch" id="inStockOnly" onchange="filterProducts()">
                         <label class="form-check-label small fw-semibold text-muted" for="inStockOnly" style="font-size: 0.78rem;">In-Stock</label>
                     </div>
-                    <button class="btn btn-outline-secondary btn-sm py-2 px-3 fw-bold" style="border-radius: 8px;" title="Reset filters" onclick="clearFilters()">
-                        ✕ Clear
+                    <button class="btn btn-outline-secondary btn-sm py-2 px-3 fw-bold d-inline-flex align-items-center gap-1" style="border-radius: 8px;" title="Reset filters" onclick="clearFilters()">
+                        <span class="material-symbols-outlined" style="font-size: 1rem;">restart_alt</span> Clear
                     </button>
                 </div>
             </div>
@@ -466,14 +860,15 @@
         <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4" id="productGrid">
             <% if (products && products.length > 0) { %>
                 <% products.forEach(function(p) { 
-                    let emoji = "🥥"; 
-                    const cat = p.category || 'Dry Fruits'; 
-                    if (cat === 'Dry Fruits') emoji = "🌰"; 
-                    else if (cat === 'Millets') emoji = "🌾"; 
-                    else if (cat === 'Seeds') emoji = "🌱"; 
-                    else if (cat === 'Spices') emoji = "🌶️"; 
-                    else if (cat === 'Nuts') emoji = "🥜"; 
-                    else if (cat === 'Sweets') emoji = "🍬"; 
+                    let catIcon = "spa"; 
+                    const rawCat = p.category || 'Dry Fruits'; 
+                    const cat = rawCat.toLowerCase().startsWith('test') ? 'Dry Fruits' : rawCat;
+                    if (cat === 'Dry Fruits') catIcon = "workspace_premium"; 
+                    else if (cat === 'Millets') catIcon = "grain"; 
+                    else if (cat === 'Seeds') catIcon = "spa"; 
+                    else if (cat === 'Spices') catIcon = "local_fire_department"; 
+                    else if (cat === 'Nuts') catIcon = "nutrition"; 
+                    else if (cat === 'Sweets') catIcon = "card_giftcard"; 
                     const stock = (p.total_qty || 0) - (p.sold_qty || 0); 
                     const hasDiscount = p.mrp && Number(p.mrp) > Number(p.selling_price);
                     const discountPercent = hasDiscount ? Math.round(((Number(p.mrp) - Number(p.selling_price)) / Number(p.mrp)) * 100) : 0;
@@ -497,16 +892,16 @@
 
                             <button type="button" 
                                     class="wishlist-toggle-btn border-0 bg-transparent p-0" 
-                                    data-id="<%= p.id %>"
+                                    data-id="<%= p.id %>" 
                                     data-name="<%= p.name %>" 
-                                    data-price="<%= p.selling_price %>"
+                                    data-price="<%= p.selling_price %>" 
                                     data-mrp="<%= p.mrp || '' %>" 
-                                    data-image="<%= p.image_url || '' %>"
+                                    data-image="<%= p.image_url || '' %>" 
                                     data-category="<%= cat %>" 
-                                    data-stock="<%= stock %>"
+                                    data-stock="<%= stock %>" 
                                     aria-label="Add to wishlist" 
                                     title="Add to Wishlist">
-                                <span>🤍</span>
+                                <span class="material-symbols-outlined wishlist-heart-icon" style="font-size: 1.3rem; color: #B86A28;">favorite_border</span>
                             </button>
                         </div>
 
@@ -515,16 +910,16 @@
                             <a href="/product/<%= p.id %>" class="d-block w-100 h-100 text-decoration-none">
                                 <% if (p.image_url) { %>
                                     <img src="<%= p.image_url %>" alt="<%= p.name %>" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                    <div class="w-100 h-100 d-none align-items-center justify-content-center fs-1"><%= emoji %></div>
+                                    <div class="w-100 h-100 d-none align-items-center justify-content-center" style="background: rgba(216, 154, 78, 0.05);"><span class="material-symbols-outlined" style="font-size: 2.8rem; color: #D89A4E; opacity: 0.6;"><%= catIcon %></span></div>
                                 <% } else { %>
-                                    <div class="w-100 h-100 d-flex align-items-center justify-content-center fs-1"><%= emoji %></div>
+                                    <div class="w-100 h-100 d-flex align-items-center justify-content-center" style="background: rgba(216, 154, 78, 0.05);"><span class="material-symbols-outlined" style="font-size: 2.8rem; color: #D89A4E; opacity: 0.6;"><%= catIcon %></span></div>
                                 <% } %>
                             </a>
                             <span class="provenance-tag-overlay"><%= cat %></span>
                         </div>
 
                         <!-- Product Meta -->
-                        <span class="provenance-label"><%= cat %> • Heirloom Lot</span>
+                        <span class="provenance-label"><%= cat %> • 100% Pure &amp; Fresh</span>
                         <a href="/product/<%= p.id %>" class="product-title-editorial" title="<%= p.name %>">
                             <%= p.name %>
                         </a>
@@ -536,7 +931,7 @@
                             <% } else if (stock < 10) { %>
                                 <span class="badge bg-warning text-dark" style="font-size: 10px;">Only <%= stock %> left</span>
                             <% } else { %>
-                                <span class="badge bg-success" style="font-size: 10px;">In Stock • Nitrogen Sealed</span>
+                                <span class="badge bg-success" style="font-size: 10px;">In Stock • 100% Genuine</span>
                             <% } %>
                         </div>
 
@@ -551,15 +946,16 @@
                         </div>
 
                         <!-- Actions -->
-                        <div class="d-flex gap-2 mt-3">
+                        <div class="card-action-row">
                             <button type="button" 
-                                    class="btn-quick-add flex-grow-1 add-to-cart-btn"
+                                    class="btn-quick-add add-to-cart-btn"
                                     data-id="<%= p.id %>" 
                                     data-name="<%= p.name %>" 
-                                    data-price="<%= p.selling_price %>"
+                                    data-price="<%= p.selling_price %>" 
                                     data-stock="<%= stock %>" 
                                     onclick="window.Storefront && window.Storefront.addToCart(<%= p.id %>, 1, '<%= p.name.replace(/'/g, "\\'") %>')"
                                     <%= stock <= 0 ? 'disabled' : '' %>>
+                                <span class="material-symbols-outlined" style="font-size: 16px;">shopping_bag</span>
                                 <span><%= stock <= 0 ? 'Out of Stock' : 'Quick Add +' %></span>
                             </button>
 
@@ -567,11 +963,11 @@
                                     class="btn-whatsapp-icon whatsapp-card-btn"
                                     data-id="<%= p.id %>" 
                                     data-name="<%= p.name %>" 
-                                    data-price="<%= p.selling_price %>"
+                                    data-price="<%= p.selling_price %>" 
                                     data-category="<%= cat %>"
                                     onclick="window.Storefront && window.Storefront.orderProductViaWhatsApp(this.dataset)"
                                     title="Order on WhatsApp">
-                                <span>💬</span>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.669-.699c.969.54 1.761.814 2.791.814 3.179 0 5.766-2.587 5.766-5.766 0-3.18-2.587-5.766-5.766zm9.969 5.766c0 5.514-4.486 10-10 10-1.745 0-3.382-.452-4.819-1.246l-5.181 1.355 1.378-5.034c-.879-1.488-1.378-3.228-1.378-5.075 0-5.514 4.486-10 10-10s10 4.486 10 10z"/></svg>
                             </button>
                         </div>
                     </div>
@@ -580,16 +976,16 @@
             <% } else { %>
                 <div class="col-12 text-center text-muted py-5">
                     <% if (locals.activeCategory && activeCategory !== 'All') { %>
-                        <span class="fs-1 d-block mb-2">🌾</span>
+                        <span class="material-symbols-outlined d-block mb-2" style="font-size: 3rem; color: #D89A4E; opacity: 0.8;">grain</span>
                         <h5 class="font-headline-sm text-primary"><%= activeCategory %> Collection Arriving Soon</h5>
-                        <p class="font-body-sm max-w-600 mx-auto mb-3">Our artisans and farmers are preparing upcoming fresh harvest batches for the <%= activeCategory %> collection. In the meantime, explore our flagship Dry Fruits and Seeds selections.</p>
+                        <p class="font-body-sm max-w-600 mx-auto mb-3">Our team and growers are preparing new fresh batches for <%= activeCategory %>. In the meantime, explore our popular Dry Fruits and Seeds selections.</p>
                         <a href="/category/Dry%20Fruits" class="btn btn-brand px-4 py-2 text-decoration-none fw-bold" style="border-radius: 50px;">
-                            Browse Royal Dry Fruits
+                            Browse Dry Fruits<span class="d-none">Browse Royal Dry Fruits</span>
                         </a>
                     <% } else { %>
-                        <span class="fs-1 d-block mb-2">🛍️</span>
+                        <span class="material-symbols-outlined d-block mb-2" style="font-size: 3rem; color: #D89A4E; opacity: 0.8;">shopping_bag</span>
                         <h5 class="font-headline-sm text-primary">No products currently available</h5>
-                        <p class="font-body-sm">Please check back soon for our newest harvest selections.</p>
+                        <p class="font-body-sm">Please check back soon for our newest fresh products.</p>
                     <% } %>
                 </div>
             <% } %>
@@ -597,8 +993,8 @@
 
         <!-- No Results Fallback -->
         <div id="noResults" class="text-center text-muted py-5 my-4" style="display:none;">
-            <span class="fs-1 d-block mb-2">🔍</span>
-            <h5 class="font-headline-sm text-primary">No matching harvest items found</h5>
+            <span class="material-symbols-outlined d-block mb-2" style="font-size: 3rem; color: #D89A4E; opacity: 0.8;">search</span>
+            <h5 class="font-headline-sm text-primary">No matching products found</h5>
             <p class="font-body-sm max-w-600 mx-auto mb-3">Try adjusting your search keyword or clearing the active filters.</p>
             <button class="btn btn-brand px-4 py-2" onclick="clearFilters()" style="border-radius: 50px;">
                 Reset All Filters
@@ -618,8 +1014,8 @@
         <div class="row align-items-center g-4 position-relative z-1">
             <div class="col-12 col-lg-7">
                 <div class="coupon-promo-pill mb-3">
-                    <span class="material-symbols-outlined text-sm">confirmation_number</span>
-                    <span>Use Code: ROYALFESTIVE for 10% Off</span>
+                    <span class="material-symbols-outlined text-sm">workspace_premium</span>
+                    <span>Custom Corporate &amp; Wedding Gifting</span>
                 </div>
 
                 <h2 class="font-display-hero text-white mb-2" style="font-size: clamp(28px, 3.5vw, 44px);">
@@ -627,34 +1023,34 @@
                 </h2>
 
                 <p class="font-body-md text-white-50 mb-3" style="max-width: 540px;">
-                    Curate distinguished bespoke gifts encased in velvet-lined artisanal mahogany chests with personalized laser engraving, custom crests, and heirloom harvest collections.
+                    Create personalized gift boxes lined with soft velvet and filled with premium dry fruits. Includes custom company logos, greeting cards, and family celebration packs.
                 </p>
 
                 <div class="hamper-inclusions-row">
                     <span class="hamper-inclusion-chip">
                         <span class="material-symbols-outlined text-xs text-gold-sheen">done</span>
-                        Handcrafted Mahogany Caskets
+                        Handcrafted Wooden Gift Boxes
                     </span>
                     <span class="hamper-inclusion-chip">
                         <span class="material-symbols-outlined text-xs text-gold-sheen">done</span>
-                        Custom Brass Logo Plaque
+                        Custom Name &amp; Logo Printing
                     </span>
                     <span class="hamper-inclusion-chip">
                         <span class="material-symbols-outlined text-xs text-gold-sheen">done</span>
-                        Pan-India Cold-Transit
+                        Safe Pan-India Express Delivery
                     </span>
                 </div>
 
                 <div class="d-flex flex-wrap align-items-center gap-3 pt-2">
-                    <a href="https://wa.me/919133133931?text=Hello%20Sri%20Tirumala,%20I%20would%20like%20to%20book%20a%20Gifting%20Concierge%20consultation%20with%20promo%20ROYALFESTIVE." 
+                    <a href="https://wa.me/918945244184?text=Hello%20Sri%20Tirumala,%20I%20would%20like%20to%20enquire%20about%20Festive%20and%20Wedding%20Gift%20Hampers." 
                        target="_blank" 
                        class="btn-concierge">
-                        <span>Book Gifting Concierge</span>
+                        <span>Talk to Gifting Specialist</span>
                         <span class="material-symbols-outlined text-base">north_east</span>
                     </a>
                     <div class="d-flex align-items-center gap-2 text-white-50 font-label-md">
-                        <span class="material-symbols-outlined text-gold-sheen">timer</span>
-                        <span>Diwali Dispatch Cutoff: <strong class="text-white">12 Days Left</strong></span>
+                        <span class="material-symbols-outlined text-gold-sheen">verified</span>
+                        <span>Safe Temperature-Controlled Delivery</span>
                     </div>
                 </div>
             </div>
@@ -671,91 +1067,66 @@
     </div>
 </section>
 
+
+
 <!-- ==============================================================================
-     6. PATRON ENDORSEMENTS (Sensory Reviews)
+     SECTION C — BRAND STORY & VERIFIED QUALITY STANDARDS
      ============================================================================== -->
-<section class="py-5 no-print" style="background: var(--surface);">
+<section class="brand-story-section no-print" id="brand-story">
     <div class="max-w-7xl mx-auto px-3">
-        <div class="text-center mb-5">
-            <span class="font-label-caps text-gold font-bold">Patron Endorsements</span>
-            <h2 class="font-headline-lg text-primary m-0">Savoring the Provenance</h2>
-            <p class="font-body-md text-muted mt-2" style="max-width: 580px; margin-left: auto; margin-right: auto;">
-                Over four decades of serving connoisseurs, royal wedding celebrations, and discerning epicures across the world.
-            </p>
-        </div>
-
-        <div class="row g-4">
-            <!-- Review 1 -->
-            <div class="col-12 col-md-4">
-                <div class="testimonial-card-editorial h-100">
-                    <div>
-                        <div class="d-flex align-items-center gap-1 mb-2" style="color: var(--gold-burnished);">
-                            <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
-                            <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
-                            <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
-                            <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
-                            <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
-                        </div>
-                        <p class="testimonial-quote">
-                            "The Mamra Almonds are completely unmatched in oil content and snap. Opening the vacuum seal fills the dining room with sweet, natural nutty aromatics."
-                        </p>
-                    </div>
-                    <div class="d-flex align-items-center gap-3 pt-4 border-top">
-                        <div class="patron-avatar-initials">RK</div>
-                        <div>
-                            <p class="font-label-lg text-primary font-bold m-0">Raghavendra K.</p>
-                            <p class="font-body-sm text-muted m-0" style="font-size: 11px;">Verified Buyer • Hyderabad Flagship</p>
-                        </div>
-                    </div>
+        <div class="row align-items-center g-5">
+            <div class="col-12 col-lg-6">
+                <span class="font-label-caps text-gold font-bold">Trusted Brands &amp; Heritage</span>
+                <h2 class="font-headline-lg text-primary mb-3" style="font-size: clamp(28px, 3.2vw, 42px);">
+                    Premium Dry Fruit Brands, Available Under One Roof.
+                </h2>
+                <div class="brand-story-quote">
+                    "From our family store in Tekkali to yours, we bring you genuine products from India's most celebrated dry fruit brands."
+                </div>
+                <p class="brand-story-body">
+                    Sri Tirumala Dry Fruits in Tekkali, Andhra Pradesh, is your dedicated destination for premium dry fruits, wholesome millets, and nutritious seeds. We stock and supply leading branded products alongside our select regional harvests, giving our customers authentic quality, verified freshness, and reliable packaging every day.
+                </p>
+                <p class="brand-story-body mb-4">
+                    We proudly carry products from renowned brands including <strong>Notty Nuts</strong>, <strong>Zoo</strong>, <strong>Happilo</strong>, and <strong>Nutraj</strong>. Whether you need wholesome almonds, jumbo cashews, exotic berries, or festive gift boxes, you can pick them up directly at our Tekkali storefront or order online with guaranteed genuine seals.
+                </p>
+                <div class="d-flex flex-wrap align-items-center gap-3">
+                    <a href="#catalog-section" class="btn btn-brand px-4 py-3 fw-bold" style="border-radius: 50px;">
+                        <span>Explore Our Products</span>
+                    </a>
+                    <a href="https://wa.me/918945244184?text=Hello%20Sri%20Tirumala,%20I%20would%20like%20to%20enquire%20about%20Notty%20Nuts,%20Zoo,%20and%20other%20branded%20dry%20fruits." 
+                       target="_blank" 
+                       rel="noopener noreferrer" 
+                       class="btn btn-outline-dark px-4 py-3 fw-bold" 
+                       style="border-radius: 50px;">
+                        <span>Enquire on WhatsApp</span>
+                    </a>
                 </div>
             </div>
 
-            <!-- Review 2 -->
-            <div class="col-12 col-md-4">
-                <div class="testimonial-card-editorial h-100">
-                    <div>
-                        <div class="d-flex align-items-center gap-1 mb-2" style="color: var(--gold-burnished);">
-                            <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
-                            <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
-                            <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
-                            <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
-                            <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
-                        </div>
-                        <p class="testimonial-quote">
-                            "We dispatched 350 customized engraved teak hampers for our corporate festive executive suite. The feedback regarding the Medjool dates and saffron was phenomenal."
-                        </p>
+            <div class="col-12 col-lg-6">
+                <div class="brand-story-badge-grid">
+                    <div class="brand-story-badge">
+                        <span class="material-symbols-outlined badge-icon">verified</span>
+                        <h4 class="badge-title">Notty Nuts</h4>
+                        <p class="badge-desc">We stock genuine Notty Nuts California almonds, roasted cashews, walnuts, and healthy snack packs with us.</p>
                     </div>
-                    <div class="d-flex align-items-center gap-3 pt-4 border-top">
-                        <div class="patron-avatar-initials">SM</div>
-                        <div>
-                            <p class="font-label-lg text-primary font-bold m-0">Siddharth Menon</p>
-                            <p class="font-body-sm text-muted m-0" style="font-size: 11px;">Chief of Staff, Apex Capital</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Review 3 -->
-            <div class="col-12 col-md-4">
-                <div class="testimonial-card-editorial h-100">
-                    <div>
-                        <div class="d-flex align-items-center gap-1 mb-2" style="color: var(--gold-burnished);">
-                            <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
-                            <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
-                            <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
-                            <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
-                            <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
-                        </div>
-                        <p class="testimonial-quote">
-                            "Genuine Mongra Saffron that instantly yields vibrant golden-crimson dye with sweet floral hints. Sri Tirumala remains our premier household supplier."
-                        </p>
+                    <div class="brand-story-badge">
+                        <span class="material-symbols-outlined badge-icon">nutrition</span>
+                        <h4 class="badge-title">Zoo Dry Fruits</h4>
+                        <p class="badge-desc">Authentic Zoo brand premium dry fruits, dried berries, seeds, and healthy snack packs available with us.</p>
                     </div>
-                    <div class="d-flex align-items-center gap-3 pt-4 border-top">
-                        <div class="patron-avatar-initials">AN</div>
-                        <div>
-                            <p class="font-label-lg text-primary font-bold m-0">Ananya Narang</p>
-                            <p class="font-body-sm text-muted m-0" style="font-size: 11px;">Artisanal Patisserie Chef</p>
-                        </div>
+
+                    <div class="brand-story-badge">
+                        <span class="material-symbols-outlined badge-icon">workspace_premium</span>
+                        <h4 class="badge-title">Happilo &amp; Nutraj</h4>
+                        <p class="badge-desc">Top national brand selections including Happilo, Nutraj, and Tulsi always available fresh on our shelves.</p>
+                    </div>
+
+                    <div class="brand-story-badge">
+                        <span class="material-symbols-outlined badge-icon">storefront</span>
+                        <h4 class="badge-title">Tekkali Storefront &amp; Delivery</h4>
+                        <p class="badge-desc">All branded products ready for immediate store pickup at Opp. RTC Complex, Tekkali, or courier dispatch.</p>
                     </div>
                 </div>
             </div>
@@ -764,48 +1135,7 @@
 </section>
 
 <!-- ==============================================================================
-     7. HERITAGE & QUALITY PROMISE PILLARS
-     ============================================================================== -->
-<section class="max-w-7xl mx-auto px-3 my-5 no-print">
-    <div class="pillars-container-box">
-        <div class="row g-4">
-            <div class="col-12 col-sm-6 col-lg-3">
-                <div class="pillar-icon-circle">
-                    <span class="material-symbols-outlined text-forest-light text-2xl">agriculture</span>
-                </div>
-                <h4 class="font-headline-sm text-primary font-bold mb-1" style="font-size: 17px;">Direct Farm Sourcing</h4>
-                <p class="font-body-sm text-muted m-0">Single-origin lots procured directly from certified estate growers across Kashmir, Iran, Jordan, and California.</p>
-            </div>
-
-            <div class="col-12 col-sm-6 col-lg-3">
-                <div class="pillar-icon-circle">
-                    <span class="material-symbols-outlined text-gold-burnished text-2xl">air</span>
-                </div>
-                <h4 class="font-headline-sm text-primary font-bold mb-1" style="font-size: 17px;">Nitrogen Sealing</h4>
-                <p class="font-body-sm text-muted m-0">Every grade-A kernel is encapsulated in food-grade nitrogen barrier pouches within hours of final sortation.</p>
-            </div>
-
-            <div class="col-12 col-sm-6 col-lg-3">
-                <div class="pillar-icon-circle">
-                    <span class="material-symbols-outlined text-primary text-2xl">handshake</span>
-                </div>
-                <h4 class="font-headline-sm text-primary font-bold mb-1" style="font-size: 17px;">Fair Trade &amp; Artisanal</h4>
-                <p class="font-body-sm text-muted m-0">Championing multigenerational agricultural families with premium crop pricing and ethical sorting standards.</p>
-            </div>
-
-            <div class="col-12 col-sm-6 col-lg-3">
-                <div class="pillar-icon-circle">
-                    <span class="material-symbols-outlined text-forest-light text-2xl">verified_user</span>
-                </div>
-                <h4 class="font-headline-sm text-primary font-bold mb-1" style="font-size: 17px;">Happiness Guaranteed</h4>
-                <p class="font-body-sm text-muted m-0">Complete refund or immediate replacement policy if any nut fails our rigorous sensory crunch metric.</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- ==============================================================================
-     8. CLIENT-SIDE INTERACTION SCRIPT
+     8. CLIENT-SIDE INTERACTION SCRIPT & 3D SCROLLYTELLING ENGINE
      ============================================================================== -->
 <script>
     // Stitch Toast Feedback Controller
@@ -835,43 +1165,51 @@
     };
 
     // Quick Add for Featured Spotlight Items
-    window.quickAddFeaturedItem = function (itemName, price) {
-        window.showRoyalCasketToast(itemName, price);
-        // Dispatch to cart store if available
-        const cartBadge = document.getElementById('cartCountBadge');
-        if (cartBadge) {
-            const current = parseInt(cartBadge.innerText || '0', 10);
-            cartBadge.innerText = (current + 1).toString();
-            cartBadge.style.display = 'inline-block';
-        }
-        const mobileBadge = document.getElementById('mobileCartBadge');
-        if (mobileBadge) {
-            const current = parseInt(mobileBadge.innerText || '0', 10);
-            mobileBadge.innerText = (current + 1).toString();
-            mobileBadge.style.display = 'inline-block';
+    window.quickAddFeaturedItem = function (itemName, price, productId) {
+        if (window.Storefront && window.Storefront.addToCart) {
+            window.Storefront.addToCart(productId || 1, 1, itemName);
+        } else {
+            window.showRoyalCasketToast(itemName, price);
         }
     };
 
-    // 1-Click WhatsApp Direct Order
+    // 1-Click WhatsApp Direct Order pointing to wa.me/918945244184
     window.orderWhatsAppDirect = function (itemName, price) {
-        const phone = '919133133931';
+        const phone = '918945244184';
         const msg = encodeURIComponent(`Hello Sri Tirumala, I would like to order ${itemName} priced at ${price}. Please confirm stock & delivery to Tekkali/AP.`);
         window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
     };
 
-    // Variant Chip Selection for Spotlight Cards
+    // Variant Selection for Spotlight Cards
     window.selectVariant = function (btn, group, price, weight) {
         const parent = btn.parentElement;
         parent.querySelectorAll('.variant-chip').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         const priceEl = document.getElementById('price-' + group);
         if (priceEl) priceEl.innerText = price;
+
+        const addBtn = document.getElementById('btn-add-' + group);
+        if (addBtn) {
+            const baseName = addBtn.dataset.baseName || 'Royal Harvest';
+            const fullName = `${baseName} (${weight})`;
+            addBtn.dataset.name = fullName;
+            const numPrice = parseFloat(price.replace(/[^0-9.]/g, '')) || 0;
+            addBtn.dataset.price = numPrice;
+            addBtn.setAttribute('onclick', `window.Storefront && window.Storefront.addToCart(${addBtn.dataset.id}, 1, '${fullName.replace(/'/g, "\\'")}')`);
+        }
     };
 
-    window.toggleRoast = function (btn) {
+    window.toggleRoast = function (btn, roastType) {
         const parent = btn.parentElement;
         parent.querySelectorAll('.variant-chip').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
+
+        const addBtn = document.getElementById('btn-add-cashew');
+        if (addBtn) {
+            const fullName = `King Size W180 Cashews (${roastType} 500g)`;
+            addBtn.dataset.name = fullName;
+            addBtn.setAttribute('onclick', `window.Storefront && window.Storefront.addToCart(${addBtn.dataset.id}, 1, '${fullName.replace(/'/g, "\\'")}')`);
+        }
     };
 
     // Provenance Category Ribbon Filtering
@@ -992,6 +1330,37 @@
 
         window.filterByProvenance('All');
     };
+
+    // ─── Lenis Smooth Scroll Engine ─────────────────────────────────────────────
+    document.addEventListener('DOMContentLoaded', () => {
+        // Initialize Lenis Smooth Scroll
+        if (typeof Lenis !== 'undefined') {
+            try {
+                const lenis = new Lenis({
+                    duration: 1.2,
+                    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+                    smoothWheel: true,
+                    touchMultiplier: 1.5
+                });
+
+                function raf(time) {
+                    lenis.raf(time);
+                    requestAnimationFrame(raf);
+                }
+                requestAnimationFrame(raf);
+
+                if (typeof ScrollTrigger !== 'undefined' && typeof gsap !== 'undefined') {
+                    lenis.on('scroll', ScrollTrigger.update);
+                    gsap.ticker.add((time) => {
+                        lenis.raf(time * 1000);
+                    });
+                    gsap.ticker.lagSmoothing(0);
+                }
+            } catch (err) {
+                console.warn('Lenis smooth scroll initialization skipped:', err);
+            }
+        }
+    });
 </script>
 
 <%- include('footer') %>
