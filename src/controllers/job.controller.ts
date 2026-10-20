@@ -21,7 +21,7 @@ export function sanitizeJob(job: Job): Job {
     }
 
     // Redact credential keys
-    for (const key of ['token', 'accessToken', 'access_token', 'secret', 'password', 'apiKey', 'api_key']) {
+    for (const key of ['token', 'accessToken', 'access_token', 'secret', 'password', 'apiKey', 'api_key', 'otp']) {
       if (key in payloadCopy) {
         payloadCopy[key] = '[REDACTED]';
       }

@@ -18,7 +18,7 @@ export * from './types/index.js';
 import db from './database.js';
 function seedDefaults() {
   const userCount = (db.prepare('SELECT COUNT(*) as c FROM users').get() as { c: number }).c;
-  if (userCount === 0) {
+  if (userCount === 0 && process.env.NODE_ENV !== 'production') {
     const adminHash = bcrypt.hashSync('admin123', 10);
     const staffHash = bcrypt.hashSync('staff123', 10);
     db.prepare('INSERT INTO users (username, password_hash, role) VALUES (?, ?, ?)').run('admin', adminHash, 'admin');

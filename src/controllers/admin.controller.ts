@@ -75,12 +75,11 @@ export class AdminController {
   }
 
   getProfit(req: Request, res: Response) {
-    const bills = billRepository.getBills();
+    const bills = billRepository.getBillsWithProfit();
     const grouped_data: Record<string, { daily_profit: number; daily_sales: number; bills: any[]; revenue_by_method: Record<string, number> }> = {};
 
     for (const bill of bills) {
-      const sales = saleRepository.getSalesByBillId(bill.id);
-      const billProfit = sales.reduce((sum, s) => sum + s.profit_made, 0);
+      const billProfit = bill.bill_profit;
       if (!grouped_data[bill.bill_date]) {
         grouped_data[bill.bill_date] = { daily_profit: 0, daily_sales: 0, bills: [], revenue_by_method: { Cash: 0, UPI: 0, Card: 0 } };
       }

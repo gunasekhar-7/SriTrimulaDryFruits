@@ -133,4 +133,24 @@ describe('Server-Side Persistent Cart', () => {
     expect(checkoutRes.body.success).toBe(true);
     expect(checkoutRes.body.data.redirect).toBeDefined();
   });
+
+  it('should reject adding out of stock item to anonymous cart with 400', async () => {
+    // Create an out of stock product
+    const barcode = `T-OOS-${Date.now()}`;
+    const oos = db.prepare(`
+      INSERT INTO product_variants (name, barcode, cost_price, selling_price, mrp, total_qty, sold_qty, category, tax_rate)
+      VALUES ('OOS Item', ?, 500, 600, 700, 5, 5, 'Dry Fruits', 5)
+    `).run(barcode);
+    const oosId = oos.lastInsertRowid;
+
+    const res = await request(app)
+      .post('/api/v1/cart/add')
+      .set('Cookie', anonCookies)
+      .set('CSRF-Token', csrfTokenAnon)
+      .send({ product_id: oosId, quantity: 1 });
+
+    expect(res.status).toBe(409);
+    const msg = res.body.error?.message || res.body.message;
+    expect(msg).toMatch(/out of stock/i);
+  });
 });

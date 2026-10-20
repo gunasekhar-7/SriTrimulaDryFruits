@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import logger from '../../logger.js';
 
 export interface WhatsAppConfig {
@@ -110,9 +111,15 @@ export class WhatsAppClient {
 
   verifySignature(payload: string, signature: string): boolean {
     if (!this.config.appSecret) return true; // Mock verification
-    const crypto = require('crypto');
-    const expected = crypto.createHmac('sha256', this.config.appSecret).update(payload).digest('hex');
-    return `sha256=${expected}` === signature;
+    try {
+      const expected = `sha256=${crypto.createHmac('sha256', this.config.appSecret).update(payload).digest('hex')}`;
+      const sigBuf = Buffer.from(signature);
+      const expBuf = Buffer.from(expected);
+      if (sigBuf.length !== expBuf.length) return false;
+      return crypto.timingSafeEqual(sigBuf, expBuf);
+    } catch {
+      return false;
+    }
   }
 }
 

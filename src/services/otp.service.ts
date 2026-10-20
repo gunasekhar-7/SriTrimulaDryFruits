@@ -230,7 +230,6 @@ export class OtpService {
         payload: {
           verificationId,
           phone,
-          otp,
           purpose
         },
         idempotencyKey: `otp_delivery_${verificationId}`,
@@ -244,7 +243,6 @@ export class OtpService {
           payload: {
             verificationId,
             phone,
-            otp,
             purpose
           },
           idempotencyKey: `otp_delivery_${verificationId}`,

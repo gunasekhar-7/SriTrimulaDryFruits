@@ -246,6 +246,7 @@ export class AnalyticsService {
           b.id as bill_id,
           b.bill_date,
           b.total_amount,
+          b.discount_amount,
           s.product_id,
           s.qty_sold,
           s.unit_price,
@@ -272,15 +273,28 @@ export class AnalyticsService {
 
       const posRows = db.prepare(posQuery).all(...posParams) as any[];
 
-      const billIds = new Set<number>();
-      for (const row of posRows) {
-        billIds.add(row.bill_id);
-        const lineRev = (Number(row.unit_price) || 0) * (Number(row.qty_sold) || 0);
-        posRevenue += lineRev;
-        const lineCost = (Number(row.cost_price) || 0) * (Number(row.qty_sold) || 0);
-        posCogs += lineCost;
+      if (!category && !productId) {
+        const billTotals = new Map<number, number>();
+        for (const row of posRows) {
+          billTotals.set(row.bill_id, Number(row.total_amount) || 0);
+          const lineCost = (Number(row.cost_price) || 0) * (Number(row.qty_sold) || 0);
+          posCogs += lineCost;
+        }
+        posRevenue = Array.from(billTotals.values()).reduce((sum, amt) => sum + amt, 0);
+        posOrderCount = billTotals.size;
+      } else {
+        const billIds = new Set<number>();
+        for (const row of posRows) {
+          billIds.add(row.bill_id);
+          const lineGross = (Number(row.unit_price) || 0) * (Number(row.qty_sold) || 0);
+          const bSubtotal = (Number(row.total_amount) || 0) + (Number(row.discount_amount) || 0);
+          const discountFactor = bSubtotal > 0 && row.discount_amount > 0 ? (1 - (Number(row.discount_amount) / bSubtotal)) : 1;
+          posRevenue += lineGross * discountFactor;
+          const lineCost = (Number(row.cost_price) || 0) * (Number(row.qty_sold) || 0);
+          posCogs += lineCost;
+        }
+        posOrderCount = billIds.size;
       }
-      posOrderCount = billIds.size;
     }
 
     posRevenue = FinancialCalculator.roundCurrency(posRevenue);
@@ -301,6 +315,8 @@ export class AnalyticsService {
           o.id as order_id,
           DATE(o.created_at) as order_date,
           o.status,
+          o.subtotal,
+          o.discount,
           o.total_amount,
           oi.product_id,
           oi.product_name,
@@ -338,15 +354,28 @@ export class AnalyticsService {
 
       const onlineRows = db.prepare(onlineQuery).all(...onlineParams) as any[];
 
-      const orderIds = new Set<number>();
-      for (const row of onlineRows) {
-        orderIds.add(row.order_id);
-        const lineRev = Number(row.total_price) || 0;
-        onlineRevenue += lineRev;
-        const lineCost = (Number(row.cost_price) || 0) * (Number(row.quantity) || 0);
-        onlineCogs += lineCost;
+      if (!category && !productId) {
+        const orderTotals = new Map<number, number>();
+        for (const row of onlineRows) {
+          orderTotals.set(row.order_id, Number(row.total_amount) || 0);
+          const lineCost = (Number(row.cost_price) || 0) * (Number(row.quantity) || 0);
+          onlineCogs += lineCost;
+        }
+        onlineRevenue = Array.from(orderTotals.values()).reduce((sum, amt) => sum + amt, 0);
+        onlineOrderCount = orderTotals.size;
+      } else {
+        const orderIds = new Set<number>();
+        for (const row of onlineRows) {
+          orderIds.add(row.order_id);
+          const lineGross = Number(row.total_price) || 0;
+          const oSubtotal = Number(row.subtotal) || 0;
+          const discountFactor = oSubtotal > 0 && row.discount > 0 ? (1 - (Number(row.discount) / oSubtotal)) : 1;
+          onlineRevenue += lineGross * discountFactor;
+          const lineCost = (Number(row.cost_price) || 0) * (Number(row.quantity) || 0);
+          onlineCogs += lineCost;
+        }
+        onlineOrderCount = orderIds.size;
       }
-      onlineOrderCount = orderIds.size;
     }
 
     onlineRevenue = FinancialCalculator.roundCurrency(onlineRevenue);

@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { z } from 'zod';
 import db from '../database.js';
 import { billingService } from '../services/billing.service.js';
+import { orderService } from '../services/order.service.js';
 import { productService } from '../services/product.service.js';
 import { billRepository } from '../repositories/bill.repository.js';
 import { saleRepository } from '../repositories/sale.repository.js';
@@ -56,7 +57,7 @@ export class BillingController {
     const grandTotal = cart.reduce((sum: number, item: any) => sum + (item.total || 0), 0);
 
     if (product) {
-      const available_stock = product.total_qty - (product.sold_qty || 0);
+      const available_stock = Math.max(0, product.total_qty - (product.sold_qty || 0) - (product.reserved_qty || 0));
       const final_name = custom_name || product.name;
       let final_mrp = custom_mrp ? parseFloat(custom_mrp) : (product.mrp || 0);
       let final_price = custom_price ? parseFloat(custom_price) : product.selling_price;
@@ -97,7 +98,7 @@ export class BillingController {
         const item = cart[index];
         const product = productService.getProductById(item.id);
         if (product) {
-          const available_stock = product.total_qty - (product.sold_qty || 0) + item.qty;
+          const available_stock = Math.max(0, product.total_qty - (product.sold_qty || 0) - (product.reserved_qty || 0) + item.qty);
           if (new_qty <= available_stock) {
             item.qty = new_qty;
             item.total = item.price * new_qty;
@@ -203,25 +204,6 @@ export class BillingController {
       res.render('sell', {
         cart, total: subtotal, error: error.message, held_bills, csrfToken: res.locals.csrfToken
       });
-    }
-  }
-
-  apiGetProducts(req: Request, res: Response) {
-    const products = productService.getProducts().map(p => ({
-      id: p.id, name: p.name, barcode: p.barcode, mrp: p.mrp,
-      selling_price: p.selling_price,
-      available: p.total_qty - (p.sold_qty || 0),
-      category: p.category || 'Dry Fruits'
-    }));
-    res.json(products);
-  }
-
-  apiGetProductDetails(req: Request, res: Response) {
-    const product = productService.getProductByBarcode(req.params.barcode);
-    if (product) {
-      res.json({ success: true, id: product.id, name: product.name, mrp: product.mrp, selling_price: product.selling_price, available: product.total_qty - (product.sold_qty || 0) });
-    } else {
-      res.json({ success: false });
     }
   }
 
@@ -387,17 +369,17 @@ export class BillingController {
     const finalTotal = Math.max(0, subtotal - discount_amount);
 
     try {
-      const newBill = billingService.createBill(
-        dateStr, timeStr, items, customer_name, customer_phone, discount_amount, payment_method, shift.id
-      );
-
       const posOrderId = (req.session as any)?.posOrderId;
-      if (posOrderId) {
-        try {
-          const { orderService } = await import('../services/order.service.js');
+      const saleTx = db.transaction(() => {
+        if (posOrderId) {
           orderService.updateOrderStatus(posOrderId, 'COMPLETED', req.session.user || 'POS Cashier', { isPosConversion: true });
-        } catch {}
-      }
+        }
+        return billingService.createBill(
+          dateStr, timeStr, items, customer_name, customer_phone, discount_amount, payment_method, shift.id
+        );
+      });
+
+      const newBill = saleTx();
 
       req.session.cart = [];
       delete (req.session as any).posCustomerName;

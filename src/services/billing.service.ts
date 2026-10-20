@@ -69,7 +69,7 @@ export class BillingService {
     });
 
     try {
-      return createBillAndSales();
+      return (createBillAndSales as any).immediate ? (createBillAndSales as any).immediate() : createBillAndSales();
     } catch (error: any) {
       if (
         error.code === 'SQLITE_CONSTRAINT_CHECK' ||
@@ -89,15 +89,19 @@ export class BillingService {
 
     if (!bill || !sale || !product || returnQty <= 0 || returnQty > sale.qty_sold) return false;
 
-    const refundAmount = returnQty * sale.unit_price;
+    const discountAmount = bill.discount_amount || 0;
+    const totalGross = bill.total_amount + discountAmount;
+    const discountRatio = totalGross > 0 && discountAmount > 0 ? (1 - discountAmount / totalGross) : 1;
+    const effectiveUnitPrice = sale.unit_price * discountRatio;
+    const refundAmount = Math.min(bill.total_amount, Math.round(returnQty * effectiveUnitPrice * 100) / 100);
 
     const returnTransaction = db.transaction(() => {
-      const profitDeduction = returnQty * (sale.unit_price - product.cost_price);
+      const profitDeduction = returnQty * (effectiveUnitPrice - product.cost_price);
 
       // Decrement sold qty
       db.prepare('UPDATE product_variants SET sold_qty = sold_qty - ? WHERE id = ?').run(returnQty, productId);
       inventoryRepository.recordMovement(productId, returnQty, 'RETURN', actor, 'Bill', billId.toString(), `Returned from Sale ${saleId}`);
-      db.prepare('UPDATE bills SET total_amount = total_amount - ? WHERE id = ?').run(refundAmount, billId);
+      db.prepare('UPDATE bills SET total_amount = MAX(0, total_amount - ?) WHERE id = ?').run(refundAmount, billId);
 
       const newQty = sale.qty_sold - returnQty;
       if (newQty <= 0) {

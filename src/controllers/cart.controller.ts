@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
 import { cartService } from '../services/cart.service.js';
+import { getProductById } from '../repository.js';
+import { metricsAggregator } from '../observability/index.js';
 import { z } from 'zod';
 
 const updateCartSchema = z.object({
@@ -36,8 +38,22 @@ export class CartController {
         const cartData = cartService.addItem(req.session.customer_id, parsed.product_id, qty);
         return res.json(cartData);
       } else {
+        const product = getProductById(parsed.product_id);
+        if (!product) return res.status(404).json({ message: 'Product not found' });
+        const stock = product.total_qty - (product.sold_qty || 0) - (product.reserved_qty || 0);
+        if (stock <= 0) {
+          metricsAggregator.recordStockOut(product.name, 'online');
+          return res.status(400).json({ message: 'Product is out of stock' });
+        }
+
         if (!req.session.cart) req.session.cart = [];
         const existing = req.session.cart.find(i => i.id === parsed.product_id);
+        const currentQty = existing ? existing.qty : 0;
+        if (currentQty + qty > stock) {
+          metricsAggregator.recordStockOut(product.name, 'online');
+          return res.status(400).json({ message: `Cannot add more than available stock (${stock})` });
+        }
+
         if (existing) {
           existing.qty += qty;
         } else {
@@ -61,6 +77,14 @@ export class CartController {
         const cartData = cartService.updateItemQuantity(req.session.customer_id, parsed.product_id, parsed.quantity);
         return res.json(cartData);
       } else {
+        const product = getProductById(parsed.product_id);
+        if (!product) return res.status(404).json({ message: 'Product not found' });
+        const stock = product.total_qty - (product.sold_qty || 0) - (product.reserved_qty || 0);
+        if (parsed.quantity > stock) {
+          metricsAggregator.recordStockOut(product.name, 'online');
+          return res.status(400).json({ message: `Only ${stock} items available` });
+        }
+
         if (!req.session.cart) req.session.cart = [];
         if (parsed.quantity <= 0) {
           req.session.cart = req.session.cart.filter(i => i.id !== parsed.product_id);
@@ -132,8 +156,22 @@ export class CartController {
     if (req.session.customer_id) {
       cartData = cartService.addItem(req.session.customer_id, parsed.product_id, qty);
     } else {
+      const product = getProductById(parsed.product_id);
+      if (!product) throw new Error('Product not found');
+      const stock = product.total_qty - (product.sold_qty || 0) - (product.reserved_qty || 0);
+      if (stock <= 0) {
+        metricsAggregator.recordStockOut(product.name, 'online');
+        throw new Error('Product is out of stock');
+      }
+
       if (!req.session.cart) req.session.cart = [];
       const existing = req.session.cart.find(i => i.id === parsed.product_id);
+      const currentQty = existing ? existing.qty : 0;
+      if (currentQty + qty > stock) {
+        metricsAggregator.recordStockOut(product.name, 'online');
+        throw new Error(`Cannot add more than available stock (${stock})`);
+      }
+
       if (existing) {
         existing.qty += qty;
       } else {
@@ -152,6 +190,14 @@ export class CartController {
     if (req.session.customer_id) {
       cartData = cartService.updateItem(req.session.customer_id, parsed.product_id, parsed.quantity);
     } else {
+      const product = getProductById(parsed.product_id);
+      if (!product) throw new Error('Product not found');
+      const stock = product.total_qty - (product.sold_qty || 0) - (product.reserved_qty || 0);
+      if (parsed.quantity > stock) {
+        metricsAggregator.recordStockOut(product.name, 'online');
+        throw new Error(`Only ${stock} items available`);
+      }
+
       if (!req.session.cart) req.session.cart = [];
       const existing = req.session.cart.find(i => i.id === parsed.product_id);
       if (existing) {

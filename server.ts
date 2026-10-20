@@ -88,7 +88,12 @@ import { observabilityController } from './src/controllers/observability.control
 import { observabilityRouter } from './src/routes/observability.js';
 
 app.use(observabilityMiddleware);
-app.get('/health', (req, res) => res.status(200).json({ status: 'UP' }));
+app.get('/health', (req, res) => res.status(200).json({
+  status: 'UP',
+  uptimeSeconds: Math.floor(process.uptime()),
+  timestamp: new Date().toISOString(),
+  environment: process.env.NODE_ENV || 'development'
+}));
 app.get('/ready', (req, res) => res.status(200).json({ status: 'READY' }));
 app.get('/metrics', observabilityController.getMetricsPrometheus.bind(observabilityController));
 app.use('/api/v1/observability', observabilityRouter);
@@ -198,18 +203,12 @@ app.use((req, res, next) => {
   next();
 });
 
-// ─── Health Check ─────────────────────────────────────────────────────────────
-app.get('/health', (req, res) => {
-  res.status(200).json({
-    status: 'healthy',
-    uptimeSeconds: Math.floor(process.uptime()),
-    timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV || 'development'
-  });
-});
 
 // ─── Public Home ──────────────────────────────────────────────────────────────
 app.get('/', csrfProtection, (req, res) => {
+  if (req.session && req.session.user) {
+    return res.redirect('/sell');
+  }
   const allProducts = getProducts();
   const shuffled = [...allProducts].sort(() => 0.5 - Math.random());
   const selectedProducts = shuffled.slice(0, 12);
@@ -231,7 +230,7 @@ app.use('/', pdfRoutes);
 app.use('/', storeRoutes);
 app.use('/customer', customerRoutes);
 app.use('/account', accountRoutes);
-app.use('/api/cart', cartRoutes);
+app.use('/api/cart', cartRoutes); // Legacy unversioned cart API (kept for backward compatibility)
 app.use('/api/v1', apiV1Router);
 
 // ─── 404 Handler ─────────────────────────────────────────────────────────────

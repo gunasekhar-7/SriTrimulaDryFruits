@@ -102,52 +102,69 @@ export function instrumentDatabase(db: Database.Database): Database.Database {
   db.transaction = function (fn: any): any {
     const wrappedTx = (originalTransaction as any)(fn);
 
-    return function (this: any, ...args: any[]) {
-      const startHr = process.hrtime();
-      const activeSpan = trace.getSpan(context.active());
-      let txSpan: any = null;
+    const makeTracedTx = (targetFn: any, mode: string = 'deferred') => {
+      return function (this: any, ...args: any[]) {
+        const startHr = process.hrtime();
+        const activeSpan = trace.getSpan(context.active());
+        let txSpan: any = null;
 
-      if (activeSpan) {
-        txSpan = otelTracer.startSpan('db.transaction', {
-          kind: SpanKind.CLIENT,
-          attributes: {
-            'db.system': 'sqlite',
-            'db.name': 'store.db',
-            'db.operation': 'TRANSACTION'
-          }
-        });
-      }
-
-      try {
-        const result = wrappedTx.apply(this, args);
-        const diff = process.hrtime(startHr);
-        const durationSeconds = diff[0] + diff[1] / 1e9;
-
-        if (txSpan) {
-          txSpan.setAttribute('db.duration_ms', Number((durationSeconds * 1000).toFixed(2)));
-          txSpan.setStatus({ code: SpanStatusCode.OK });
-          txSpan.end();
-        }
-
-        metricsAggregator.recordDbQuery('TRANSACTION', 'transaction', durationSeconds, true);
-        return result;
-      } catch (error: any) {
-        const diff = process.hrtime(startHr);
-        const durationSeconds = diff[0] + diff[1] / 1e9;
-
-        if (txSpan) {
-          txSpan.recordException(error);
-          txSpan.setStatus({
-            code: SpanStatusCode.ERROR,
-            message: error.message
+        if (activeSpan) {
+          txSpan = otelTracer.startSpan('db.transaction', {
+            kind: SpanKind.CLIENT,
+            attributes: {
+              'db.system': 'sqlite',
+              'db.name': 'store.db',
+              'db.operation': 'TRANSACTION',
+              'db.transaction.mode': mode
+            }
           });
-          txSpan.end();
         }
 
-        metricsAggregator.recordDbQuery('TRANSACTION', 'transaction', durationSeconds, false);
-        throw error;
-      }
+        try {
+          const result = targetFn.apply(this, args);
+          const diff = process.hrtime(startHr);
+          const durationSeconds = diff[0] + diff[1] / 1e9;
+
+          if (txSpan) {
+            txSpan.setAttribute('db.duration_ms', Number((durationSeconds * 1000).toFixed(2)));
+            txSpan.setStatus({ code: SpanStatusCode.OK });
+            txSpan.end();
+          }
+
+          metricsAggregator.recordDbQuery('TRANSACTION', 'transaction', durationSeconds, true);
+          return result;
+        } catch (error: any) {
+          const diff = process.hrtime(startHr);
+          const durationSeconds = diff[0] + diff[1] / 1e9;
+
+          if (txSpan) {
+            txSpan.recordException(error);
+            txSpan.setStatus({
+              code: SpanStatusCode.ERROR,
+              message: error.message
+            });
+            txSpan.end();
+          }
+
+          metricsAggregator.recordDbQuery('TRANSACTION', 'transaction', durationSeconds, false);
+          throw error;
+        }
+      };
     };
+
+    const mainTx: any = makeTracedTx(wrappedTx, 'deferred');
+    if (typeof wrappedTx?.deferred === 'function') {
+      mainTx.deferred = makeTracedTx(wrappedTx.deferred.bind(wrappedTx), 'deferred');
+    }
+    if (typeof wrappedTx?.immediate === 'function') {
+      mainTx.immediate = makeTracedTx(wrappedTx.immediate.bind(wrappedTx), 'immediate');
+    }
+    if (typeof wrappedTx?.exclusive === 'function') {
+      mainTx.exclusive = makeTracedTx(wrappedTx.exclusive.bind(wrappedTx), 'exclusive');
+    }
+    mainTx.default = mainTx;
+
+    return mainTx;
   };
 
   return db;

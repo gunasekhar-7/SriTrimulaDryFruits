@@ -59,8 +59,28 @@ class AsyncLocalStorageContextManager implements ContextManager {
 const contextManager = new AsyncLocalStorageContextManager();
 context.setGlobalContextManager(contextManager);
 
-// ─── In-Memory Span Exporter & Trace Buffer ────────────────────────────────────
-export const inMemorySpanExporter = new InMemorySpanExporter();
+// ─── In-Memory Span Exporter & Bounded Trace Buffer ───────────────────────────
+class BoundedInMemorySpanExporter extends InMemorySpanExporter {
+  private maxSpans: number;
+
+  constructor(maxSpans = 500) {
+    super();
+    this.maxSpans = maxSpans;
+  }
+
+  export(spans: ReadableSpan[], resultCallback: (result: any) => void): void {
+    super.export(spans, (result) => {
+      // @ts-ignore
+      const finished = this._finishedSpans;
+      if (Array.isArray(finished) && finished.length > this.maxSpans) {
+        finished.splice(0, finished.length - this.maxSpans);
+      }
+      resultCallback(result);
+    });
+  }
+}
+
+export const inMemorySpanExporter = new BoundedInMemorySpanExporter(500);
 
 // ─── Tracer Provider Initialization ───────────────────────────────────────────
 const provider = new BasicTracerProvider({

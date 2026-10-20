@@ -1,149 +1,169 @@
 <% if (session && session.user) { %>
-        </div><!-- end .page-content -->
+    </div><!-- end .page-content -->
     </div><!-- end .main-content -->
-</div><!-- end .app-layout -->
-<% } else { %>
-</div><!-- end public container (.public-main-home or .container.public-main) -->
-<% } %>
-
-<footer class="luxury-site-footer no-print">
-    <div class="max-w-7xl px-3 mx-auto">
-        <% if (!session || !session.user) { %>
-        <!-- Newsletter & Offers Card -->
-        <div class="newsletter-subscribe-card d-flex flex-col flex-md-row align-items-center justify-content-between gap-4">
-            <div class="max-w-lg">
-                <span class="font-label-caps text-secondary uppercase tracking-widest d-block mb-1">Special Updates &amp; Offers</span>
-                <h3 class="font-headline-md text-primary mb-1">Get Fresh Offers &amp; Seasonal Updates</h3>
-                <p class="font-body-sm text-muted mb-0">Get news on fresh seasonal arrivals, healthy snack ideas, and special festive discounts.</p>
-            </div>
-            <form class="d-flex flex-column flex-sm-row gap-2 w-100 w-md-auto" onsubmit="event.preventDefault(); alert('Thank you for subscribing to our fresh updates.');">
-                <input class="form-control nav-search-input" style="border-radius: 8px; min-width: 280px; height: 48px;" placeholder="Enter your email address" type="email" required>
-                <button class="btn btn-brand px-4 fw-bold" style="border-radius: 8px; height: 48px; background: var(--primary-container); color: var(--surface);" type="submit">Subscribe</button>
-            </form>
-        </div>
-
-        <div class="row g-4 mb-5">
-            <!-- Brand Identity -->
-            <div class="col-12 col-lg-5">
-                <div class="d-flex align-items-center gap-2 mb-3">
-                    <img src="/images/stitch/logo_crest.png"
-                         alt="Sri Tirumala Dryfruits Logo" 
-                         class="brand-crest-logo"
-                         style="height: 32px;"
-                         onerror="this.style.display='none';">
-                    <strong class="font-headline-sm text-primary fs-5">Sri Tirumala</strong>
-                </div>
-                <p class="font-body-sm text-muted mb-3 leading-relaxed" style="max-width: 380px;">
-                    Serving quality dry fruits since 1984. Bringing you hand-selected California almonds, pure Kashmir saffron, and natural Middle Eastern dates for your everyday health.
-                </p>
-                <div class="d-flex align-items-center gap-2 pt-1">
-                    <span class="badge bg-light text-dark border px-2 py-1 rounded-pill font-label-caps d-inline-flex align-items-center gap-1" style="font-size: 10px;">
-                        <span class="material-symbols-outlined" style="font-size: 13px; color: #B89528;">verified</span> FSSAI Certified
-                    </span>
-                    <span class="badge bg-light text-dark border px-2 py-1 rounded-pill font-label-caps d-inline-flex align-items-center gap-1" style="font-size: 10px;">
-                        <span class="material-symbols-outlined" style="font-size: 13px; color: #2D5A27;">eco</span> 100% Organic Origin
-                    </span>
-                </div>
-            </div>
-
-            <!-- Collections -->
-            <div class="col-6 col-lg-2">
-                <h6 class="footer-nav-heading">Collections</h6>
-                <ul class="footer-link-list">
-                    <% 
-                    const footerCats = (locals.storefrontCategories && storefrontCategories.length > 0)
-                      ? storefrontCategories
-                      : [
-                        { name: 'Dry Fruits', slug: 'Dry%20Fruits' },
-                        { name: 'Millets', slug: 'Millets' },
-                        { name: 'Seeds', slug: 'Seeds' },
-                        { name: 'Spices', slug: 'Spices' },
-                        { name: 'Nuts', slug: 'Nuts' },
-                        { name: 'Sweets', slug: 'Sweets' }
-                      ];
-                    footerCats.forEach(function(cat) { 
-                    %>
-                        <li><a href="/category/<%= cat.slug %>"><%= cat.name %></a></li>
-                    <% }); %>
-                </ul>
-            </div>
-
-            <!-- Customer Services -->
-            <div class="col-6 col-lg-2">
-                <h6 class="footer-nav-heading">Customer Services</h6>
-                <ul class="footer-link-list">
-                    <li><a href="#festive-spotlight">Festive Gift Hampers</a></li>
-                    <li><a href="https://wa.me/918945244184?text=Hello%20Sri%20Tirumala,%20I%20would%20like%20to%20enquire%20about%20Corporate%20Gifting." target="_blank">Corporate &amp; Bulk Gifting</a></li>
-                    <li><a href="/track">Track Order</a></li>
-                    <li><a href="/sitemap.xml" target="_blank">XML Sitemap</a></li>
-                </ul>
-            </div>
-
-            <!-- Store Location & Contact -->
-            <div class="col-12 col-lg-3">
-                <h6 class="footer-nav-heading">Store Location &amp; Contact</h6>
-                <div class="font-body-sm text-muted d-flex flex-column gap-1">
-                    <p class="mb-1">Opposite RTC Complex, Tekkali, Srikakulam Dist, Andhra Pradesh – 532201</p>
-                    <p class="mb-1"><a href="tel:+919133133931" class="text-decoration-none text-dark fw-bold">+91 91331 33931</a></p>
-                    <small class="text-muted">Mon - Sat: 09:30 AM – 09:00 PM IST</small>
-                </div>
-            </div>
-        </div>
-        <hr class="my-4 text-muted opacity-25">
+    </div><!-- end .app-layout -->
+    <% } else { %>
+        </div><!-- end public container (.public-main-home or .container.public-main) -->
         <% } %>
 
-        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2 font-label-md text-muted">
-            <div>© 2026 Sri Tirumala Dryfruits &amp; Nuts. All Rights Reserved.</div>
-            <div class="d-flex align-items-center gap-3">
-                <span>Terms of Service</span>
-                <span>Privacy Policy</span>
-                <span>Shipping &amp; Delivery Policy</span>
-            </div>
-        </div>
-    </div>
-</footer>
+            <footer class="luxury-site-footer no-print">
+                <div class="max-w-7xl px-3 mx-auto">
+                    <% if (!session || !session.user) { %>
+                        <!-- Newsletter & Offers Card -->
+                        <div
+                            class="newsletter-subscribe-card d-flex flex-col flex-md-row align-items-center justify-content-between gap-4">
+                            <div class="max-w-lg">
+                                <span
+                                    class="font-label-caps text-secondary uppercase tracking-widest d-block mb-1">Special
+                                    Updates &amp; Offers</span>
+                                <h3 class="font-headline-md text-primary mb-1">Get Fresh Offers &amp; Seasonal Updates
+                                </h3>
+                                <p class="font-body-sm text-muted mb-0">Get news on fresh seasonal arrivals, healthy
+                                    snack ideas, and special festive discounts.</p>
+                            </div>
+                            <form class="d-flex flex-column flex-sm-row gap-2 w-100 w-md-auto"
+                                onsubmit="event.preventDefault(); alert('Thank you for subscribing to our fresh updates.');">
+                                <input class="form-control nav-search-input"
+                                    style="border-radius: 8px; min-width: 280px; height: 48px;"
+                                    placeholder="Enter your email address" type="email" required>
+                                <button class="btn btn-brand px-4 fw-bold"
+                                    style="border-radius: 8px; height: 48px; background: var(--primary-container); color: var(--surface);"
+                                    type="submit">Subscribe</button>
+                            </form>
+                        </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+                        <div class="row g-4 mb-5">
+                            <!-- Brand Identity -->
+                            <div class="col-12 col-lg-5">
+                                <div class="d-flex align-items-center gap-2 mb-3">
+                                    <img src="/images/stitch/logo_crest.png" alt="Sri Tirumala Dryfruits Logo"
+                                        class="brand-crest-logo" style="height: 32px;"
+                                        onerror="this.style.display='none';">
+                                    <strong class="font-headline-sm text-primary fs-5">Sri Tirumala</strong>
+                                </div>
+                                <p class="font-body-sm text-muted mb-3 leading-relaxed" style="max-width: 380px;">
+                                    Serving quality dry fruits since 1984. Bringing you hand-selected California
+                                    almonds, pure Kashmir saffron, and natural Middle Eastern dates for your everyday
+                                    health.
+                                </p>
+                                <div class="d-flex align-items-center gap-2 pt-1">
+                                    <span
+                                        class="badge bg-light text-dark border px-2 py-1 rounded-pill font-label-caps d-inline-flex align-items-center gap-1"
+                                        style="font-size: 10px;">
+                                        <span class="material-symbols-outlined"
+                                            style="font-size: 13px; color: #B89528;">verified</span> FSSAI Certified
+                                    </span>
+                                    <span
+                                        class="badge bg-light text-dark border px-2 py-1 rounded-pill font-label-caps d-inline-flex align-items-center gap-1"
+                                        style="font-size: 10px;">
+                                        <span class="material-symbols-outlined"
+                                            style="font-size: 13px; color: #2D5A27;">eco</span> 100% Organic Origin
+                                    </span>
+                                </div>
+                            </div>
 
-<% if (!session || !session.user) { %>
-<!-- GSAP & Lenis Smooth Scrollytelling Engine -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-<script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
-<script src="/cinematic-story.js?v=20261018-minimal"></script>
-<script src="/msflow-realms.js?v=20261018"></script>
-<% } %>
+                            <!-- Collections -->
+                            <div class="col-6 col-lg-2">
+                                <h6 class="footer-nav-heading">Collections</h6>
+                                <ul class="footer-link-list">
+                                    <% const footerCats=(locals.storefrontCategories && storefrontCategories.length> 0)
+                                        ? storefrontCategories
+                                        : [
+                                        { name: 'Dry Fruits', slug: 'Dry%20Fruits' },
+                                        { name: 'Millets', slug: 'Millets' },
+                                        { name: 'Seeds', slug: 'Seeds' },
+                                        { name: 'Spices', slug: 'Spices' },
+                                        { name: 'Nuts', slug: 'Nuts' },
+                                        { name: 'Sweets', slug: 'Sweets' }
+                                        ];
+                                        footerCats.forEach(function(cat) {
+                                        %>
+                                        <li><a href="/category/<%= cat.slug %>"><%= cat.name %></a></li>
+                                        <% }); %>
+                                </ul>
+                            </div>
 
-<!-- Sidebar toggle script -->
-<% if (session && session.user) { %>
-<script>
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('sidebarOverlay');
-    const toggle = document.getElementById('sidebarToggle');
+                            <!-- Customer Services -->
+                            <div class="col-6 col-lg-2">
+                                <h6 class="footer-nav-heading">Customer Services</h6>
+                                <ul class="footer-link-list">
+                                    <li><a href="#festive-spotlight">Festive Gift Hampers</a></li>
+                                    <li><a href="https://wa.me/918945244184?text=Hello%20Sri%20Tirumala,%20I%20would%20like%20to%20enquire%20about%20Corporate%20Gifting."
+                                            target="_blank">Corporate &amp; Bulk Gifting</a></li>
+                                    <li><a href="/track">Track Order</a></li>
+                                    <li><a href="/sitemap.xml" target="_blank">XML Sitemap</a></li>
+                                </ul>
+                            </div>
 
-    if (toggle) {
-        toggle.addEventListener('click', () => {
-            sidebar.classList.toggle('open');
-            overlay.classList.toggle('active');
-        });
-    }
-    if (overlay) {
-        overlay.addEventListener('click', () => {
-            sidebar.classList.remove('open');
-            overlay.classList.remove('active');
-        });
-    }
+                            <!-- Store Location & Contact -->
+                            <div class="col-12 col-lg-3">
+                                <h6 class="footer-nav-heading">Store Location &amp; Contact</h6>
+                                <div class="font-body-sm text-muted d-flex flex-column gap-1">
+                                    <p class="mb-1">Opposite RTC Complex, Tekkali, Srikakulam Dist, Andhra Pradesh –
+                                        532201</p>
+                                    <p class="mb-1"><a href="tel:+919133133931"
+                                            class="text-decoration-none text-dark fw-bold">+91 91331 33931</a></p>
+                                    <small class="text-muted">Mon - Sat: 09:30 AM – 09:00 PM IST</small>
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="my-4 text-muted opacity-25">
+                        <% } %>
 
-    // Highlight active sidebar link
-    const currentPath = window.location.pathname;
-    document.querySelectorAll('.sidebar-link').forEach(link => {
-        const href = link.getAttribute('href');
-        if (href && (currentPath === href || (href !== '/' && currentPath.startsWith(href)))) {
-            link.classList.add('active');
-        }
-    });
-</script>
-<% } %>
+                            <div
+                                class="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2 font-label-md text-muted">
+                                <div>© 2026 Sri Tirumala Dryfruits &amp; Nuts. All Rights Reserved.</div>
+                                <div class="d-flex align-items-center gap-3">
+                                    <span>Terms of Service</span>
+                                    <span>Privacy Policy</span>
+                                    <span>Shipping &amp; Delivery Policy</span>
+                                </div>
+                            </div>
+                </div>
+            </footer>
 
-</body>
-</html>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+            <% if (!session || !session.user) { %>
+                <!-- GSAP & Lenis Smooth Scrollytelling Engine -->
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+                <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
+                <script src="/cinematic-story.js?v=20261018-minimal"></script>
+                <script src="/msflow-realms.js?v=20261018"></script>
+                <% } %>
+
+                    <!-- Sidebar toggle script -->
+                    <% if (session && session.user) { %>
+                        <script>
+                            const sidebar = document.getElementById('sidebar');
+                            const overlay = document.getElementById('sidebarOverlay');
+                            const toggle = document.getElementById('sidebarToggle');
+
+                            if (toggle) {
+                                toggle.addEventListener('click', () => {
+                                    sidebar.classList.toggle('open');
+                                    overlay.classList.toggle('active');
+                                });
+                            }
+                            if (overlay) {
+                                overlay.addEventListener('click', () => {
+                                    sidebar.classList.remove('open');
+                                    overlay.classList.remove('active');
+                                });
+                            }
+
+                            // Highlight active sidebar link
+                            const currentPath = window.location.pathname;
+                            document.querySelectorAll('.sidebar-link').forEach(link => {
+                                const href = link.getAttribute('href');
+                                if (href && (currentPath === href || (href !== '/' && currentPath.startsWith(href)))) {
+                                    link.classList.add('active');
+                                }
+                            });
+                        </script>
+                        <% } %>
+
+                            </body>
+
+                            </html>

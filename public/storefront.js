@@ -343,7 +343,7 @@
   function saveWishlist() {
     try {
       localStorage.setItem('stdf_wishlist', JSON.stringify(wishlist));
-    } catch {}
+    } catch { }
     updateWishlistBadge();
     renderWishlist();
     syncWishlistButtons();
@@ -514,7 +514,7 @@
             const modalInstance = bootstrap.Modal.getInstance(modalEl);
             if (modalInstance) modalInstance.hide();
           }
-        } catch {}
+        } catch { }
       };
     }
 
@@ -529,7 +529,7 @@
         const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
         modal.show();
       }
-    } catch {}
+    } catch { }
   }
 
   // ─── Keyboard Accessibility & Shortcuts ─────────────────────────────────────

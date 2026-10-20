@@ -13,9 +13,7 @@
             const isLast = (index === crumbList.length - 1) || crumb.current;
         %>
             <% if (isLast) { %>
-                <li class="breadcrumb-item active text-truncate" aria-current="page" style="color: var(--sf-muted, #5A6E63); font-weight: 600; max-width: min(320px, 65vw);">
-                    <%= crumb.name %>
-                </li>
+                <li class="breadcrumb-item active text-truncate" aria-current="page" style="color: var(--sf-muted, #5A6E63); font-weight: 600; max-width: min(320px, 65vw);"><%= crumb.name %></li>
             <% } else { %>
                 <li class="breadcrumb-item d-flex align-items-center">
                     <a href="<%= crumb.url %>" class="text-decoration-none breadcrumb-link" style="color: var(--sf-primary, #063A22); font-weight: 500; transition: color 0.15s ease;">

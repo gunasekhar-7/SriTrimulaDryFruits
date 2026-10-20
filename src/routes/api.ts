@@ -114,13 +114,13 @@ apiV1Router.use('/whatsapp', whatsappApiRouter);
 
 // 8. Admin API
 const adminApiRouter = express.Router();
-adminApiRouter.get('/analytics', requireAdmin, (req, res) => adminController.getAnalyticsApi(req, res));
-adminApiRouter.get('/audit-logs', requireAdmin, (req, res) => adminController.getAuditLogsApi(req, res));
-adminApiRouter.get('/audit-logs/verify', requireAdmin, (req, res) => adminController.verifyAuditLedgerApi(req, res));
-apiV1Router.use('/admin', requireAuth, adminApiRouter);
-apiV1Router.get('/analytics', requireAuth, requireAdmin, (req, res) => adminController.getAnalyticsApi(req, res));
-apiV1Router.get('/audit-logs', requireAuth, requireAdmin, (req, res) => adminController.getAuditLogsApi(req, res));
-apiV1Router.get('/audit-logs/verify', requireAuth, requireAdmin, (req, res) => adminController.verifyAuditLedgerApi(req, res));
+adminApiRouter.use(requireAuth, requireAdmin);
+adminApiRouter.get('/analytics', (req, res) => adminController.getAnalyticsApi(req, res));
+adminApiRouter.get('/audit-logs', (req, res) => adminController.getAuditLogsApi(req, res));
+adminApiRouter.get('/audit-logs/verify', (req, res) => adminController.verifyAuditLedgerApi(req, res));
+
+apiV1Router.use('/admin', adminApiRouter);
+apiV1Router.use('/', adminApiRouter);
 
 // 9. Background Jobs API
 import jobRouter from './job.js';

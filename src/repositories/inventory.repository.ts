@@ -30,8 +30,10 @@ export class InventoryRepository {
       ORDER BY timestamp DESC, id DESC
     `).all(variantId) as StockMovement[];
   }
-  reserveStock(variantId: number, quantity: number, orderId?: number, cartId?: number): number {
-    const expiresAt = new Date(Date.now() + 15 * 60 * 1000).toISOString(); // 15 mins expiry
+  reserveStock(variantId: number, quantity: number, orderId?: number, cartId?: number, expiryMinutes?: number): number {
+    const defaultMins = orderId ? (parseInt(process.env.ORDER_RESERVATION_EXPIRY_MINUTES || '15', 10)) : 15;
+    const minutes = expiryMinutes || defaultMins;
+    const expiresAt = new Date(Date.now() + minutes * 60 * 1000).toISOString();
     
     // Atomic update to prevent race conditions
     const update = db.prepare(`

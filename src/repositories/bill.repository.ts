@@ -6,6 +6,16 @@ export class BillRepository {
     return db.prepare('SELECT * FROM bills ORDER BY id DESC').all() as Bill[];
   }
 
+  getBillsWithProfit(): (Bill & { bill_profit: number })[] {
+    return db.prepare(`
+      SELECT b.*, COALESCE(SUM(s.profit_made), 0) as bill_profit
+      FROM bills b
+      LEFT JOIN sales s ON b.id = s.bill_id
+      GROUP BY b.id
+      ORDER BY b.id DESC
+    `).all() as (Bill & { bill_profit: number })[];
+  }
+
   getBillById(id: number): Bill | undefined {
     return db.prepare('SELECT * FROM bills WHERE id = ?').get(id) as Bill | undefined;
   }

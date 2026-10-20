@@ -550,6 +550,9 @@ export class StoreController {
   }
 
   getCategoryView(req: Request, res: Response) {
+    if (req.session && req.session.user) {
+      return res.redirect('/sell');
+    }
     const rawCategory = req.params.category || '';
     const category = decodeURIComponent(rawCategory).trim();
     if (!category) {

@@ -94,7 +94,7 @@ export class OrderService {
         return newOrder;
       });
 
-      const newOrder = transaction();
+      const newOrder = (transaction as any).immediate ? (transaction as any).immediate() : transaction();
 
       // Enqueue durable WhatsApp notification after transaction commits to database
       try {

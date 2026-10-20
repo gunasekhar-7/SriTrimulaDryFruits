@@ -25,31 +25,49 @@
 
 :root {
   /* Warm Roasted Espresso, Golden Caramel & Almond Cream Tokens (Reference Palette) */
-  --alabaster-warm: #FAF5ED; /* Dominant Warm Canvas */
-  --emerald-royal: #24140D;  /* Structural / Rich Dark Roast Espresso */
-  --gold-burnished: #DE9A4B; /* Burnished Amber Gold Accents */
+  --alabaster-warm: #FAF5ED;
+  /* Dominant Warm Canvas */
+  --emerald-royal: #24140D;
+  /* Structural / Rich Dark Roast Espresso */
+  --gold-burnished: #DE9A4B;
+  /* Burnished Amber Gold Accents */
 
-  --primary: #24140D;        /* Rich Dark Chocolate Roast */
-  --primary-container: #341C10; /* Warm Mahogany Wood */
-  --on-primary: #FAF5ED;     /* Warm Champagne White */
-  --on-primary-container: #DE9A4B; /* Honey Amber Glow */
-  --forest-dark: #190E08;    /* Deep Espresso Shadow */
-  --forest-light: #442617;   /* Warm Toasted Walnut */
-  --forest-deep: #120904;    /* Charcoal Espresso */
+  --primary: #24140D;
+  /* Rich Dark Chocolate Roast */
+  --primary-container: #341C10;
+  /* Warm Mahogany Wood */
+  --on-primary: #FAF5ED;
+  /* Warm Champagne White */
+  --on-primary-container: #DE9A4B;
+  /* Honey Amber Glow */
+  --forest-dark: #190E08;
+  /* Deep Espresso Shadow */
+  --forest-light: #442617;
+  /* Warm Toasted Walnut */
+  --forest-deep: #120904;
+  /* Charcoal Espresso */
 
-  --secondary: #DE9A4B;      /* Warm Golden Amber */
-  --secondary-container: #F4C783; /* Soft Sunlit Caramel */
+  --secondary: #DE9A4B;
+  /* Warm Golden Amber */
+  --secondary-container: #F4C783;
+  /* Soft Sunlit Caramel */
   --on-secondary-container: #472704;
-  --gold-accent: #DE9A4B;    /* Signature Harvest Gold */
-  --gold-sheen: #F9E7BA;     /* Champagne Silk */
+  --gold-accent: #DE9A4B;
+  /* Signature Harvest Gold */
+  --gold-sheen: #F9E7BA;
+  /* Champagne Silk */
 
-  --tertiary: #B86A28;       /* Roasted Almond Amber */
+  --tertiary: #B86A28;
+  /* Roasted Almond Amber */
   --tertiary-container: #E8B682;
 
-  --surface: #FAF5ED;        /* Warm Almond Cream Canvas */
-  --surface-bright: #FDFBF7; /* Pure Almond Milk */
+  --surface: #FAF5ED;
+  /* Warm Almond Cream Canvas */
+  --surface-bright: #FDFBF7;
+  /* Pure Almond Milk */
   --surface-container-lowest: #FFFFFF;
-  --cream-container: #F4EBDD;/* Warm Spiced Parchment */
+  --cream-container: #F4EBDD;
+  /* Warm Spiced Parchment */
   --surface-container-low: #F6EFE3;
   --surface-container: #EDE2D0;
   --surface-container-high: #E5D7C2;
@@ -57,9 +75,12 @@
   --soft-sand: #E6D8C4;
 
   --charcoal: #1C1008;
-  --on-surface: #1E1109;     /* Deep Espresso Text */
-  --on-surface-variant: #6A5342; /* Warm Roasted Taupe */
-  --outline: #8E7460;        /* Muted Cocoa */
+  --on-surface: #1E1109;
+  /* Deep Espresso Text */
+  --on-surface-variant: #6A5342;
+  /* Warm Roasted Taupe */
+  --outline: #8E7460;
+  /* Muted Cocoa */
   --outline-variant: #D5C3AF;
   --error: #ba1a1a;
 
@@ -96,7 +117,10 @@ body {
 
 .brand-font,
 .font-editorial,
-h1, h2, h3, h4 {
+h1,
+h2,
+h3,
+h4 {
   font-family: 'Playfair Display', Georgia, serif;
 }
 
@@ -586,9 +610,20 @@ h1, h2, h3, h4 {
 }
 
 @keyframes pulseGold {
-  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(184, 149, 40, 0.7); }
-  70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(184, 149, 40, 0); }
-  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(184, 149, 40, 0); }
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(184, 149, 40, 0.7);
+  }
+
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 8px rgba(184, 149, 40, 0);
+  }
+
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(184, 149, 40, 0);
+  }
 }
 
 .hero-cta-btn-primary {
@@ -1421,18 +1456,22 @@ h1, h2, h3, h4 {
   .hero-editorial-section {
     padding: 32px 16px 48px;
   }
+
   .hero-showcase-canvas {
     max-width: 100%;
     margin-top: 24px;
   }
+
   .floating-badge-top {
     left: 8px;
     top: 8px;
   }
+
   .floating-badge-bottom {
     right: 8px;
     bottom: 8px;
   }
+
   .festive-spotlight-box {
     padding: 32px 20px;
   }
@@ -1441,18 +1480,23 @@ h1, h2, h3, h4 {
 /* ==============================================================================
    3D SCROLLYTELLING STOREFRONT (Stitch AI Architecture)
    ============================================================================== */
-html.lenis, html.lenis body {
+html.lenis,
+html.lenis body {
   height: auto;
 }
+
 .lenis.lenis-smooth {
   scroll-behavior: auto !important;
 }
+
 .lenis.lenis-smooth [data-lenis-prevent] {
   overscroll-behavior: contain;
 }
+
 .lenis.lenis-stopped {
   overflow: hidden;
 }
+
 .lenis.lenis-scrolling iframe {
   pointer-events: none;
 }
@@ -1651,6 +1695,7 @@ html.lenis, html.lenis body {
   .scrolly-track-wrapper {
     min-height: auto;
   }
+
   .scrolly-sticky-stage {
     position: relative;
     top: 0;
@@ -1659,19 +1704,23 @@ html.lenis, html.lenis body {
     max-height: none;
     padding: 32px 16px;
   }
+
   .scrolly-casket-centerpiece {
     position: relative;
     width: 100%;
     max-width: 440px;
     margin: 0 auto;
   }
+
   .scrolly-orbit-pill {
     display: none;
   }
+
   .scrolly-narrative-cards-col {
     padding-top: 24px;
     padding-bottom: 32px;
   }
+
   .scrolly-narrative-card {
     margin-bottom: 24px;
   }
@@ -2053,10 +2102,12 @@ html.lenis, html.lenis body {
 .thermal-slip-paper::after {
   content: "";
   position: absolute;
-  bottom: -8px; left: 0; right: 0;
+  bottom: -8px;
+  left: 0;
+  right: 0;
   height: 8px;
-  background-image: linear-gradient(-45deg, transparent 4px, #FFFFFF 4px), 
-                    linear-gradient(45deg, transparent 4px, #FFFFFF 4px);
+  background-image: linear-gradient(-45deg, transparent 4px, #FFFFFF 4px),
+    linear-gradient(45deg, transparent 4px, #FFFFFF 4px);
   background-size: 8px 12px;
 }
 

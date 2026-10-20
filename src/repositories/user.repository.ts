@@ -1,5 +1,4 @@
 import db from '../database.js';
-import bcrypt from 'bcryptjs';
 import { User } from '../types/index.js';
 
 export class UserRepository {

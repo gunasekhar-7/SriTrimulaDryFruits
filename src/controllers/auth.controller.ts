@@ -70,7 +70,7 @@ export class AuthController {
     const username = req.session.user;
     req.session.destroy(() => {
       if (username) logger.info(`Logout: ${username}`);
-      res.redirect('/');
+      res.redirect('/login');
     });
   }
 

@@ -69,14 +69,30 @@ export class CustomerService {
     }
 
     // Scenario B: Clean registration for a new customer
-    // If an OTP was optionally supplied, verify and consume it
+    if (process.env.REQUIRE_PHONE_OTP_REGISTRATION === 'true' && !otp) {
+      throw new Error('Phone verification required: Please enter the verification code sent to your phone.');
+    }
+
+    // If an OTP was supplied, verify and consume it
     if (otp) {
-      const { challengeId } = otpService.verifyOtp(normalizedPhone, 'REGISTRATION', otp, { consume: false });
+      let verifiedChallengeId: number | null = null;
+      try {
+        const result = otpService.verifyOtp(normalizedPhone, 'REGISTRATION', otp, { consume: false });
+        verifiedChallengeId = result.challengeId;
+      } catch (regErr: any) {
+        try {
+          const result = otpService.verifyOtp(normalizedPhone, 'ACCOUNT_LINK', otp, { consume: false });
+          verifiedChallengeId = result.challengeId;
+        } catch {
+          throw regErr;
+        }
+      }
+
       const createTx = db.transaction(() => {
-        otpService.consumeChallenge(challengeId);
+        otpService.consumeChallenge(verifiedChallengeId!);
         return customerRepository.createCustomer(name, normalizedPhone, email, hash);
       });
-      return createTx();
+      return (createTx as any).immediate ? (createTx as any).immediate() : createTx();
     }
 
     return customerRepository.createCustomer(name, normalizedPhone, email, hash);
