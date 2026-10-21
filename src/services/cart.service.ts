@@ -1,5 +1,5 @@
 import { cartRepository } from '../repositories/cart.repository.js';
-import { getProductById } from '../repository.js';
+import { productRepository } from '../repositories/product.repository.js';
 import { metricsAggregator } from '../observability/index.js';
 
 export class CartService {
@@ -59,7 +59,7 @@ export class CartService {
       cart = cartRepository.createCart(customerId);
     }
     
-    const product = getProductById(productId);
+    const product = productRepository.getProductById(productId);
     if (!product) throw new Error('Product not found');
     
     const stock = product.total_qty - (product.sold_qty || 0);
@@ -99,7 +99,7 @@ export class CartService {
       return this.getCart(customerId);
     }
     
-    const product = getProductById(productId);
+    const product = productRepository.getProductById(productId);
     if (!product) throw new Error('Product not found');
     
     const stock = product.total_qty - (product.sold_qty || 0);
@@ -139,7 +139,7 @@ export class CartService {
   validateSessionCart(sessionCart: any[]) {
     let subtotal = 0;
     const validatedItems = sessionCart.map(item => {
-      const product = getProductById(item.id);
+      const product = productRepository.getProductById(item.id);
       if (!product) {
         return { ...item, available: false, message: 'Product not found', qty: 0 };
       }

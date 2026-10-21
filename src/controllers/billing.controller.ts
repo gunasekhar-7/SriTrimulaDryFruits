@@ -7,7 +7,7 @@ import { productService } from '../services/product.service.js';
 import { billRepository } from '../repositories/bill.repository.js';
 import { saleRepository } from '../repositories/sale.repository.js';
 import { onlineOrderRepository } from '../repositories/online_order.repository.js';
-import * as repo from '../repository.js';
+import { shiftRepository } from '../repositories/shift.repository.js';
 import logger from '../logger.js';
 import { metricsAggregator } from '../observability/index.js';
 
@@ -26,7 +26,7 @@ export class BillingController {
     const held_bills = req.session.held_bills || [];
     const customer_name = (req.session as any).posCustomerName || '';
     const customer_phone = (req.session as any).posCustomerPhone || '';
-    const currentShift = res.locals.currentShift || (req.session?.user_id ? repo.getOpenShiftByUserId(req.session.user_id) : undefined);
+    const currentShift = res.locals.currentShift || (req.session?.user_id ? shiftRepository.getOpenShiftByUserId(req.session.user_id) : undefined);
     res.render('sell', { 
       cart, 
       total: grandTotal, 
@@ -345,7 +345,7 @@ export class BillingController {
   }
 
   async completeSaleApi(req: Request, res: Response) {
-    const shift = res.locals.currentShift || (req.session?.user_id ? repo.getOpenShiftByUserId(req.session.user_id) : undefined);
+    const shift = res.locals.currentShift || (req.session?.user_id ? shiftRepository.getOpenShiftByUserId(req.session.user_id) : undefined);
     if (!shift) {
       return res.status(403).json({ success: false, error: { code: 'SHIFT_REQUIRED', message: 'Active shift required' } });
     }

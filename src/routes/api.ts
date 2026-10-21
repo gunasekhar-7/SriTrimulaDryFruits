@@ -3,7 +3,7 @@ import { cartController } from '../controllers/cart.controller.js';
 import { storeController } from '../controllers/store.controller.js';
 import { whatsappController } from '../controllers/whatsapp.controller.js';
 import { apiErrorHandler } from '../middleware/apiErrorHandler.js';
-import { requireAuth, requireAdmin, requireCustomerAuth } from '../middleware/auth.js';
+import { requireAuth, requireAdmin } from '../middleware/auth.js';
 import { sendSuccess } from '../utils/apiResponse.js';
 import { productService } from '../services/product.service.js';
 import { adminController } from '../controllers/admin.controller.js';
@@ -17,17 +17,7 @@ apiV1Router.use((req, res, next) => {
   next();
 });
 
-// 1. Auth API
-const authApiRouter = express.Router();
-// (Placeholders for future JSON auth endpoints)
-apiV1Router.use('/auth', authApiRouter);
-
-// 2. Customers API
-const customersApiRouter = express.Router();
-// (Placeholders for customer data)
-apiV1Router.use('/customers', customersApiRouter);
-
-// 3. Products API
+// Products API
 const productsApiRouter = express.Router();
 productsApiRouter.get('/', (req, res, next) => {
   try {

@@ -1,17 +1,8 @@
 import express from 'express';
-import rateLimit from 'express-rate-limit';
 import { requireAuth, requireAdmin, csrfProtection } from '../middleware/auth.js';
 import { storeController } from '../controllers/store.controller.js';
 
 const router = express.Router();
-
-const isTest = process.env.NODE_ENV === 'test' || process.env.VITEST === 'true';
-
-const checkoutLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: isTest ? 1000 : 15,
-  message: 'Too many checkout requests from this IP, please try again after 15 minutes',
-});
 
 router.get('/robots.txt', storeController.getRobotsTxt.bind(storeController));
 router.get('/sitemap.xml', storeController.getSitemapXml.bind(storeController));

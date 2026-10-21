@@ -1,6 +1,6 @@
 import express from 'express';
 import crypto from 'crypto';
-import * as repo from '../repository.js';
+import { shiftRepository } from '../repositories/shift.repository.js';
 import { metricsAggregator } from '../observability/index.js';
 import { resolveSecret } from '../utils/secrets.js';
 
@@ -124,7 +124,7 @@ export const requireShift = (req: express.Request, res: express.Response, next: 
     }
     return res.redirect('/login');
   }
-  const shift = repo.getOpenShiftByUserId(req.session.user_id);
+  const shift = shiftRepository.getOpenShiftByUserId(req.session.user_id);
   if (!shift) {
     if (isApiRequest(req)) {
       return res.status(403).json({

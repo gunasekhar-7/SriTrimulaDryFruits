@@ -1,5 +1,5 @@
 import express from 'express';
-import { requireCustomerAuth, csrfProtection } from '../middleware/auth.js';
+import { csrfProtection } from '../middleware/auth.js';
 import { customerController } from '../controllers/customer.controller.js';
 import rateLimit from 'express-rate-limit';
 

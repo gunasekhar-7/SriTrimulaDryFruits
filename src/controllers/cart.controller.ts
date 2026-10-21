@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { cartService } from '../services/cart.service.js';
-import { getProductById } from '../repository.js';
+import { productRepository } from '../repositories/product.repository.js';
 import { metricsAggregator } from '../observability/index.js';
 import { z } from 'zod';
 
@@ -38,7 +38,7 @@ export class CartController {
         const cartData = cartService.addItem(req.session.customer_id, parsed.product_id, qty);
         return res.json(cartData);
       } else {
-        const product = getProductById(parsed.product_id);
+        const product = productRepository.getProductById(parsed.product_id);
         if (!product) return res.status(404).json({ message: 'Product not found' });
         const stock = product.total_qty - (product.sold_qty || 0) - (product.reserved_qty || 0);
         if (stock <= 0) {
@@ -77,7 +77,7 @@ export class CartController {
         const cartData = cartService.updateItemQuantity(req.session.customer_id, parsed.product_id, parsed.quantity);
         return res.json(cartData);
       } else {
-        const product = getProductById(parsed.product_id);
+        const product = productRepository.getProductById(parsed.product_id);
         if (!product) return res.status(404).json({ message: 'Product not found' });
         const stock = product.total_qty - (product.sold_qty || 0) - (product.reserved_qty || 0);
         if (parsed.quantity > stock) {
@@ -156,7 +156,7 @@ export class CartController {
     if (req.session.customer_id) {
       cartData = cartService.addItem(req.session.customer_id, parsed.product_id, qty);
     } else {
-      const product = getProductById(parsed.product_id);
+      const product = productRepository.getProductById(parsed.product_id);
       if (!product) throw new Error('Product not found');
       const stock = product.total_qty - (product.sold_qty || 0) - (product.reserved_qty || 0);
       if (stock <= 0) {
@@ -190,7 +190,7 @@ export class CartController {
     if (req.session.customer_id) {
       cartData = cartService.updateItem(req.session.customer_id, parsed.product_id, parsed.quantity);
     } else {
-      const product = getProductById(parsed.product_id);
+      const product = productRepository.getProductById(parsed.product_id);
       if (!product) throw new Error('Product not found');
       const stock = product.total_qty - (product.sold_qty || 0) - (product.reserved_qty || 0);
       if (parsed.quantity > stock) {

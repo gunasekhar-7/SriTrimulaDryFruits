@@ -2,7 +2,6 @@ import express from 'express';
 import { requireCustomerAuth, csrfProtection } from '../middleware/auth.js';
 import { customerController } from '../controllers/customer.controller.js';
 import { onlineOrderRepository } from '../repositories/online_order.repository.js';
-import { customerRepository } from '../repositories/customer.repository.js';
 import { productService } from '../services/product.service.js';
 
 const router = express.Router();

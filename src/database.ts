@@ -382,6 +382,20 @@ try {
   // Categories already initialized or schema busy
 }
 
+// Seed default development users if empty (dev/test only)
+try {
+  const userCount = (db.prepare('SELECT COUNT(*) as c FROM users').get() as { c: number }).c;
+  if (userCount === 0 && process.env.NODE_ENV !== 'production') {
+    const bcrypt = await import('bcryptjs');
+    const adminHash = bcrypt.default.hashSync('admin123', 10);
+    const staffHash = bcrypt.default.hashSync('staff123', 10);
+    db.prepare('INSERT INTO users (username, password_hash, role) VALUES (?, ?, ?)').run('admin', adminHash, 'admin');
+    db.prepare('INSERT INTO users (username, password_hash, role) VALUES (?, ?, ?)').run('staff', staffHash, 'staff');
+  }
+} catch {
+  // Ignore if busy or already exists
+}
+
 import { instrumentDatabase } from './observability/index.js';
 instrumentDatabase(db);
 

@@ -4,10 +4,8 @@ import session from 'express-session';
 import cookieParser from 'cookie-parser';
 import flash from 'connect-flash';
 import helmet from 'helmet';
-import morgan from 'morgan';
 import path from 'path';
 import fs from 'fs';
-import { fileURLToPath } from 'url';
 import crypto from 'crypto';
 
 // ─── Routes ──────────────────────────────────────────────────────────────────
@@ -19,15 +17,17 @@ import pdfRoutes from './src/routes/pdf.js';
 import storeRoutes from './src/routes/store.js';
 import customerRoutes from './src/routes/customer.js';
 import cartRoutes from './src/routes/cart.js';
+import accountRoutes from './src/routes/account.js';
+import { apiV1Router } from './src/routes/api.js';
 import rateLimit from 'express-rate-limit';
 
 // ─── Middleware & Database ───────────────────────────────────────────────────
 import { requireAuth, csrfProtection } from './src/middleware/auth.js';
-import { getProducts } from './src/repository.js';
 import { closeDatabase } from './src/database.js';
 import logger from './src/logger.js';
 import { seoService } from './src/services/seo.service.js';
 import { productService } from './src/services/product.service.js';
+import { productRepository } from './src/repositories/product.repository.js';
 import { validateProductionSiteConfig } from './src/config/site.js';
 import { canonicalRedirectMiddleware } from './src/middleware/canonical-redirect.js';
 
@@ -46,9 +46,6 @@ declare module 'express-session' {
     csrfToken?: string;
   }
 }
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 // ─── Ensure data/logs directories exist ──────────────────────────────────────
 const dataDir = path.join(process.cwd(), 'data');
@@ -193,7 +190,7 @@ app.use((req, res, next) => {
   res.locals.siteUrl = seoService.getSiteUrl(req);
   res.locals.currentPath = req.path;
   try {
-    const products = getProducts();
+    const products = productRepository.getProducts();
     res.locals.lowStockCount = products.filter(p => (p.total_qty - (p.sold_qty || 0)) < 5).length;
     res.locals.storefrontCategories = productService.getStorefrontCategories();
   } catch {
@@ -209,17 +206,13 @@ app.get('/', csrfProtection, (req, res) => {
   if (req.session && req.session.user) {
     return res.redirect('/sell');
   }
-  const allProducts = getProducts();
+  const allProducts = productRepository.getProducts();
   const shuffled = [...allProducts].sort(() => 0.5 - Math.random());
   const selectedProducts = shuffled.slice(0, 12);
   const siteUrl = seoService.getSiteUrl(req);
   const seo = seoService.buildHomeSeo(siteUrl);
   res.render('home', { products: selectedProducts, ...seo, siteUrl, activeCategory: 'All' });
 });
-
-import accountRoutes from './src/routes/account.js';
-
-import { apiV1Router } from './src/routes/api.js';
 
 // ─── Route Modules ────────────────────────────────────────────────────────────
 app.use('/', authRoutes);
